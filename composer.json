@@ -54,6 +54,7 @@
             "@php artisan test"
         ],
         "post-autoload-dump": [
+            "@php artisan modules:sync",
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade"
