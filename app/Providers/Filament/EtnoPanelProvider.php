@@ -27,6 +27,7 @@ class EtnoPanelProvider extends PanelProvider
             ->id('etno')
             ->path('etno')
             ->login()
+            ->default()
             ->colors([
                 'primary' => Color::Amber,
             ])
