@@ -14,6 +14,7 @@
         "internachi/modular": "^3.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "metafori/archeo": "*",
         "metafori/etno": "*"
     },
     "require-dev": {
