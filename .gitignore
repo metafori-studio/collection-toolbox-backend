@@ -38,3 +38,6 @@ Thumbs.db
 /GEMINI.md
 /boost.json
 /opencode.json
+
+# Nix
+.nix-data
