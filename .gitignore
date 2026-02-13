@@ -19,6 +19,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+**/vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
@@ -37,3 +38,6 @@ Thumbs.db
 /GEMINI.md
 /boost.json
 /opencode.json
+
+# Nix
+.nix-data
