@@ -4,8 +4,79 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eefca9b46e59a208e41c2eab937e7c8f",
+    "content-hash": "0d007248a49ca15a3aec9c089e2fd43b",
     "packages": [
+        {
+            "name": "abdulmajeed-jamaan/filament-translatable-tabs",
+            "version": "v5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Abdulmajeed-Jamaan/filament-translatable-tabs.git",
+                "reference": "a1957257c1dc0afeb326471fb1c7f0eb60bf3715"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Abdulmajeed-Jamaan/filament-translatable-tabs/zipball/a1957257c1dc0afeb326471fb1c7f0eb60bf3715",
+                "reference": "a1957257c1dc0afeb326471fb1c7f0eb60bf3715",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^5.0",
+                "filament/forms": "^5.0",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^9.0",
+                "pestphp/pest": "^3.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": [],
+                    "providers": [
+                        "AbdulmajeedJamaan\\FilamentTranslatableTabs\\FilamentTranslatableTabsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "AbdulmajeedJamaan\\FilamentTranslatableTabs\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abdulmajeed-Jamaan",
+                    "email": "abdulmajeed.jamaan@outlook.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Simplifying managing json based translation columns using tabs",
+            "homepage": "https://github.com/abdulmajeed-jamaan/filament-translatable-tabs",
+            "keywords": [
+                "Abdulmajeed-Jamaan",
+                "filament",
+                "filament-translatable-tabs",
+                "laravel",
+                "translation"
+            ],
+            "support": {
+                "issues": "https://github.com/abdulmajeed-jamaan/filament-translatable-tabs/issues",
+                "source": "https://github.com/abdulmajeed-jamaan/filament-translatable-tabs"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Abdulmajeed-Jamaan",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-01-23T12:26:31+00:00"
+        },
         {
             "name": "anourvalar/eloquent-serialize",
             "version": "1.3.5",
@@ -6440,6 +6511,89 @@
                 }
             ],
             "time": "2025-07-17T15:46:43+00:00"
+        },
+        {
+            "name": "spatie/laravel-translatable",
+            "version": "6.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-translatable.git",
+                "reference": "8fc0c1dd5ab4013c27a28e5d5590f2ce849bd349"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-translatable/zipball/8fc0c1dd5ab4013c27a28e5d5590f2ce849bd349",
+                "reference": "8fc0c1dd5ab4013c27a28e5d5590f2ce849bd349",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^11.0|^12.0",
+                "illuminate/support": "^11.0|^12.0",
+                "php": "^8.3",
+                "spatie/laravel-package-tools": "^1.92.7"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.90",
+                "mockery/mockery": "^1.6.12",
+                "orchestra/testbench": "^9.0|^10.0",
+                "pestphp/pest": "^4.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "aliases": {
+                    "Translatable": "Spatie\\Translatable\\Facades\\Translatable"
+                },
+                "laravel": {
+                    "providers": [
+                        "Spatie\\Translatable\\TranslatableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Translatable\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A trait to make an Eloquent model hold translations",
+            "homepage": "https://github.com/spatie/laravel-translatable",
+            "keywords": [
+                "eloquent",
+                "i8n",
+                "laravel-translatable",
+                "model",
+                "multilingual",
+                "spatie",
+                "translate"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-translatable/issues",
+                "source": "https://github.com/spatie/laravel-translatable/tree/6.12.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-24T15:57:48+00:00"
         },
         {
             "name": "spatie/shiki-php",
