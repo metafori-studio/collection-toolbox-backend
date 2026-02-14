@@ -2,12 +2,17 @@
 
 namespace Metafori\Core\Providers;
 
+<<<<<<< HEAD
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use Closure;
 use Filament\Forms\Components\Field;
 use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Locale;
+=======
+use Filament\Panel;
+use Illuminate\Support\ServiceProvider;
+>>>>>>> 0d34f94 (feat: add core module)
 use Metafori\Core\CorePlugin;
 
 class CoreServiceProvider extends ServiceProvider
@@ -19,6 +24,7 @@ class CoreServiceProvider extends ServiceProvider
         });
     }
 
+<<<<<<< HEAD
     public function boot(): void
     {
         TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
@@ -43,4 +49,7 @@ class CoreServiceProvider extends ServiceProvider
             });
         });
     }
+=======
+    public function boot(): void {}
+>>>>>>> 0d34f94 (feat: add core module)
 }
