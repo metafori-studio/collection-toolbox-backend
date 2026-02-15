@@ -4229,6 +4229,38 @@
             }
         },
         {
+            "name": "metafori/core",
+            "version": "1.0",
+            "dist": {
+                "type": "path",
+                "url": "app-modules/core",
+                "reference": "d57c34bb63e6da28a3a9db601f0e572ada61212b"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Metafori\\Core\\Providers\\CoreServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Metafori\\Core\\": "src/",
+                    "Metafori\\Core\\Tests\\": "tests/",
+                    "Metafori\\Core\\Database\\Factories\\": "database/factories/",
+                    "Metafori\\Core\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "metafori/etno",
             "version": "1.0",
             "dist": {
