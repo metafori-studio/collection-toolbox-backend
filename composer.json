@@ -15,7 +15,8 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "metafori/archeo": "*",
-        "metafori/etno": "*"
+        "metafori/etno": "*",
+        "tpetry/laravel-postgresql-enhanced": "^3.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
