@@ -3,10 +3,8 @@
 namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Metafori\Core\Models\Activity;
 
-class ArcheoActivity extends Model
+class Activity extends Model
 {
     protected $table = 'archeo_activities';
 

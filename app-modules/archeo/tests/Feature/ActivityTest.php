@@ -3,8 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Metafori\Archeo\Models\ArcheoActivity;
-use Metafori\Core\Models\Activity;
+use Metafori\Archeo\Models\Activity;
 use Tests\TestCase;
 
 class ActivityTest extends TestCase
@@ -16,7 +15,14 @@ class ActivityTest extends TestCase
      */
     public function test_activity_can_be_created(): void
     {
-        $archeoDetails = ArcheoActivity::create([
+        $Activity = new Activity;
+        $Activity->setTable('archeo_activities');
+
+        $data = [
+            'activity_number' => 'č.a. 9999',
+            'activity_year_start' => 2024,
+            'activity_year_end' => 2024,
+            'activity_type' => 'nálezová správa',
             'action_number' => '123/2024',
             'cvs_number' => 12345,
             'research_leader' => 'Dr. Jakub Okneb',
@@ -32,34 +38,21 @@ class ActivityTest extends TestCase
             'coordinate_x' => 47.9862,
             'coordinate_y' => 18.1637,
             'has_gis_link' => true,
-        ]);
-
-        $activityData = [
-            'activity_number' => 'č.a. 9999',
-            'activity_year_start' => 2024,
-            'activity_year_end' => 2024,
-            'activity_type' => 'nálezová správa',
-            'details_type' => ArcheoActivity::class,
-            'details_id' => $archeoDetails->id,
         ];
 
-        $activity = Activity::create($activityData);
+        $Activity->forceFill($data);
+        $Activity->save();
 
-        $this->assertDatabaseHas('activities', [
+        $this->assertDatabaseHas('archeo_activities', [
+            'id' => $Activity->id,
             'activity_number' => 'č.a. 9999',
-            'details_type' => ArcheoActivity::class,
-            'details_id' => $archeoDetails->id,
-        ]);
-
-        $this->assertDatabaseHas('archeo_activity_details', [
-            'id' => $archeoDetails->id,
             'cvs_number' => 12345,
             'registration_year' => 2024,
             'cadastral_area' => 'Nové Zámky',
         ]);
 
-        $this->assertEquals('č.a. 9999', $activity->activity_number);
-        $this->assertEquals(12345, $activity->details->cvs_number);
-        $this->assertEquals(2024, $activity->details->registration_year);
+        $this->assertEquals('č.a. 9999', $Activity->activity_number);
+        $this->assertEquals(12345, $Activity->cvs_number);
+        $this->assertEquals(2024, $Activity->registration_year);
     }
 }
