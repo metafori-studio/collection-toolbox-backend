@@ -22,15 +22,15 @@ class ArcheoPlugin implements Plugin
         $panel
             ->discoverResources(
                 in: __DIR__.'/Filament/Resources',
-                for: 'Metafori\\Etno\\Filament\\Resources',
+                for: 'Metafori\\Archeo\\Filament\\Resources',
             )
             ->discoverPages(
                 in: __DIR__.'/Filament/Pages',
-                for: 'Metafori\\Etno\\Filament\\Pages',
+                for: 'Metafori\\Archeo\\Filament\\Pages',
             )
             ->discoverWidgets(
                 in: __DIR__.'/Filament/Widgets',
-                for: 'Metafori\\Etno\\Filament\\Widgets',
+                for: 'Metafori\\Archeo\\Filament\\Widgets',
             );
     }
 
