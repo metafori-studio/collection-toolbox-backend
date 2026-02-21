@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->json('name')->nullable();
+            $table->jsonb('name')->nullable();
             $table->string('ror_id', 9)->nullable();
             $table->timestamps();
             $table->softDeletes();
