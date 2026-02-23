@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organizations', function (Blueprint $table) {
+        Schema::create('keywords', function (Blueprint $table) {
             $table->id();
-            $table->jsonb('name')->nullable();
-            $table->string('ror_id', 9)->nullable();
+            $table->jsonb('name');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organizations');
+        Schema::dropIfExists('keywords');
     }
 };
