@@ -42,5 +42,7 @@ class CoreServiceProvider extends ServiceProvider
                 $component->required(fn () => $component->evaluate($condition) && $locale === config('app.fallback_locale'));
             });
         });
+
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'core');
     }
 }
