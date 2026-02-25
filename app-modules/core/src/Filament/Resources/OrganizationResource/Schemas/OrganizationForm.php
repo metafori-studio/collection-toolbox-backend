@@ -12,7 +12,6 @@ class OrganizationForm
         return $schema
             ->schema([
                 TextInput::make('name')
-                    ->requiredWith('ror_id')
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
