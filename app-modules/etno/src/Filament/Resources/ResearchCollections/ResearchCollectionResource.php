@@ -7,6 +7,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Pages\CreateResearchCollection;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Pages\EditResearchCollection;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Pages\ListResearchCollections;
@@ -37,5 +39,13 @@ class ResearchCollectionResource extends Resource
             'create' => CreateResearchCollection::route('/create'),
             'edit' => EditResearchCollection::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

@@ -7,6 +7,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Metafori\Core\Filament\Resources\LocalityResource\Pages;
 use Metafori\Core\Filament\Resources\LocalityResource\RelationManagers;
 use Metafori\Core\Filament\Resources\LocalityResource\Schemas\LocalityForm;
@@ -43,5 +45,13 @@ class LocalityResource extends Resource
             'create' => Pages\CreateLocality::route('/create'),
             'edit' => Pages\EditLocality::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

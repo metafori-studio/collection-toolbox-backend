@@ -6,6 +6,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Metafori\Core\Filament\Resources\OrganizationResource\Pages;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Tables\OrganizationTable;
@@ -41,5 +43,13 @@ class OrganizationResource extends Resource
             'create' => Pages\CreateOrganization::route('/create'),
             'edit' => Pages\EditOrganization::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

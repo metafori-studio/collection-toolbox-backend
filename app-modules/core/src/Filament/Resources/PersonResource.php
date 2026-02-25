@@ -6,6 +6,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Metafori\Core\Filament\Resources\PersonResource\Pages;
 use Metafori\Core\Filament\Resources\PersonResource\Schemas\PersonForm;
 use Metafori\Core\Filament\Resources\PersonResource\Tables\PersonTable;
@@ -41,5 +43,13 @@ class PersonResource extends Resource
             'create' => Pages\CreatePerson::route('/create'),
             'edit' => Pages\EditPerson::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }
