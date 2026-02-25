@@ -67,11 +67,6 @@ class Document extends Model
         return $this->belongsTo(Organization::class, 'institution_id');
     }
 
-    public function researchCollection(): BelongsTo
-    {
-        return $this->belongsTo(ResearchCollection::class, 'research_collection_id');
-    }
-
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id');
@@ -99,6 +94,11 @@ class Document extends Model
 
     public function keywords(): BelongsToMany
     {
-        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->orderBy('sort_order');
+        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->orderByPivot('sort_order');
+    }
+
+    public function researchCollections(): BelongsToMany
+    {
+        return $this->belongsToMany(ResearchCollection::class, 'etno_document_research_collection')->orderByPivot('sort_order');
     }
 }
