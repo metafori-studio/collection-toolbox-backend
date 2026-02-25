@@ -7,6 +7,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Metafori\Core\Filament\Resources\KeywordResource\Pages;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
 use Metafori\Core\Filament\Resources\KeywordResource\Tables\KeywordTable;
@@ -35,5 +37,13 @@ class KeywordResource extends Resource
             'create' => Pages\CreateKeyword::route('/create'),
             'edit' => Pages\EditKeyword::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

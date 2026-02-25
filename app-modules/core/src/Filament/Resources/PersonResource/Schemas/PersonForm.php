@@ -10,6 +10,7 @@ class PersonForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->schema([
                 TextInput::make('given_name')
                     ->required(),
