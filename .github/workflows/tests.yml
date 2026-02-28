@@ -15,9 +15,6 @@ jobs:
     - name: Install Nix
       uses: determinateSystems/nix-installer-action@v16
 
-    - name: Magic Nix Cache
-      uses: determinateSystems/magic-nix-cache-action@v8
-
     - name: Install Dependencies
       run: nix develop --command composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
