@@ -9,6 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set Permissions
+      run: chmod -R 777 storage bootstrap/cache
+
     - name: Install Nix
       uses: determinateSystems/nix-installer-action@v16
 
@@ -23,9 +26,6 @@ jobs:
 
     - name: Generate App Key
       run: nix develop --command php artisan key:generate
-
-    - name: Set Permissions
-      run: nix develop --command chmod -R 777 storage bootstrap/cache
 
     - name: Run Pint
       run: nix develop --command ./vendor/bin/pint --test
