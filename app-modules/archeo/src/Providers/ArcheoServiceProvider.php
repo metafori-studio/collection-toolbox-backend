@@ -14,10 +14,12 @@ class ArcheoServiceProvider extends ServiceProvider
             if ($panel->getId() !== 'archeo') {
                 return;
             }
-
             $panel->plugin(ArcheoPlugin::make());
         });
     }
 
-    public function boot(): void {}
+    public function boot(): void
+    {
+        $this->loadRoutesFrom(__DIR__.'/../../routes/archeo-routes.php');
+    }
 }
