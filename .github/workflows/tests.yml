@@ -6,29 +6,49 @@ jobs:
   tests:
     runs-on: ubuntu-24.04
 
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: collection_toolbox_backend
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.5'
+        extensions: ctype, curl, dom, fileinfo, filter, hash, mbstring, openssl, pcre, pdo, pdo_pgsql, session, tokenizer, xml
+        coverage: none
 
     - name: Set Permissions
       run: chmod -R 777 storage bootstrap/cache
 
-    - name: Install Nix
-      uses: determinateSystems/nix-installer-action@v16
-
     - name: Install Dependencies
-      run: nix develop --command composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: Copy .env
-      run: nix develop --command php -r "file_exists('.env') || copy('.env.example', '.env');"
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
     - name: Generate App Key
-      run: nix develop --command php artisan key:generate
+      run: php artisan key:generate
 
     - name: Run Pint
-      run: nix develop --command ./vendor/bin/pint --test
+      run: ./vendor/bin/pint --test
 
     - name: Run Larastan
-      run: nix develop --command ./vendor/bin/phpstan analyse --no-progress
+      run: ./vendor/bin/phpstan analyse --no-progress
 
     - name: Run Tests
       env:
@@ -38,4 +58,4 @@ jobs:
         DB_DATABASE: collection_toolbox_backend
         DB_USERNAME: postgres
         DB_PASSWORD: ''
-      run: nix develop --command php artisan test
+      run: php artisan test
