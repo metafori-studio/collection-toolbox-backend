@@ -54,8 +54,17 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'otlp,single')),
             'ignore_exceptions' => false,
+        ],
+
+        'otlp' => [
+            'driver' => 'monolog',
+            'handler' => \Keepsuit\LaravelOpenTelemetry\Monolog\OpenTelemetryLogHandler::class,
+            'level' => env('LOG_LEVEL', 'debug'),
+            'processors' => [
+                \Keepsuit\LaravelOpenTelemetry\Monolog\OpenTelemetryLogProcessor::class,
+            ],
         ],
 
         'single' => [

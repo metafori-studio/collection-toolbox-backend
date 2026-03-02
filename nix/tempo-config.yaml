@@ -1,0 +1,48 @@
+server:
+  http_listen_port: 3200
+  log_level: info
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4319"
+        http:
+          endpoint: "0.0.0.0:4320"
+
+ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+  max_block_duration: 5m
+
+compactor:
+  ring:
+    kvstore:
+      store: inmemory
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: .nix-data/tempo/wal
+    local:
+      path: .nix-data/tempo/blocks
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: .nix-data/tempo/generator/wal
+    remote_write:
+      - url: http://127.0.0.1:9090/api/v1/write
+  ring:
+    kvstore:
+      store: inmemory
+
+overrides:
+  metrics_generator_processors: [service-graphs, span-metrics, local-blocks]

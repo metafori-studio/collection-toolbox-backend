@@ -1,8 +1,9 @@
-{ pkgs, config }:
-
+{
+  pkgs,
+  config,
+}:
 let
   inherit (config)
-    dataDir
     postgresDataDir
     valkeyDataDir
     postgresPort
@@ -26,25 +27,28 @@ let
       echo "unix_socket_directories = '$PGDATA_ABS'" >> "$PGDATA_ABS/postgresql.conf"
     fi
 
-    # Check if PostgreSQL instance is running
+    # Start PostgreSQL
     if [ -f "$PGDATA_ABS/postmaster.pid" ] && ${pkgs_postgresql}/bin/pg_ctl -D "$PGDATA_ABS" status > /dev/null 2>&1; then
       echo "PostgreSQL is already running"
     else
-      # Clean up stale pid file if it exists
       [ -f "$PGDATA_ABS/postmaster.pid" ] && rm -f "$PGDATA_ABS/postmaster.pid"
-
-      # Start PostgreSQL
       ${pkgs_postgresql}/bin/pg_ctl -D "$PGDATA_ABS" -l "$PGLOG" -o "-p ${postgresPort} -k $PGDATA_ABS" start > /dev/null
 
+      echo -n "Waiting for PostgreSQL to be ready..."
+      count=0
       until ${pkgs_postgresql}/bin/pg_isready -p ${postgresPort} -h localhost > /dev/null 2>&1; do
         sleep 1
+        count=$((count + 1))
+        if [ $count -ge 30 ]; then echo " TIMEOUT"; break; fi
       done
+      echo " READY"
     fi
 
-    # Create databases if they don't exist already
+    # Create postgresql databases
     ${pkgs_postgresql}/bin/psql -p ${postgresPort} -h localhost -U ${postgresUser} -lqt | cut -d \| -f 1 | grep -qw ${postgresDb} || \
       ${pkgs_postgresql}/bin/createdb -p ${postgresPort} -h localhost -U ${postgresUser} ${postgresDb}
 
+    # Start Valkey
     if ${pkgs_valkey}/bin/valkey-cli -p ${valkeyPort} ping > /dev/null 2>&1; then
       echo "Valkey is already running"
     else
@@ -56,31 +60,33 @@ let
         --pidfile $(pwd)/${valkeyDataDir}/valkey.pid \
         > /dev/null 2>&1
 
+      echo -n "Waiting for Valkey to be ready..."
+      count=0
       until ${pkgs_valkey}/bin/valkey-cli -p ${valkeyPort} ping > /dev/null 2>&1; do
         sleep 1
+        count=$((count + 1))
+        if [ $count -ge 30 ]; then echo " TIMEOUT"; break; fi
       done
+      echo " READY"
     fi
 
-    echo "postgresql://${postgresUser}@localhost:${postgresPort}/${postgresDb}"
-    echo "valkey://localhost:${valkeyPort}"
+    echo "Database connections:"
+    echo "  PostgreSQL: postgresql://${postgresUser}@localhost:${postgresPort}/${postgresDb}"
+    echo "  Valkey: valkey://localhost:${valkeyPort}"
   '';
 
   stopDatabases = pkgs.writeShellScriptBin "stop-databases" ''
-    echo "Stopping databases..."
-
     PGDATA_ABS="$(pwd)/${postgresDataDir}"
-
     if [ -f "$PGDATA_ABS/postmaster.pid" ]; then
+      echo "Stopping PostgreSQL..."
       ${pkgs_postgresql}/bin/pg_ctl -D "$PGDATA_ABS" stop -m fast > /dev/null 2>&1
     fi
 
     if [ -f "$(pwd)/${valkeyDataDir}/valkey.pid" ]; then
+      echo "Stopping Valkey..."
       ${pkgs_valkey}/bin/valkey-cli -p ${valkeyPort} shutdown > /dev/null 2>&1 || true
     fi
-
-    echo "Databases stopped"
   '';
-
 in
 {
   start = startDatabases;
