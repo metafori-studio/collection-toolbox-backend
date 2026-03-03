@@ -32,9 +32,6 @@ jobs:
         extensions: ctype, curl, dom, fileinfo, filter, hash, mbstring, openssl, pcre, pdo, pdo_pgsql, session, tokenizer, xml
         coverage: none
 
-    - name: Set Permissions
-      run: chmod -R 777 storage bootstrap/cache
-
     - name: Install Dependencies
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
