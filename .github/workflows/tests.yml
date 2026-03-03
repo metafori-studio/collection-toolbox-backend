@@ -44,7 +44,7 @@ jobs:
     - name: Run Pint
       run: ./vendor/bin/pint --test
 
-    - name: Run Larastan
+    - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse --no-progress
 
     - name: Run Tests
