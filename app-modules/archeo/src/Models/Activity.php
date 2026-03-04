@@ -38,6 +38,7 @@ class Activity extends Model
         'dating_ns' => 'array',
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
+        'site_type_original' => 'array',
         'has_gis_link' => 'boolean',
     ];
 }
