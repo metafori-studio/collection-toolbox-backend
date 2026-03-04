@@ -22,6 +22,5 @@ class EtnoServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'etno');
-        $this->loadRoutesFrom(__DIR__.'/../../routes/etno-routes.php');
     }
 }

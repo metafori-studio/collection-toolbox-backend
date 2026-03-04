@@ -18,8 +18,5 @@ class ArcheoServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot(): void
-    {
-        $this->loadRoutesFrom(__DIR__.'/../../routes/archeo-routes.php');
-    }
+    public function boot(): void {}
 }

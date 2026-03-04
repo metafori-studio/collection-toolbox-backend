@@ -44,6 +44,5 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'core');
-        $this->loadRoutesFrom(__DIR__.'/../../routes/core-routes.php');
     }
 }
