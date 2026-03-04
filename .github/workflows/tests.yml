@@ -43,16 +43,10 @@ jobs:
     - name: Run setup (install dependencies, create .env, generate app key, run migrations, build frontend)
       run: composer run setup
 
-    - name: Run prek on all files
+    - name: Run prek on all files (PHPStan, Laravel Pint, etc.)
       uses: j178/prek-action@v1
       with:
         prek-version: '0.3.4'
-
-    - name: Run Pint
-      run: ./vendor/bin/pint --test
-
-    - name: Run PHPStan
-      run: ./vendor/bin/phpstan analyse --no-progress
 
     - name: Run Tests
       run: php artisan test
