@@ -1,0 +1,52 @@
+name: Run tests and linters
+
+on: pull_request
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: collection_toolbox_backend
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ''
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install nixfmt
+      run: |
+        curl -L https://github.com/NixOS/nixfmt/releases/download/v1.2.0/nixfmt \
+          -o /usr/local/bin/nixfmt
+        echo "aa43e06e2e98d07f9393a8dc73978e0df79bad15d7f84fcd838e15557eb056ee  /usr/local/bin/nixfmt" \
+          | sha256sum --check
+        chmod +x /usr/local/bin/nixfmt
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.5'
+        extensions: ctype, curl, dom, fileinfo, filter, hash, mbstring, openssl, pcre, pdo, pdo_pgsql, session, tokenizer, xml
+        coverage: none
+
+    - name: Run setup (install dependencies, create .env, generate app key, run migrations, build frontend)
+      run: composer run setup
+
+    - name: Run prek on all files (PHPStan, Laravel Pint, etc.)
+      uses: j178/prek-action@v1
+      with:
+        prek-version: '0.3.4'
+
+    - name: Run Tests
+      run: php artisan test
