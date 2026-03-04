@@ -1,0 +1,38 @@
+exclude: '^public/'
+
+repos:
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.2.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+
+  - repo: local
+    hooks:
+      - id: nixfmt
+        name: Format Nix files
+        entry: nixfmt
+        language: system
+        files: \.nix$
+
+      - id: pint
+        name: Laravel Pint
+        entry: ./vendor/bin/pint
+        language: system
+        files: \.php$
+        pass_filenames: true
+
+      - id: phpstan
+        name: PHPStan
+        entry: ./vendor/bin/phpstan analyse --memory-limit=2G
+        language: system
+        files: \.php$
+        pass_filenames: false

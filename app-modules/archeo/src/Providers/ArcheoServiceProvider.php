@@ -14,6 +14,7 @@ class ArcheoServiceProvider extends ServiceProvider
             if ($panel->getId() !== 'archeo') {
                 return;
             }
+
             $panel->plugin(ArcheoPlugin::make());
         });
     }

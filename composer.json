@@ -10,17 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "abdulmajeed-jamaan/filament-translatable-tabs": "^5.0",
-        "codewithdennis/filament-select-tree": "4.x",
         "dedoc/scramble": "^0.13.14",
         "filament/filament": "^5.0",
         "internachi/modular": "^3.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "metafori/archeo": "*",
-        "metafori/core": "*",
         "metafori/etno": "*",
-        "spatie/laravel-translatable": "^6.12",
         "tpetry/laravel-postgresql-enhanced": "^3.5"
     },
     "require-dev": {
@@ -30,6 +26,7 @@
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
+        "laravel/telescope": "^5.18",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.3",
@@ -88,7 +85,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/telescope"
+            ]
         }
     },
     "config": {
