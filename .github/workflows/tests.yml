@@ -32,14 +32,8 @@ jobs:
         extensions: ctype, curl, dom, fileinfo, filter, hash, mbstring, openssl, pcre, pdo, pdo_pgsql, session, tokenizer, xml
         coverage: none
 
-    - name: Install Dependencies
-      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-
-    - name: Generate App Key
-      run: php artisan key:generate
+    - name: Run setup (install dependencies, create .env, generate app key, run migrations, build frontend)
+      run: composer run setup
 
     - name: Run Pint
       run: ./vendor/bin/pint --test
