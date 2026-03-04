@@ -25,6 +25,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install nixfmt
+      run: |
+        curl -L https://github.com/NixOS/nixfmt/releases/download/v1.2.0/nixfmt \
+          -o /usr/local/bin/nixfmt
+        echo "aa43e06e2e98d07f9393a8dc73978e0df79bad15d7f84fcd838e15557eb056ee  /usr/local/bin/nixfmt" \
+          | sha256sum --check
+        chmod +x /usr/local/bin/nixfmt
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
@@ -34,6 +42,11 @@ jobs:
 
     - name: Install Dependencies
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Run prek on all files
+      uses: j178/prek-action@v1
+      with:
+        prek-version: '0.3.4'
 
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
