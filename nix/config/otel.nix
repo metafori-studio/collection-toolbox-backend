@@ -1,4 +1,5 @@
-{config}: ''
+{ config }:
+''
   receivers:
     otlp:
       protocols:

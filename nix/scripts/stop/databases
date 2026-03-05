@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+PROJ_ROOT="${PROJ_ROOT:-$(pwd)}"
+
+# Uses env vars: PROJ_ROOT, POSTGRES_DATA_DIR, VALKEY_DATA_DIR, VALKEY_PORT
+
+PGDATA_ABS="$PROJ_ROOT/$POSTGRES_DATA_DIR"
+if [ -f "$PGDATA_ABS/postmaster.pid" ]; then
+    echo "Stopping PostgreSQL..."
+    pg_ctl -D "$PGDATA_ABS" stop -m fast >/dev/null 2>&1
+fi
+
+VALKEY_PIDFILE="$PROJ_ROOT/$VALKEY_DATA_DIR/valkey.pid"
+if [ -f "$VALKEY_PIDFILE" ]; then
+    PID=$(cat "$VALKEY_PIDFILE")
+    if kill -0 "$PID" 2>/dev/null; then
+        echo "Stopping Valkey (PID: $PID)..."
+        valkey-cli -p "$VALKEY_PORT" shutdown >/dev/null 2>&1 || true
+        count=0
+        while kill -0 "$PID" 2>/dev/null; do
+            sleep 0.5
+            count=$((count + 1))
+            if [ $count -ge 10 ]; then
+                echo "Forcefully killing Valkey..."
+                kill -9 "$PID" 2>/dev/null || true
+                break
+            fi
+        done
+    fi
+    rm -f "$VALKEY_PIDFILE"
+fi

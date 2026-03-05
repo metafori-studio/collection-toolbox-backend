@@ -1,4 +1,5 @@
-{config}: ''
+{ config }:
+''
   server:
     http_listen_port: ${config.tempoPort}
     log_level: info

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -e
+PROJ_ROOT="${PROJ_ROOT:-$(pwd)}"
+
+# Uses env vars: PROJ_ROOT, POSTGRES_DATA_DIR, VALKEY_DATA_DIR, POSTGRES_USER,
+# POSTGRES_PORT, POSTGRES_DB, VALKEY_PORT
+
+mkdir -p "$PROJ_ROOT/$POSTGRES_DATA_DIR" "$PROJ_ROOT/$VALKEY_DATA_DIR"
+PGDATA_ABS="$PROJ_ROOT/$POSTGRES_DATA_DIR"
+PGLOG="$PGDATA_ABS/logfile"
+
+if [ ! -d "$PGDATA_ABS/base" ]; then
+    echo "Initializing PostgreSQL database..."
+    initdb -D "$PGDATA_ABS" -U "$POSTGRES_USER" --no-locale --encoding=UTF8 -A trust
+    {
+        echo "unix_socket_directories = '$PGDATA_ABS'"
+        echo "listen_addresses = 'localhost'"
+    } >>"$PGDATA_ABS/postgresql.conf"
+fi
+
+if [ -f "$PGDATA_ABS/postmaster.pid" ] && pg_ctl -D "$PGDATA_ABS" status >/dev/null 2>&1; then
+    echo "PostgreSQL is already running"
+else
+    [ -f "$PGDATA_ABS/postmaster.pid" ] && rm -f "$PGDATA_ABS/postmaster.pid"
+    pg_ctl -D "$PGDATA_ABS" -l "$PGLOG" -o "-p $POSTGRES_PORT -k $PGDATA_ABS" start >/dev/null
+fi
+
+until pg_isready -p "$POSTGRES_PORT" -h "$PGDATA_ABS" >/dev/null 2>&1; do
+    sleep 1
+done
+
+psql -p "$POSTGRES_PORT" -h "$PGDATA_ABS" -U "$POSTGRES_USER" -lqt | cut -d \| -f 1 | grep -qw "$POSTGRES_DB" ||
+    createdb -p "$POSTGRES_PORT" -h "$PGDATA_ABS" -U "$POSTGRES_USER" "$POSTGRES_DB"
+
+if valkey-cli -p "$VALKEY_PORT" ping >/dev/null 2>&1; then
+    echo "Valkey is already running"
+else
+    valkey-server \
+        --port "$VALKEY_PORT" \
+        --dir "$PROJ_ROOT/$VALKEY_DATA_DIR" \
+        --appendonly yes \
+        --daemonize yes \
+        --pidfile "$PROJ_ROOT/$VALKEY_DATA_DIR/valkey.pid" \
+        >"$PROJ_ROOT/$VALKEY_DATA_DIR/valkey.log" 2>&1
+
+    until valkey-cli -p "$VALKEY_PORT" ping >/dev/null 2>&1; do
+        sleep 1
+    done
+    echo "Valkey READY"
+fi
+
+echo "  PostgreSQL: postgresql://$POSTGRES_USER@localhost:$POSTGRES_PORT/$POSTGRES_DB"
+echo "  Valkey: valkey://localhost:$VALKEY_PORT"

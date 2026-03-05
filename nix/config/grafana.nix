@@ -1,4 +1,5 @@
-{config}: {
+{ config }:
+{
   ini = ''
     [server]
     http_port = ${config.grafanaPort}

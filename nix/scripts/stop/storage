@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+PROJ_ROOT="${PROJ_ROOT:-$(pwd)}"
+
+# Uses env vars: PROJ_ROOT, SEAWEEDFS_DATA_DIR, SEAWEEDFS_ADMIN_DATA_DIR
+
+"$PROJ_ROOT/nix/scripts/stop_pid" "SeaweedFS" "$PROJ_ROOT/$SEAWEEDFS_DATA_DIR/seaweedfs.pid"
+"$PROJ_ROOT/nix/scripts/stop_pid" "SeaweedFS Admin" "$PROJ_ROOT/$SEAWEEDFS_ADMIN_DATA_DIR/admin.pid"

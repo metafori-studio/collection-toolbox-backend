@@ -1,4 +1,5 @@
-{config}: ''
+{ config }:
+''
   auth_enabled: false
 
   server:

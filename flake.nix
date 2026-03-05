@@ -16,6 +16,7 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        lib = pkgs.lib;
 
         config = import ./nix/config.nix;
         php = import ./nix/php.nix { inherit pkgs; };
@@ -23,17 +24,6 @@
         monitoring = import ./nix/monitoring.nix { inherit pkgs config; };
         storage = import ./nix/storage.nix { inherit pkgs config; };
 
-        startAll = pkgs.writeShellScriptBin "start-all" ''
-          ${storage.start}/bin/start-storage
-          ${databases.start}/bin/start-databases
-          ${monitoring.start}/bin/start-monitoring
-        '';
-
-        stopAll = pkgs.writeShellScriptBin "stop-all" ''
-          ${monitoring.stop}/bin/stop-monitoring
-          ${databases.stop}/bin/stop-databases
-          ${storage.stop}/bin/stop-storage
-        '';
       in
       {
         devShells.default = pkgs.mkShell {
@@ -42,15 +32,11 @@
             pkgs.php85Packages.composer
             pkgs.jq
             pkgs.awscli2
-
-            startAll
-            stopAll
+            pkgs.just
 
             # Databases
             databases.pkgs_postgresql
             databases.pkgs_valkey
-            databases.start
-            databases.stop
 
             # Monitoring
             monitoring.pkgs_otel
@@ -58,26 +44,60 @@
             monitoring.pkgs_loki
             monitoring.pkgs_prometheus
             monitoring.pkgs_grafana
-            monitoring.start
-            monitoring.stop
 
             # Storage
             storage.pkgs_seaweedfs
-            storage.start
-            storage.stop
           ];
 
           shellHook = ''
-            export PROJECT_ROOT="''${PWD}"
-            export OTEL_SERVICE_NAME="collection_toolbox_backend"
-            export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:4318"
-            export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-            export OTEL_TRACES_SAMPLER="always_on"
-            export OTEL_LOGS_EXPORTER="otlp"
-            export OTEL_METRICS_EXPORTER="otlp"
+            export PROJ_ROOT="''${PWD}"
             export OTEL_PHP_AUTOLOAD_ENABLED=true
 
+            # Create data directory
+            mkdir -p "${config.dataDir}"
+
+            # Export database configuration
+            export POSTGRES_DATA_DIR="${config.postgresDataDir}"
+            export VALKEY_DATA_DIR="${config.valkeyDataDir}"
+            export POSTGRES_USER="${config.postgresUser}"
+            export POSTGRES_PORT="${config.postgresPort}"
+            export POSTGRES_DB="${config.postgresDb}"
+            export VALKEY_PORT="${config.valkeyPort}"
+
+            # Export storage configuration
+            export SEAWEEDFS_DATA_DIR="${config.seaweedfsDataDir}"
+            export S3_CREDENTIALS_FILE="${config.s3CredentialsFile}"
+            export SEAWEEDFS_PORT="${config.seaweedfsPort}"
+            export SEAWEEDFS_MASTER_PORT="${config.seaweedfsMasterPort}"
+            export SEAWEEDFS_VOLUME_PORT="${config.seaweedfsVolumePort}"
+            export SEAWEEDFS_FILER_PORT="${config.seaweedfsFilerPort}"
+            export SEAWEEDFS_METRICS_PORT="${config.seaweedfsMetricsPort}"
+            export SEAWEEDFS_ADMIN_DATA_DIR="${config.seaweedfsAdminDataDir}"
+            export SEAWEEDFS_ADMIN_PORT="${config.seaweedfsAdminPort}"
+
+            # Export monitoring configuration files
+            export PROMETHEUS_CONFIG="${monitoring.configs.prometheus}"
+            export OTEL_CONFIG="${monitoring.configs.otel}"
+            export TEMPO_CONFIG="${monitoring.configs.tempo}"
+            export LOKI_CONFIG="${monitoring.configs.loki}"
+            export GRAFANA_INI="${monitoring.configs.grafana_ini}"
+            export GRAFANA_DATASOURCES="${monitoring.configs.grafana_datasources}"
+            export GRAFANA_HOME="${monitoring.pkgs_grafana}/share/grafana"
+
+            # Export monitoring data directories and ports
+            export OTEL_DATA_DIR="${config.otelDataDir}"
+            export GRAFANA_DATA_DIR="${config.grafanaDataDir}"
+            export TEMPO_DATA_DIR="${config.tempoDataDir}"
+            export PROMETHEUS_DATA_DIR="${config.prometheusDataDir}"
+            export LOKI_DATA_DIR="${config.lokiDataDir}"
+            export PROMETHEUS_PORT="${config.prometheusPort}"
+            export TEMPO_PORT="${config.tempoPort}"
+            export LOKI_PORT="${config.lokiPort}"
+            export OTEL_HEALTH_CHECK_PORT="${config.otelHealthCheckPort}"
+            export GRAFANA_PORT="${config.grafanaPort}"
+
             echo "----------------------------------------------------------------"
+
             echo "collection_toolbox_backend dev environment"
             echo "----------------------------------------------------------------"
             echo "$(php --version | head -n 1)"
@@ -96,27 +116,17 @@
             php -m | grep -E "(pdo_pgsql|pgsql|redis|imagick|opentelemetry)"
             echo "----------------------------------------------------------------"
 
-            # Start services
-            ${storage.start}/bin/start-storage
-            ${databases.start}/bin/start-databases
-            ${monitoring.start}/bin/start-monitoring
-
             # Export AWS credentials
             if [ -f "${config.s3CredentialsFile}" ]; then
               export AWS_ACCESS_KEY_ID=$(jq -r '.access_key' ${config.s3CredentialsFile})
               export AWS_SECRET_ACCESS_KEY=$(jq -r '.secret_key' ${config.s3CredentialsFile})
               export AWS_DEFAULT_REGION="us-east-1"
               export AWS_ENDPOINT_URL="http://127.0.0.1:8333"
-              echo "aws-cli configured for SeaweedFS (http://127.0.0.1:8333)"
+              echo "aws-cli configured (http://127.0.0.1:8333)"
+              echo "Data is stored in ./${config.dataDir}/"
             fi
-
-            # Set up trap to stop services on exit
-            trap "${stopAll}/bin/stop-all" EXIT
-
             echo "----------------------------------------------------------------"
-            echo "Data is stored in ./${config.dataDir}/"
-            echo "Services will stop automatically when you exit this shell."
-            echo "----------------------------------------------------------------"
+            just --list
           '';
         };
 

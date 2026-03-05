@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+PROJ_ROOT="${PROJ_ROOT:-$(pwd)}"
+
+# Uses env vars: PROJ_ROOT, GRAFANA_DATA_DIR, OTEL_DATA_DIR, LOKI_DATA_DIR,
+# TEMPO_DATA_DIR, PROMETHEUS_DATA_DIR
+
+"$PROJ_ROOT/nix/scripts/stop_pid" "Grafana" "$PROJ_ROOT/$GRAFANA_DATA_DIR/grafana.pid"
+"$PROJ_ROOT/nix/scripts/stop_pid" "otel-collector" "$PROJ_ROOT/$OTEL_DATA_DIR/otel.pid"
+"$PROJ_ROOT/nix/scripts/stop_pid" "Loki" "$PROJ_ROOT/$LOKI_DATA_DIR/loki.pid"
+"$PROJ_ROOT/nix/scripts/stop_pid" "Tempo" "$PROJ_ROOT/$TEMPO_DATA_DIR/tempo.pid"
+"$PROJ_ROOT/nix/scripts/stop_pid" "Prometheus" "$PROJ_ROOT/$PROMETHEUS_DATA_DIR/prometheus.pid"

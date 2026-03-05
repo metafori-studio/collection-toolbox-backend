@@ -1,4 +1,5 @@
-{config}: ''
+{ config }:
+''
   global:
     scrape_interval: 15s
 
