@@ -26,8 +26,8 @@ return new class extends Migration
             $table->text('position')->nullable();
             $table->text('district')->nullable();
             $table->integer('localization_degree')->nullable();
-            $table->decimal('coordinate_x', 10, 6)->nullable();
-            $table->decimal('coordinate_y', 10, 6)->nullable();
+            $table->decimal('coordinate_x', 20, 6)->nullable();
+            $table->decimal('coordinate_y', 20, 6)->nullable();
             $table->boolean('has_gis_link')->default(false);
 
             $table->integer('cvs_number');
@@ -41,6 +41,7 @@ return new class extends Migration
             $table->text('site_type_original')->nullable();
 
             $table->text('size_category');
+            $table->string('file_name')->nullable()->index();
 
             $table->timestamps();
         });

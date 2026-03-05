@@ -3,9 +3,13 @@
 namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Activity extends Model
+class Activity extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $table = 'archeo_activities';
 
     protected $fillable = [
@@ -32,6 +36,7 @@ class Activity extends Model
         'dating_site_type',
         'site_type_original',
         'size_category',
+        'file_name',
     ];
 
     protected $casts = [
@@ -40,4 +45,9 @@ class Activity extends Model
         'dating_site_type' => 'array',
         'has_gis_link' => 'boolean',
     ];
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('activity_attachments');
+    }
 }
