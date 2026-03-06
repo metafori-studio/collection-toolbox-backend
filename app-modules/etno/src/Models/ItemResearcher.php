@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Metafori\Core\Models\Person;
 
-class DocumentResearcher extends Model
+class ItemResearcher extends Model
 {
-    protected $table = 'etno_document_researchers';
+    protected $table = 'etno_item_researchers';
 
     protected $guarded = [];
 
-    public function document(): BelongsTo
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Document::class);
+        return $this->belongsTo(Item::class);
     }
 
     public function person(): BelongsTo

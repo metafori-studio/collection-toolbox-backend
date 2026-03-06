@@ -1,6 +1,6 @@
 <?php
 
-namespace Metafori\Etno\Filament\Resources\Documents\Schemas;
+namespace Metafori\Etno\Filament\Resources\Items\Schemas;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
@@ -22,14 +22,14 @@ use Metafori\Core\Models\Person;
 use Metafori\Etno\Enums\AccessRight;
 use Metafori\Etno\Enums\AcquisitionMethod;
 use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\DocumentFormat;
-use Metafori\Etno\Enums\DocumentNotation;
-use Metafori\Etno\Enums\DocumentType;
+use Metafori\Etno\Enums\ItemFormat;
+use Metafori\Etno\Enums\ItemNotation;
+use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\SizeType;
 use Metafori\Etno\Filament\Resources\Projects\Schemas\ProjectForm;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Schemas\ResearchCollectionForm;
 
-class DocumentForm
+class ItemForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -47,7 +47,7 @@ class DocumentForm
                             ->placeholder('10.xxxx/xxxx')
                             ->maxLength(255),
                         Select::make('type')
-                            ->options(DocumentType::class)
+                            ->options(ItemType::class)
                             ->searchable()
                             ->columnSpanFull(),
                     ])
@@ -215,12 +215,12 @@ class DocumentForm
                             ->columns(2)
                             ->columnSpanFull(),
                         Select::make('notations')
-                            ->options(DocumentNotation::class)
+                            ->options(ItemNotation::class)
                             ->multiple()
                             ->reorderable()
                             ->searchable(),
                         Select::make('formats')
-                            ->options(DocumentFormat::class)
+                            ->options(ItemFormat::class)
                             ->multiple()
                             ->reorderable()
                             ->searchable(),
