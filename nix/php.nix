@@ -9,6 +9,7 @@ let
         pdo_pgsql
         pgsql
         redis
+        opentelemetry
       ])
     );
     extraConfig = ''

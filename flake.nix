@@ -41,7 +41,7 @@
             echo "Valkey version: $(${databases.pkgs_valkey}/bin/valkey-server --version | head -n 1)"
             echo ""
             echo "Enabled PHP extensions:"
-            php -m | grep -E "(pdo_pgsql|pgsql|redis)"
+            php -m | grep -E "(pdo_pgsql|pgsql|redis|opentelemetry)"
             echo ""
 
             # Start databases automatically
