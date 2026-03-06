@@ -15,9 +15,9 @@ let
         opentelemetry
       ]);
     extraConfig = ''
-      memory_limit = 256M
-      upload_max_filesize = 20M
-      post_max_size = 20M
+      memory_limit = 1024M
+      upload_max_filesize = 500M
+      post_max_size = 200M
     '';
   };
 in
