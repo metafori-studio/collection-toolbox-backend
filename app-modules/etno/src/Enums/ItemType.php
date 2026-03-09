@@ -5,7 +5,7 @@ namespace Metafori\Etno\Enums;
 use Filament\Support\Contracts\HasLabel;
 use Metafori\Core\Enums\Concerns\HasTranslatedLabel;
 
-enum DocumentType: string implements HasLabel
+enum ItemType: string implements HasLabel
 {
     use HasTranslatedLabel;
 

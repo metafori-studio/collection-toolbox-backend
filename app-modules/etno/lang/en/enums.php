@@ -26,18 +26,18 @@ return [
         'survey' => 'Survey',
         'archival_research' => 'Archival Research',
     ],
-    'DocumentNotation' => [
+    'ItemNotation' => [
         'typeset' => 'Typeset',
         'manuscript' => 'Manuscript',
         'drawing' => 'Drawing',
         'sheet_music' => 'Sheet Music',
     ],
-    'DocumentFormat' => [
+    'ItemFormat' => [
         'a4' => 'A4',
         'archival_card' => 'Archival Card',
         'electronic_text' => 'Electronic Text',
     ],
-    'DocumentType' => [
+    'ItemType' => [
         'questionnaire' => 'Questionnaire',
         'audio_recording' => 'Audio Recording',
         'bachelors_thesis' => "Bachelor's Thesis",

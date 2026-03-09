@@ -26,18 +26,18 @@ return [
         'survey' => 'dotazníková akcia',
         'archival_research' => 'archívny výskum',
     ],
-    'DocumentNotation' => [
+    'ItemNotation' => [
         'typeset' => 'strojopis',
         'manuscript' => 'rukopis',
         'drawing' => 'kresba',
         'sheet_music' => 'noty',
     ],
-    'DocumentFormat' => [
+    'ItemFormat' => [
         'a4' => 'A4',
         'archival_card' => 'archívny lístok',
         'electronic_text' => 'elektronický text',
     ],
-    'DocumentType' => [
+    'ItemType' => [
         'questionnaire' => 'dotazník',
         'audio_recording' => 'audionahrávka',
         'bachelors_thesis' => 'bakalárska práca',
