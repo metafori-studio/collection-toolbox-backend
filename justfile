@@ -2,11 +2,14 @@ set shell := ["bash", "-c"]
 
 export PROJ_ROOT := env_var_or_default("PROJ_ROOT", `pwd`)
 
+start:
+    @nix develop
+
 setup:
-    composer run setup
+    @composer run setup
 
 run:
-    composer run dev
+    @composer run dev
 
 start-storage:
     @./nix/scripts/start/storage
