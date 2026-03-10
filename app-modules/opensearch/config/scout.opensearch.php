@@ -16,4 +16,8 @@ return [
         env('OPENSEARCH_HOST', 'localhost:9200'),
     ],
 
+    'username' => env('OPENSEARCH_USERNAME'),
+
+    'password' => env('OPENSEARCH_PASSWORD'),
+
 ];

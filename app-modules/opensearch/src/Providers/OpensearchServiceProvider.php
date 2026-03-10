@@ -17,10 +17,19 @@ class OpensearchServiceProvider extends ServiceProvider
             __DIR__.'/../../config/scout.opensearch.php', 'scout.opensearch'
         );
 
-        $this->app->singleton(Client::class, fn (): Client => ClientBuilder::create()
-            ->setHosts(config('scout.opensearch.hosts', []))
-            ->build()
-        );
+        $this->app->singleton(Client::class, function (): Client {
+            $builder = ClientBuilder::create()
+                ->setHosts(config('scout.opensearch.hosts', []));
+
+            $username = config('scout.opensearch.username');
+            $password = config('scout.opensearch.password');
+
+            if ($username && $password) {
+                $builder->setBasicAuthentication($username, $password);
+            }
+
+            return $builder->build();
+        });
     }
 
     public function boot(): void
