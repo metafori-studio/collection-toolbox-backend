@@ -13,7 +13,7 @@ return [
     */
 
     'hosts' => [
-        env('OPENSEARCH_HOST', 'localhost:9200'),
+        env('OPENSEARCH_URL', 'http://localhost:9200'),
     ],
 
     'username' => env('OPENSEARCH_USERNAME'),
