@@ -23,11 +23,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1773162248,
-        "narHash": "sha256-PRezU2hgqgWkfZbUw8QFFmnyneE2UUIq34nSCIJT9AE=",
+        "lastModified": 1773163845,
+        "narHash": "sha256-7Ao0Ix4H1LZAChJK3Bx/bUM5Y+7ocF9bfOA1TJkMEIg=",
         "ref": "refs/heads/main",
-        "rev": "b0afaf79095dcf831be7fb7d722c89dd060ce500",
-        "revCount": 6,
+        "rev": "931df30aa26975741d90f24e75c3f8904c13dbc8",
+        "revCount": 7,
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       },

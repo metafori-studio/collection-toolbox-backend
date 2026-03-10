@@ -27,6 +27,9 @@
             enableDatabases = true;
             enableMonitoring = true;
             enableStorage = true;
+            configOverrides = {
+              postgresDb = "collection_toolbox_backend";
+            };
           }
         );
 
