@@ -136,16 +136,14 @@ class ItemForm
                                     ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
                                     ->searchable()
                                     ->preload()
-                                    ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
-                                    ->columnSpan(1),
+                                    ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents()),
                                 TextInput::make('label')
                                     ->maxLength(255)
-                                    ->columnSpan(1),
+                                    ->translatableTabs(),
                             ])
                             ->defaultItems(0)
                             ->reorderableWithButtons()
                             ->orderColumn('sort_order')
-                            ->columns(2)
                             ->columnSpanFull(),
                     ]),
 
