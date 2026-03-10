@@ -18,13 +18,47 @@
         "type": "github"
       }
     },
+    "metafori-infra": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1773162248,
+        "narHash": "sha256-PRezU2hgqgWkfZbUw8QFFmnyneE2UUIq34nSCIJT9AE=",
+        "ref": "refs/heads/main",
+        "rev": "b0afaf79095dcf831be7fb7d722c89dd060ce500",
+        "revCount": 6,
+        "type": "git",
+        "url": "ssh://git@github.com/metafori-studio/infra.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/metafori-studio/infra.git"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1770841267,
-        "narHash": "sha256-9xejG0KoqsoKEGp2kVbXRlEYtFFcDTHjidiuX8hGO44=",
+        "lastModified": 1772963539,
+        "narHash": "sha256-9jVDGZnvCckTGdYT53d/EfznygLskyLQXYwJLKMPsZs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "ec7c70d12ce2fc37cb92aff673dcdca89d187bae",
+        "rev": "9dcb002ca1690658be4a04645215baea8b95f31d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1772963539,
+        "narHash": "sha256-9jVDGZnvCckTGdYT53d/EfznygLskyLQXYwJLKMPsZs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "9dcb002ca1690658be4a04645215baea8b95f31d",
         "type": "github"
       },
       "original": {
@@ -37,7 +71,8 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs"
+        "metafori-infra": "metafori-infra",
+        "nixpkgs": "nixpkgs_2"
       }
     },
     "systems": {

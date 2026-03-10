@@ -12,22 +12,22 @@ run:
     @composer run dev
 
 start-storage:
-    @./nix/scripts/start/storage
+    @$INFRA_SCRIPTS/start/storage
 
 stop-storage:
-    @./nix/scripts/stop/storage
+    @$INFRA_SCRIPTS/stop/storage
 
 start-databases:
-    @./nix/scripts/start/databases
+    @$INFRA_SCRIPTS/start/databases
 
 stop-databases:
-    @./nix/scripts/stop/databases
+    @$INFRA_SCRIPTS/stop/databases
 
 start-monitoring:
-    @./nix/scripts/start/monitoring
+    @$INFRA_SCRIPTS/start/monitoring
 
 stop-monitoring:
-    @./nix/scripts/stop/monitoring
+    @$INFRA_SCRIPTS/stop/monitoring
 
 all: start-storage start-databases start-monitoring
 die: stop-monitoring stop-databases stop-storage
