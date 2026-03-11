@@ -10,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\FusedGroup;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -137,15 +138,21 @@ class ItemForm
                                     ->searchable()
                                     ->preload()
                                     ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
-                                    ->columnSpan(1),
+                                    ->live()
+                                    ->disabled(fn (Get $get) => collect($get('label'))->filter()->isNotEmpty())
+                                    ->helperText('Selecting a person will disable the manual label field.')
+                                    ->required(fn (Get $get) => collect($get('label'))->filter()->isEmpty()),
                                 TextInput::make('label')
                                     ->maxLength(255)
-                                    ->columnSpan(1),
+                                    ->helperText('Entering a manual label will disable the person selection.')
+                                    ->translatableTabs()
+                                    ->live()
+                                    ->disabled(fn (Get $get) => filled($get('person_id')))
+                                    ->requiredOnFallbackLocale(fn (Get $get) => blank($get('person_id'))),
                             ])
                             ->defaultItems(0)
                             ->reorderableWithButtons()
                             ->orderColumn('sort_order')
-                            ->columns(2)
                             ->columnSpanFull(),
                     ]),
 
