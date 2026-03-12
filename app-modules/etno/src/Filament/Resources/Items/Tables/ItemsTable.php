@@ -1,13 +1,13 @@
 <?php
 
-namespace Metafori\Etno\Filament\Resources\Documents\Tables;
+namespace Metafori\Etno\Filament\Resources\Items\Tables;
 
 use Filament\Actions;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class DocumentsTable
+class ItemsTable
 {
     public static function configure(Table $table): Table
     {

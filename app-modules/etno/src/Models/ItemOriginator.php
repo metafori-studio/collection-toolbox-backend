@@ -5,16 +5,21 @@ namespace Metafori\Etno\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Metafori\Core\Models\Person;
+use Spatie\Translatable\HasTranslations;
 
-class DocumentResearcher extends Model
+class ItemOriginator extends Model
 {
-    protected $table = 'etno_document_researchers';
+    use HasTranslations;
+
+    protected $table = 'etno_item_originators';
 
     protected $guarded = [];
 
-    public function document(): BelongsTo
+    protected $translatable = ['label'];
+
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Document::class);
+        return $this->belongsTo(Item::class);
     }
 
     public function person(): BelongsTo

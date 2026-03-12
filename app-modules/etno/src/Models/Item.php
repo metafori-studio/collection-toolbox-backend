@@ -16,16 +16,16 @@ use Metafori\Core\Models\Organization;
 use Metafori\Etno\Enums\AccessRight;
 use Metafori\Etno\Enums\AcquisitionMethod;
 use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\DocumentFormat;
-use Metafori\Etno\Enums\DocumentNotation;
-use Metafori\Etno\Enums\DocumentType;
+use Metafori\Etno\Enums\ItemFormat;
+use Metafori\Etno\Enums\ItemNotation;
+use Metafori\Etno\Enums\ItemType;
 use Spatie\Translatable\HasTranslations;
 
-class Document extends Model
+class Item extends Model
 {
     use HasTranslations, SoftDeletes;
 
-    protected $table = 'etno_documents';
+    protected $table = 'etno_items';
 
     public $incrementing = false;
 
@@ -51,14 +51,14 @@ class Document extends Model
             'submission_date_start' => 'date',
             'submission_date_end' => 'date',
             'submission_date_settings' => 'json',
-            'type' => DocumentType::class,
+            'type' => ItemType::class,
             'language' => Language::class,
             'acquisition_method' => AcquisitionMethod::class,
             'collection_method' => CollectionMethod::class,
             'access_right' => AccessRight::class,
             'license' => License::class,
-            'notations' => AsEnumCollection::of(DocumentNotation::class),
-            'formats' => AsEnumCollection::of(DocumentFormat::class),
+            'notations' => AsEnumCollection::of(ItemNotation::class),
+            'formats' => AsEnumCollection::of(ItemFormat::class),
         ];
     }
 
@@ -74,31 +74,31 @@ class Document extends Model
 
     public function localities(): BelongsToMany
     {
-        return $this->belongsToMany(Locality::class, 'etno_document_locality');
+        return $this->belongsToMany(Locality::class, 'etno_item_locality');
     }
 
     public function authors(): HasMany
     {
-        return $this->hasMany(DocumentAuthor::class, 'document_id')->orderBy('sort_order');
+        return $this->hasMany(ItemAuthor::class, 'item_id')->orderBy('sort_order');
     }
 
     public function researchers(): HasMany
     {
-        return $this->hasMany(DocumentResearcher::class, 'document_id')->orderBy('sort_order');
+        return $this->hasMany(ItemResearcher::class, 'item_id')->orderBy('sort_order');
     }
 
     public function originators(): HasMany
     {
-        return $this->hasMany(DocumentOriginator::class, 'document_id')->orderBy('sort_order');
+        return $this->hasMany(ItemOriginator::class, 'item_id')->orderBy('sort_order');
     }
 
     public function keywords(): BelongsToMany
     {
-        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->orderByPivot('sort_order');
+        return $this->belongsToMany(Keyword::class, 'etno_item_keyword')->orderByPivot('sort_order');
     }
 
     public function researchCollections(): BelongsToMany
     {
-        return $this->belongsToMany(ResearchCollection::class, 'etno_document_research_collection')->orderByPivot('sort_order');
+        return $this->belongsToMany(ResearchCollection::class, 'etno_item_research_collection')->orderByPivot('sort_order');
     }
 }

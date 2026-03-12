@@ -19,8 +19,8 @@ class ResearchCollection extends Model
         'title',
     ];
 
-    public function documents(): BelongsToMany
+    public function items(): BelongsToMany
     {
-        return $this->belongsToMany(Document::class, 'etno_document_research_collection')->orderByPivot('sort_order');
+        return $this->belongsToMany(Item::class, 'etno_item_research_collection')->orderByPivot('sort_order');
     }
 }
