@@ -499,12 +499,4 @@ return [
         'cc-by-sa' => 'CC BY-SA',
         'cc0' => 'CC0',
     ],
-    'LocalityType' => [
-        'country' => 'Country',
-        'region' => 'Region',
-        'district' => 'District',
-        'city' => 'City',
-        'borough' => 'Borough',
-        'custom' => 'Custom',
-    ],
 ];
