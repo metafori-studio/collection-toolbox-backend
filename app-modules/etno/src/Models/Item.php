@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Keyword;
-use Metafori\Core\Models\Locality;
 use Metafori\Core\Models\Organization;
 use Metafori\Etno\Enums\AccessRight;
 use Metafori\Etno\Enums\AcquisitionMethod;
@@ -72,9 +71,9 @@ class Item extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
-    public function localities(): BelongsToMany
+    public function localities(): HasMany
     {
-        return $this->belongsToMany(Locality::class, 'etno_item_locality');
+        return $this->hasMany(ItemLocality::class, 'item_id')->orderBy('sort_order');
     }
 
     public function authors(): HasMany

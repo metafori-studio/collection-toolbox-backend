@@ -3,7 +3,6 @@
 namespace Metafori\Etno\Filament\Resources\Items\Schemas;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
-use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -14,9 +13,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
+use Metafori\Core\Filament\Forms\Components\LocalitySelect;
 use Metafori\Core\Filament\Forms\Components\PrecisionDateSection;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
-use Metafori\Core\Filament\Resources\LocalityResource\Schemas\LocalityForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
 use Metafori\Core\Filament\Resources\PersonResource\Schemas\PersonForm;
 use Metafori\Core\Models\Person;
@@ -81,11 +80,19 @@ class ItemForm
                         Select::make('language')
                             ->options(Language::class)
                             ->searchable(),
-                        SelectTree::make('localities')
-                            ->relationship('localities', 'name', 'parent_id')
-                            ->enableBranchNode()
-                            ->searchable()
-                            ->createOptionForm(fn (Schema $schema) => LocalityForm::configure($schema)->getComponents()),
+                        Repeater::make('localities')
+                            ->relationship('localities')
+                            ->label('Localities')
+                            ->schema([
+                                LocalitySelect::make('locality')
+                                    ->label('Locality')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                            ])
+                            ->defaultItems(0)
+                            ->reorderableWithButtons()
+                            ->orderColumn('sort_order'),
                         TextInput::make('locality_note')
                             ->translatableTabs(),
                     ])
