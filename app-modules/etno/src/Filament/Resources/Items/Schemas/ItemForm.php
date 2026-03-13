@@ -18,7 +18,7 @@ use Metafori\Core\Filament\Forms\Components\PrecisionDateSection;
 use Metafori\Core\Filament\Forms\Components\Select;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
-use Metafori\Etno\Enums\AccessRight;
+use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AcquisitionMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemFormat;
@@ -224,8 +224,8 @@ class ItemForm
 
                 Section::make('Rights and Access')
                     ->schema([
-                        Select::make('access_right')
-                            ->options(AccessRight::class)
+                        Select::make('access_rights')
+                            ->options(AccessRights::class)
                             ->searchable(),
                         Select::make('license')
                             ->options(License::class)
