@@ -4,6 +4,7 @@ namespace Metafori\Core\Filament\Forms\Components;
 
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Carbon;
+use Metafori\Core\Enums\DatePrecision;
 
 class PrecisionDateEndField extends TextInput
 {
@@ -28,11 +29,11 @@ class PrecisionDateEndField extends TextInput
 
             $precision = $component->getPrecision();
 
-            if ($precision === 'year') {
+            if ($precision === DatePrecision::Year) {
                 return "{$state}-12-31";
             }
 
-            if ($precision === 'month') {
+            if ($precision === DatePrecision::Month) {
                 try {
                     return Carbon::parse($state)->endOfMonth()->toDateString();
                 } catch (\Exception $e) {

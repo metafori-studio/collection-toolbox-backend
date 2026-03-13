@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Metafori\Core\Enums\DatePrecision;
 
 class PrecisionDateSection extends Section
 {
@@ -56,13 +57,9 @@ class PrecisionDateSection extends Section
 
         $this->afterHeader(fn (PrecisionDateSection $component) => [
             Select::make("{$component->evaluate($this->settingsField)}.precision")
-                ->options([
-                    'year' => 'Year',
-                    'month' => 'Month',
-                    'day' => 'Day',
-                ])
+                ->options(DatePrecision::class)
                 ->inlineLabel()
-                ->default('day')
+                ->default(DatePrecision::Day)
                 ->selectablePlaceholder(false)
                 ->live(),
         ]);

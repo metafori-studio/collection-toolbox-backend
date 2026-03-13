@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'DatePrecision' => [
+        'year' => 'rok',
+        'month' => 'mesiac',
+        'day' => 'deň',
+    ],
     'Language' => [
         'aar' => 'afarčina',
         'abk' => 'abcházčina',

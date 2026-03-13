@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Illuminate\Support\Carbon;
+use Metafori\Core\Enums\DatePrecision;
 
 trait HasPrecisionDate
 {
@@ -44,9 +45,9 @@ trait HasPrecisionDate
             $precision = $component->getPrecision();
 
             try {
-                if ($precision === 'year') {
+                if ($precision === DatePrecision::Year) {
                     $component->state(Carbon::parse($state)->format('Y'));
-                } elseif ($precision === 'month') {
+                } elseif ($precision === DatePrecision::Month) {
                     $component->state(Carbon::parse($state)->format('Y-m'));
                 } else {
                     $component->state(Carbon::parse($state)->format('Y-m-d'));
@@ -57,22 +58,22 @@ trait HasPrecisionDate
         });
     }
 
-    public function getPrecision(): string
+    public function getPrecision(): DatePrecision
     {
         $precisionField = $this->evaluate($this->precisionField);
         if (! $precisionField) {
-            return 'day';
+            return DatePrecision::Day;
         }
 
-        return $this->evaluate(fn ($get) => $get($precisionField)) ?? 'day';
+        return $this->evaluate(fn ($get) => $get($precisionField)) ?? DatePrecision::Day;
     }
 
     public function getType(): string
     {
         return match ($this->getPrecision()) {
-            'year' => 'number',
-            'month' => 'month',
-            default => 'date',
+            DatePrecision::Year => 'number',
+            DatePrecision::Month => 'month',
+            DatePrecision::Day => 'date',
         };
     }
 }
