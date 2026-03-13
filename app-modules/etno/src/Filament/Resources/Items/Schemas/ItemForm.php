@@ -19,7 +19,7 @@ use Metafori\Core\Filament\Forms\Components\Select;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
 use Metafori\Etno\Enums\AccessRights;
-use Metafori\Etno\Enums\AcquisitionMethod;
+use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemFormat;
 use Metafori\Etno\Enums\ItemNotation;
@@ -207,8 +207,8 @@ class ItemForm
                         Select::make('collection_method')
                             ->options(CollectionMethod::class)
                             ->searchable(),
-                        Select::make('acquisition_method')
-                            ->options(AcquisitionMethod::class)
+                        Select::make('accrual_method')
+                            ->options(AccrualMethod::class)
                             ->searchable(),
                         PrecisionDateSection::make('Study period')
                             ->settingsField('study_period_settings')

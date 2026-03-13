@@ -14,7 +14,7 @@ use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
 use Metafori\Etno\Enums\AccessRights;
-use Metafori\Etno\Enums\AcquisitionMethod;
+use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemFormat;
 use Metafori\Etno\Enums\ItemNotation;
@@ -53,7 +53,7 @@ class Item extends Model
             'submission_date_settings' => 'json',
             'type' => ItemType::class,
             'language' => Language::class,
-            'acquisition_method' => AcquisitionMethod::class,
+            'accrual_method' => AccrualMethod::class,
             'collection_method' => CollectionMethod::class,
             'access_rights' => AccessRights::class,
             'license' => License::class,
