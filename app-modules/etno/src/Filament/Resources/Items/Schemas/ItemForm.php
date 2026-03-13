@@ -4,7 +4,6 @@ namespace Metafori\Etno\Filament\Resources\Items\Schemas;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\FusedGroup;
@@ -16,6 +15,7 @@ use Metafori\Core\Enums\License;
 use Metafori\Core\Filament\Forms\Components\LocalitySelect;
 use Metafori\Core\Filament\Forms\Components\PersonSelect;
 use Metafori\Core\Filament\Forms\Components\PrecisionDateSection;
+use Metafori\Core\Filament\Forms\Components\Select;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
 use Metafori\Etno\Enums\AccessRight;
