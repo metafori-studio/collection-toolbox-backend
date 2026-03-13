@@ -14,11 +14,10 @@ use Filament\Schemas\Schema;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
 use Metafori\Core\Filament\Forms\Components\LocalitySelect;
+use Metafori\Core\Filament\Forms\Components\PersonSelect;
 use Metafori\Core\Filament\Forms\Components\PrecisionDateSection;
 use Metafori\Core\Filament\Resources\KeywordResource\Schemas\KeywordForm;
 use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationForm;
-use Metafori\Core\Filament\Resources\PersonResource\Schemas\PersonForm;
-use Metafori\Core\Models\Person;
 use Metafori\Etno\Enums\AccessRight;
 use Metafori\Etno\Enums\AcquisitionMethod;
 use Metafori\Etno\Enums\CollectionMethod;
@@ -100,50 +99,34 @@ class ItemForm
 
                 Section::make('Participants')
                     ->schema([
-                        Select::make('authors')
+                        PersonSelect::make('authors')
                             ->relationship('authors')
-                            ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
                             ->multiple()
                             ->searchable()
                             ->reorderable()
                             ->preload()
-                            ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
-                            ->saveRelationshipsUsing(function ($component, $state) {
-                                $set = collect($state)
-                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
-                                    ->toArray();
-
-                                $component->getRelationship()->sync($set);
-                            })
+                            ->withOptionForm()
+                            ->saveOrder()
                             ->columnSpanFull(),
 
-                        Select::make('researchers')
+                        PersonSelect::make('researchers')
                             ->relationship('researchers')
-                            ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
                             ->multiple()
                             ->searchable()
                             ->reorderable()
                             ->preload()
-                            ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
-                            ->saveRelationshipsUsing(function ($component, $state) {
-                                $set = collect($state)
-                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
-                                    ->toArray();
-
-                                $component->getRelationship()->sync($set);
-                            })
+                            ->withOptionForm()
+                            ->saveOrder()
                             ->columnSpanFull(),
 
                         Repeater::make('originators')
                             ->relationship('originators')
                             ->schema([
-                                Select::make('person_id')
+                                PersonSelect::make('person_id')
                                     ->distinct()
                                     ->relationship('person')
-                                    ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
                                     ->searchable()
                                     ->preload()
-                                    ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
                                     ->live()
                                     ->disabled(fn (Get $get) => collect($get('label'))->filter()->isNotEmpty())
                                     ->helperText('Selecting a person will disable the manual label field.')
