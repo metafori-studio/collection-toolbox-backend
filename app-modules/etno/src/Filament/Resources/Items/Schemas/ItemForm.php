@@ -100,39 +100,38 @@ class ItemForm
 
                 Section::make('Participants')
                     ->schema([
-                        Repeater::make('authors')
+                        Select::make('authors')
                             ->relationship('authors')
-                            ->schema([
-                                Select::make('person_id')
-                                    ->required()
-                                    ->distinct()
-                                    ->relationship('person')
-                                    ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
-                                    ->searchable()
-                                    ->preload()
-                                    ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents()),
-                            ])
-                            ->defaultItems(0)
-                            ->reorderableWithButtons()
-                            ->orderColumn('sort_order'),
+                            ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
+                            ->multiple()
+                            ->searchable()
+                            ->reorderable()
+                            ->preload()
+                            ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
+                            ->saveRelationshipsUsing(function ($component, $state) {
+                                $set = collect($state)
+                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
+                                    ->toArray();
 
-                        Repeater::make('researchers')
+                                $component->getRelationship()->sync($set);
+                            })
+                            ->columnSpanFull(),
+
+                        Select::make('researchers')
                             ->relationship('researchers')
-                            ->schema([
-                                Select::make('person_id')
-                                    ->required()
-                                    ->distinct()
-                                    ->relationship('person')
-                                    ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
-                                    ->searchable()
-                                    ->preload()
-                                    ->required()
-                                    ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
-                                    ->columnSpanFull(),
-                            ])
-                            ->defaultItems(0)
-                            ->reorderableWithButtons()
-                            ->orderColumn('sort_order')
+                            ->getOptionLabelFromRecordUsing(fn (Person $person) => $person->display_name)
+                            ->multiple()
+                            ->searchable()
+                            ->reorderable()
+                            ->preload()
+                            ->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents())
+                            ->saveRelationshipsUsing(function ($component, $state) {
+                                $set = collect($state)
+                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
+                                    ->toArray();
+
+                                $component->getRelationship()->sync($set);
+                            })
                             ->columnSpanFull(),
 
                         Repeater::make('originators')

@@ -12,6 +12,7 @@ use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
+use Metafori\Core\Models\Person;
 use Metafori\Etno\Enums\AccessRight;
 use Metafori\Etno\Enums\AcquisitionMethod;
 use Metafori\Etno\Enums\CollectionMethod;
@@ -76,14 +77,14 @@ class Item extends Model
         return $this->hasMany(ItemLocality::class, 'item_id')->orderBy('sort_order');
     }
 
-    public function authors(): HasMany
+    public function authors(): BelongsToMany
     {
-        return $this->hasMany(ItemAuthor::class, 'item_id')->orderBy('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_item_authors')->orderByPivot('sort_order');
     }
 
-    public function researchers(): HasMany
+    public function researchers(): BelongsToMany
     {
-        return $this->hasMany(ItemResearcher::class, 'item_id')->orderBy('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_item_researchers')->orderByPivot('sort_order');
     }
 
     public function originators(): HasMany
