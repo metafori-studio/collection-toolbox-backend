@@ -46,9 +46,9 @@ class Item extends Model
     public function casts(): array
     {
         return [
-            'study_period_start' => 'date',
-            'study_period_end' => 'date',
-            'study_period_settings' => 'json',
+            'time_period_start' => 'date',
+            'time_period_end' => 'date',
+            'time_period_settings' => 'json',
             'submission_date_start' => 'date',
             'submission_date_end' => 'date',
             'submission_date_settings' => 'json',

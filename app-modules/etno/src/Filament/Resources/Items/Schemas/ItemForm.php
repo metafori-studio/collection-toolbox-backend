@@ -194,10 +194,10 @@ class ItemForm
                         Select::make('accrual_method')
                             ->options(AccrualMethod::class)
                             ->searchable(),
-                        PrecisionDateSection::make('Study period')
-                            ->settingsField('study_period_settings')
-                            ->startField('study_period_start')
-                            ->endField('study_period_end')
+                        PrecisionDateSection::make('Time period')
+                            ->settingsField('time_period_settings')
+                            ->startField('time_period_start')
+                            ->endField('time_period_end')
                             ->rangeable(),
                         PrecisionDateSection::make('Submission')
                             ->settingsField('submission_date_settings')
