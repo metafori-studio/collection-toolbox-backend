@@ -203,6 +203,10 @@ class ItemForm
                             ->settingsField('submission_date_settings')
                             ->startField('submission_date_start')
                             ->endField('submission_date_end'),
+                        PrecisionDateSection::make('Publication')
+                            ->settingsField('publication_date_settings')
+                            ->startField('publication_date_start')
+                            ->endField('publication_date_end'),
                     ])
                     ->columns(2),
 
