@@ -16,6 +16,7 @@ use Metafori\Core\Models\Person;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
+use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemFormat;
 use Metafori\Etno\Enums\ItemNotation;
 use Metafori\Etno\Enums\ItemType;
@@ -60,6 +61,7 @@ class Item extends Model
             'license' => License::class,
             'notations' => AsEnumCollection::of(ItemNotation::class),
             'formats' => AsEnumCollection::of(ItemFormat::class),
+            'extent_unit' => ExtentUnit::class,
         ];
     }
 

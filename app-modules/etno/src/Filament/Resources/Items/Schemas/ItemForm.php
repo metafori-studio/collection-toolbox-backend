@@ -21,10 +21,10 @@ use Metafori\Core\Filament\Resources\OrganizationResource\Schemas\OrganizationFo
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
+use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemFormat;
 use Metafori\Etno\Enums\ItemNotation;
 use Metafori\Etno\Enums\ItemType;
-use Metafori\Etno\Enums\SizeType;
 use Metafori\Etno\Filament\Resources\Projects\Schemas\ProjectForm;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Schemas\ResearchCollectionForm;
 
@@ -155,15 +155,16 @@ class ItemForm
                 Section::make('Technical and Format Information')
                     ->schema([
                         FusedGroup::make([
-                            TextInput::make('size')
-                                ->requiredWith('size_type')
+                            TextInput::make('extent')
+                                ->requiredWith('extent_unit')
                                 ->maxLength(255),
-                            Select::make('size_type')
-                                ->requiredWith('size')
-                                ->options(SizeType::class)
+                            Select::make('extent_unit')
+                                ->requiredWith('extent')
+                                ->options(ExtentUnit::class)
+                                ->sortedOptions()
                                 ->searchable(),
                         ])
-                            ->label('Size')
+                            ->label('Extent')
                             ->columns(2)
                             ->columnSpanFull(),
                         Select::make('notations')
