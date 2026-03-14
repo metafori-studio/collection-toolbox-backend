@@ -226,7 +226,7 @@ class ItemForm
 
                 Section::make('Additional Notes')
                     ->schema([
-                        TextInput::make('note')
+                        TextInput::make('general_note')
                             ->translatableTabs()
                             ->columnSpanFull(),
                     ]),
