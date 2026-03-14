@@ -190,6 +190,7 @@ class ItemForm
                             ->columnSpanFull(),
                         Select::make('collection_method')
                             ->options(CollectionMethod::class)
+                            ->sortedOptions()
                             ->searchable(),
                         Select::make('accrual_method')
                             ->options(AccrualMethod::class)
