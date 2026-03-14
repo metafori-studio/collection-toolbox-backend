@@ -175,6 +175,9 @@ class ItemForm
                             ->multiple()
                             ->reorderable()
                             ->searchable(),
+                        TextInput::make('technical_note')
+                            ->translatableTabs()
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
 

@@ -41,6 +41,7 @@ class Item extends Model
         'terms_of_use',
         'location_note',
         'content_note',
+        'technical_note',
     ];
 
     public function casts(): array
