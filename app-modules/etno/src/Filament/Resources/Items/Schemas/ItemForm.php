@@ -115,6 +115,7 @@ class ItemForm
                                     ->searchable()
                                     ->preload()
                                     ->live()
+                                    ->withOptionForm()
                                     ->disabled(fn (Get $get) => collect($get('label'))->filter()->isNotEmpty())
                                     ->helperText('Selecting a person will disable the manual label field.')
                                     ->required(fn (Get $get) => collect($get('label'))->filter()->isEmpty()),
