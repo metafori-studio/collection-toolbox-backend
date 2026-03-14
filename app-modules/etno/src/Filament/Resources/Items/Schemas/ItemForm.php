@@ -77,13 +77,7 @@ class ItemForm
                             ->reorderable()
                             ->preload()
                             ->createOptionForm(fn (Schema $schema) => KeywordForm::configure($schema)->getComponents())
-                            ->saveRelationshipsUsing(function ($component, $state) {
-                                $set = collect($state)
-                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
-                                    ->toArray();
-
-                                $component->getRelationship()->sync($set);
-                            }),
+                            ->saveOrder(),
                         Select::make('language')
                             ->options(Language::class)
                             ->searchable(),
