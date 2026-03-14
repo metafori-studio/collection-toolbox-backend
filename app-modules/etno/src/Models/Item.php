@@ -39,7 +39,7 @@ class Item extends Model
         'abstract',
         'note',
         'terms_of_use',
-        'locality_note',
+        'location_note',
         'content_note',
     ];
 

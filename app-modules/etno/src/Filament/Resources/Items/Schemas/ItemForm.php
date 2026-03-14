@@ -147,7 +147,7 @@ class ItemForm
                             ->defaultItems(0)
                             ->reorderableWithButtons()
                             ->orderColumn('sort_order'),
-                        TextInput::make('locality_note')
+                        TextInput::make('location_note')
                             ->translatableTabs(),
                     ]),
 
