@@ -22,8 +22,8 @@ use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ExtentUnit;
-use Metafori\Etno\Enums\ItemNotation;
 use Metafori\Etno\Enums\ItemType;
+use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Filament\Resources\Projects\Schemas\ProjectForm;
 use Metafori\Etno\Filament\Resources\ResearchCollections\Schemas\ResearchCollectionForm;
 
@@ -166,8 +166,8 @@ class ItemForm
                             ->label('Extent')
                             ->columns(2)
                             ->columnSpanFull(),
-                        Select::make('notations')
-                            ->options(ItemNotation::class)
+                        Select::make('production_methods')
+                            ->options(ProductionMethod::class)
                             ->multiple()
                             ->reorderable()
                             ->searchable(),

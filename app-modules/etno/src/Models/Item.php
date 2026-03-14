@@ -17,8 +17,8 @@ use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ExtentUnit;
-use Metafori\Etno\Enums\ItemNotation;
 use Metafori\Etno\Enums\ItemType;
+use Metafori\Etno\Enums\ProductionMethod;
 use Spatie\Translatable\HasTranslations;
 
 class Item extends Model
@@ -61,7 +61,7 @@ class Item extends Model
             'collection_method' => CollectionMethod::class,
             'access_rights' => AccessRights::class,
             'license' => License::class,
-            'notations' => AsEnumCollection::of(ItemNotation::class),
+            'production_methods' => AsEnumCollection::of(ProductionMethod::class),
             'extent_unit' => ExtentUnit::class,
         ];
     }
