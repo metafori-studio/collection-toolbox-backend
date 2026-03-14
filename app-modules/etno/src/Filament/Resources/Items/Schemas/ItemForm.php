@@ -52,7 +52,7 @@ class ItemForm
                     ])
                     ->columns(2),
 
-                Section::make('Content & Metadata')
+                Section::make('Descriptive Information')
                     ->schema([
                         TranslatableTabs::make()
                             ->schema([
@@ -60,7 +60,6 @@ class ItemForm
                                 TextInput::make('subtitle'),
                                 Textarea::make('abstract')
                                     ->rows(5),
-                                TextInput::make('note'),
                             ]),
                         Select::make('keywords')
                             ->relationship('keywords', 'name')
@@ -79,25 +78,10 @@ class ItemForm
                         Select::make('language')
                             ->options(Language::class)
                             ->searchable(),
-                        Repeater::make('localities')
-                            ->relationship('localities')
-                            ->label('Localities')
-                            ->schema([
-                                LocalitySelect::make('locality')
-                                    ->label('Locality')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required(),
-                            ])
-                            ->defaultItems(0)
-                            ->reorderableWithButtons()
-                            ->orderColumn('sort_order'),
-                        TextInput::make('locality_note')
-                            ->translatableTabs(),
                     ])
                     ->columns(1),
 
-                Section::make('Participants')
+                Section::make('Authors and Creators')
                     ->schema([
                         PersonSelect::make('authors')
                             ->relationship('authors')
@@ -145,20 +129,53 @@ class ItemForm
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Dates')
+                Section::make('Geographic Information')
                     ->schema([
-                        PrecisionDateSection::make('Study period')
-                            ->settingsField('study_period_settings')
-                            ->startField('study_period_start')
-                            ->endField('study_period_end')
-                            ->rangeable(),
-                        PrecisionDateSection::make('Submission')
-                            ->settingsField('submission_date_settings')
-                            ->startField('submission_date_start')
-                            ->endField('submission_date_end'),
+                        Repeater::make('localities')
+                            ->relationship('localities')
+                            ->label('Localities')
+                            ->schema([
+                                LocalitySelect::make('locality')
+                                    ->label('Locality')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                            ])
+                            ->defaultItems(0)
+                            ->reorderableWithButtons()
+                            ->orderColumn('sort_order'),
+                        TextInput::make('locality_note')
+                            ->translatableTabs(),
                     ]),
 
-                Section::make('Collection & Acquisition')
+                Section::make('Technical and Format Information')
+                    ->schema([
+                        FusedGroup::make([
+                            TextInput::make('size')
+                                ->requiredWith('size_type')
+                                ->maxLength(255),
+                            Select::make('size_type')
+                                ->requiredWith('size')
+                                ->options(SizeType::class)
+                                ->searchable(),
+                        ])
+                            ->label('Size')
+                            ->columns(2)
+                            ->columnSpanFull(),
+                        Select::make('notations')
+                            ->options(ItemNotation::class)
+                            ->multiple()
+                            ->reorderable()
+                            ->searchable(),
+                        Select::make('formats')
+                            ->options(ItemFormat::class)
+                            ->multiple()
+                            ->reorderable()
+                            ->searchable(),
+                    ])
+                    ->columns(2),
+
+                Section::make('Provenance and Research Context')
                     ->schema([
                         Select::make('institution_id')
                             ->relationship('institution', 'name')
@@ -193,37 +210,19 @@ class ItemForm
                         Select::make('acquisition_method')
                             ->options(AcquisitionMethod::class)
                             ->searchable(),
+                        PrecisionDateSection::make('Study period')
+                            ->settingsField('study_period_settings')
+                            ->startField('study_period_start')
+                            ->endField('study_period_end')
+                            ->rangeable(),
+                        PrecisionDateSection::make('Submission')
+                            ->settingsField('submission_date_settings')
+                            ->startField('submission_date_start')
+                            ->endField('submission_date_end'),
                     ])
                     ->columns(2),
 
-                Section::make('Technical Details')
-                    ->schema([
-                        FusedGroup::make([
-                            TextInput::make('size')
-                                ->requiredWith('size_type')
-                                ->maxLength(255),
-                            Select::make('size_type')
-                                ->requiredWith('size')
-                                ->options(SizeType::class)
-                                ->searchable(),
-                        ])
-                            ->label('Size')
-                            ->columns(2)
-                            ->columnSpanFull(),
-                        Select::make('notations')
-                            ->options(ItemNotation::class)
-                            ->multiple()
-                            ->reorderable()
-                            ->searchable(),
-                        Select::make('formats')
-                            ->options(ItemFormat::class)
-                            ->multiple()
-                            ->reorderable()
-                            ->searchable(),
-                    ])
-                    ->columns(2),
-
-                Section::make('Access & Licenses')
+                Section::make('Rights and Access')
                     ->schema([
                         Select::make('access_right')
                             ->options(AccessRight::class)
@@ -236,6 +235,13 @@ class ItemForm
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+
+                Section::make('Additional Notes')
+                    ->schema([
+                        TextInput::make('note')
+                            ->translatableTabs()
+                            ->columnSpanFull(),
+                    ]),
             ])
             ->columns(1);
     }
