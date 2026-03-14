@@ -22,7 +22,6 @@ use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ExtentUnit;
-use Metafori\Etno\Enums\ItemFormat;
 use Metafori\Etno\Enums\ItemNotation;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Filament\Resources\Projects\Schemas\ProjectForm;
@@ -169,11 +168,6 @@ class ItemForm
                             ->columnSpanFull(),
                         Select::make('notations')
                             ->options(ItemNotation::class)
-                            ->multiple()
-                            ->reorderable()
-                            ->searchable(),
-                        Select::make('formats')
-                            ->options(ItemFormat::class)
                             ->multiple()
                             ->reorderable()
                             ->searchable(),
