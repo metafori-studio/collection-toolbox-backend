@@ -49,6 +49,15 @@ class ItemForm
                             ->options(ItemType::class)
                             ->searchable()
                             ->columnSpanFull(),
+                        Select::make('researchCollections')
+                            ->relationship('researchCollections', 'title')
+                            ->multiple()
+                            ->searchable()
+                            ->reorderable()
+                            ->preload()
+                            ->createOptionForm(fn (Schema $schema) => ResearchCollectionForm::configure($schema)->getComponents())
+                            ->saveOrder()
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
 
@@ -182,21 +191,6 @@ class ItemForm
                             ->searchable()
                             ->preload()
                             ->createOptionForm(fn (Schema $schema) => OrganizationForm::configure($schema))
-                            ->columnSpanFull(),
-                        Select::make('researchCollections')
-                            ->relationship('researchCollections', 'title')
-                            ->multiple()
-                            ->searchable()
-                            ->reorderable()
-                            ->preload()
-                            ->createOptionForm(fn (Schema $schema) => ResearchCollectionForm::configure($schema)->getComponents())
-                            ->saveRelationshipsUsing(function ($component, $state) {
-                                $set = collect($state)
-                                    ->mapWithKeys(fn ($id, $index) => [$id => ['sort_order' => $index]])
-                                    ->toArray();
-
-                                $component->getRelationship()->sync($set);
-                            })
                             ->columnSpanFull(),
                         Select::make('project_id')
                             ->relationship('project', 'title')
