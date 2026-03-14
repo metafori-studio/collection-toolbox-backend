@@ -46,6 +46,7 @@ class ItemForm
                             ->maxLength(255),
                         Select::make('type')
                             ->options(ItemType::class)
+                            ->sortedOptions()
                             ->searchable()
                             ->columnSpanFull(),
                         Select::make('researchCollections')
@@ -80,6 +81,7 @@ class ItemForm
                             ->saveOrder(),
                         Select::make('language')
                             ->options(Language::class)
+                            ->sortedOptions()
                             ->searchable(),
                     ])
                     ->columns(1),
@@ -169,6 +171,7 @@ class ItemForm
                             ->columnSpanFull(),
                         Select::make('production_methods')
                             ->options(ProductionMethod::class)
+                            ->sortedOptions()
                             ->multiple()
                             ->reorderable()
                             ->searchable(),
@@ -195,6 +198,7 @@ class ItemForm
                             ->searchable(),
                         Select::make('accrual_method')
                             ->options(AccrualMethod::class)
+                            ->sortedOptions()
                             ->searchable(),
                         PrecisionDateSection::make('Time period')
                             ->settingsField('time_period_settings')
