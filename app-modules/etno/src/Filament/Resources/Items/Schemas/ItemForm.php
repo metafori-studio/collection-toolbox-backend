@@ -69,6 +69,7 @@ class ItemForm
                                 TextInput::make('subtitle'),
                                 Textarea::make('abstract')
                                     ->rows(5),
+                                TextInput::make('content_note'),
                             ]),
                         Select::make('keywords')
                             ->relationship('keywords', 'name')

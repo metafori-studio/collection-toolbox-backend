@@ -40,6 +40,7 @@ class Item extends Model
         'note',
         'access_right_note',
         'locality_note',
+        'content_note',
     ];
 
     public function casts(): array
