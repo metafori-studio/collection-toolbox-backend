@@ -218,7 +218,7 @@ class ItemForm
                         Select::make('license')
                             ->options(License::class)
                             ->searchable(),
-                        TextInput::make('access_right_note')
+                        TextInput::make('terms_of_use')
                             ->translatableTabs()
                             ->columnSpanFull(),
                     ])

@@ -38,7 +38,7 @@ class Item extends Model
         'subtitle',
         'abstract',
         'note',
-        'access_right_note',
+        'terms_of_use',
         'locality_note',
         'content_note',
     ];
