@@ -14,6 +14,8 @@ class CoreServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../../config/permission.php', 'permission');
+
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(CorePlugin::make());
         });
