@@ -9,11 +9,16 @@ use Filament\Panel;
 use Illuminate\Support\ServiceProvider;
 use Locale;
 use Metafori\Core\CorePlugin;
+use Metafori\Core\Models\Permission;
+use Metafori\Core\Models\Role;
 
 class CoreServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        config(['permission.models.permission' => Permission::class]);
+        config(['permission.models.role' => Role::class]);
+
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(CorePlugin::make());
         });
