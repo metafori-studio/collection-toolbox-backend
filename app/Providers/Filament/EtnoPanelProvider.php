@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Metafori\Core\Filament\Resources as CoreResources;
 
 class EtnoPanelProvider extends PanelProvider
 {
@@ -30,6 +31,17 @@ class EtnoPanelProvider extends PanelProvider
             ->default()
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->resources([
+                CoreResources\CountryResource::class,
+                CoreResources\DistrictResource::class,
+                CoreResources\KeywordResource::class,
+                CoreResources\LocationResource::class,
+                CoreResources\MunicipalityPartResource::class,
+                CoreResources\MunicipalityResource::class,
+                CoreResources\OrganizationResource::class,
+                CoreResources\PersonResource::class,
+                CoreResources\RegionResource::class,
             ])
             ->pages([
                 Dashboard::class,
