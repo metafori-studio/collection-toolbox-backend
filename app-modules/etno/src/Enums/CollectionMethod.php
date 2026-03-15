@@ -9,7 +9,7 @@ enum CollectionMethod: string implements HasLabel
 {
     use HasTranslatedLabel;
 
-    case FieldResearch = 'field_research';
+    case ArchivalResearch = 'archival-research';
+    case FieldResearch = 'field-research';
     case Survey = 'survey';
-    case ArchivalResearch = 'archival_research';
 }
