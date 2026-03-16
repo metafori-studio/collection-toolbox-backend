@@ -15,6 +15,10 @@ pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
+foreach (glob(__DIR__.'/../app-modules/*/tests/Pest.php') as $file) {
+    require_once $file;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
