@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Metafori\Core\Filament\Resources\UserResource;
 
 class ArcheoPanelProvider extends PanelProvider
 {
@@ -37,6 +38,9 @@ class ArcheoPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+            ])
+            ->resources([
+                UserResource::class,
             ])
             ->middleware([
                 EncryptCookies::class,

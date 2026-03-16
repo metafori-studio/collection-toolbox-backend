@@ -42,6 +42,7 @@ class EtnoPanelProvider extends PanelProvider
                 CoreResources\OrganizationResource::class,
                 CoreResources\PersonResource::class,
                 CoreResources\RegionResource::class,
+                CoreResources\UserResource::class,
             ])
             ->pages([
                 Dashboard::class,
