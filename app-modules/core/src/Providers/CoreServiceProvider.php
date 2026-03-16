@@ -6,11 +6,14 @@ use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use Closure;
 use Filament\Forms\Components\Field;
 use Filament\Panel;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 use Locale;
 use Metafori\Core\CorePlugin;
+use Metafori\Core\Facades\Frontend as FrontendFacade;
 use Metafori\Core\Models\Permission;
 use Metafori\Core\Models\Role;
+use Metafori\Core\Support\Frontend;
 
 class CoreServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,10 @@ class CoreServiceProvider extends ServiceProvider
         config(['permission.models.permission' => Permission::class]);
         config(['permission.models.role' => Role::class]);
 
+        $this->mergeConfigFrom(__DIR__.'/../../config/frontend.php', 'frontend');
+
+        $this->app->singleton('frontend', fn () => new Frontend);
+
         Panel::configureUsing(function (Panel $panel): void {
             $panel->plugin(CorePlugin::make());
         });
@@ -26,6 +33,8 @@ class CoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        ResetPassword::createUrlUsing(FrontendFacade::resetPasswordUrl(...));
+
         TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
             $locales = config('app.locales');
             $currentLocale = app()->getLocale();
