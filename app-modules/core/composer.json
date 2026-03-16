@@ -11,6 +11,11 @@
 		"spatie/laravel-translatable": "^6.12",
         "spatie/laravel-permission": "^7.2"
 	},
+    "require-dev": {
+        "pestphp/pest": "^4.3",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-livewire": "^4.1"
+    },
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Core\\": "src/",
