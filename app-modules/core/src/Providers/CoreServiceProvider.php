@@ -7,7 +7,12 @@ use Closure;
 use Filament\Forms\Components\Field;
 use Filament\Panel;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Locale;
 use Metafori\Core\CorePlugin;
 use Metafori\Core\Facades\Frontend as FrontendFacade;
@@ -33,6 +38,8 @@ class CoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Route::prependMiddlewareToGroup('api', EnsureFrontendRequestsAreStateful::class);
+
         ResetPassword::createUrlUsing(FrontendFacade::resetPasswordUrl(...));
 
         TranslatableTabs::configureUsing(function (TranslatableTabs $component) {
@@ -58,5 +65,9 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'core');
+
+        RateLimiter::for('login', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }
