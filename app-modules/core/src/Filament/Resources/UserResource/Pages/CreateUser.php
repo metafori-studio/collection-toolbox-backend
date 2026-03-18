@@ -3,8 +3,8 @@
 namespace Metafori\Core\Filament\Resources\UserResource\Pages;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Password;
 use Metafori\Core\Filament\Resources\UserResource;
+use Metafori\Core\Support\Facades\Password;
 
 class CreateUser extends CreateRecord
 {
@@ -14,8 +14,6 @@ class CreateUser extends CreateRecord
     {
         $user = $this->record;
 
-        Password::broker()->sendResetLink([
-            'email' => $user->email,
-        ]);
+        Password::broker()->sendSetLink($user);
     }
 }
