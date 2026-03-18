@@ -28,6 +28,7 @@ return [
 
     'routes' => [
         'reset_password' => '/reset-password',
+        'set_password' => '/set-password',
     ],
 
 ];

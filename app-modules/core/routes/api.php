@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Metafori\Core\Http\Controllers\Api\AuthController;
-use Metafori\Core\Http\Controllers\Api\PasswordResetController;
+use Metafori\Core\Http\Controllers\Api\PasswordController;
 
 Route::prefix('api')->middleware(['api'])->name('api.')->group(function () {
     Route::post('login', [AuthController::class, 'login'])
@@ -11,8 +11,13 @@ Route::prefix('api')->middleware(['api'])->name('api.')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])
         ->middleware('auth:sanctum')
         ->name('logout');
-    Route::post('password/forgot', [PasswordResetController::class, 'forgotPassword'])
+    Route::post('password/forgot', [PasswordController::class, 'forgot'])
+        ->middleware('throttle:password')
         ->name('password.forgot');
-    Route::post('password/reset', [PasswordResetController::class, 'resetPassword'])
+    Route::post('password/reset', [PasswordController::class, 'reset'])
+        ->middleware('throttle:password')
         ->name('password.reset');
+    Route::post('password/set', [PasswordController::class, 'set'])
+        ->middleware('throttle:password')
+        ->name('password.set');
 });
