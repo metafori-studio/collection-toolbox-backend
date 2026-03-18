@@ -6,6 +6,8 @@ namespace Metafori\Core\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Metafori\Core\Auth\Passwords\CanSetPassword;
+use Metafori\Core\Auth\Passwords\Contracts\CanSetPassword as CanSetPasswordContract;
 use Metafori\Core\Notifications\QueuedResetPassword;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -19,10 +21,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  */
-class User extends Authenticatable
+class User extends Authenticatable implements CanSetPasswordContract
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, Notifiable;
+    use CanSetPassword, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
