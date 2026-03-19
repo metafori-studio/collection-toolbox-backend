@@ -17,6 +17,7 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Locale;
 use Metafori\Core\CorePlugin;
 use Metafori\Core\Facades\Frontend as FrontendFacade;
+use Metafori\Core\Faker\Providers\OrcidProvider;
 use Metafori\Core\Faker\Providers\RorIdProvider;
 use Metafori\Core\Models\Permission;
 use Metafori\Core\Models\Role;
@@ -31,6 +32,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->extend(Generator::class, function (Generator $faker) {
             $faker->addProvider(new RorIdProvider($faker));
+            $faker->addProvider(new OrcidProvider($faker));
 
             return $faker;
         });
