@@ -18,7 +18,7 @@ class OrganizationFactory extends Factory
             'name' => [
                 'en' => fake()->company(),
             ],
-            'ror_id' => fake()->numerify('0#######'),
+            'ror_id' => $this->faker->optional()->rorId(),
         ];
     }
 }
