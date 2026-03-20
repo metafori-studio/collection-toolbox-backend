@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -22,11 +23,11 @@ use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Spatie\Translatable\HasTranslations;
 
-class Item extends Model
+class Document extends Model
 {
     use HasFactory, HasTranslations, SoftDeletes;
 
-    protected $table = 'etno_items';
+    protected $table = 'etno_documents';
 
     public $incrementing = false;
 
@@ -78,38 +79,38 @@ class Item extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
-    public function localities(): HasMany
+    public function locality(): MorphTo
     {
-        return $this->hasMany(ItemLocality::class, 'item_id')->orderBy('sort_order');
+        return $this->morphTo();
     }
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_item_authors')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_document_authors')->orderByPivot('sort_order');
     }
 
     public function researchers(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_item_researchers')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_document_researchers')->orderByPivot('sort_order');
     }
 
     public function originators(): HasMany
     {
-        return $this->hasMany(ItemOriginator::class, 'item_id')->orderBy('sort_order');
+        return $this->hasMany(DocumentOriginator::class, 'document_id')->orderBy('sort_order');
     }
 
     public function keywords(): BelongsToMany
     {
-        return $this->belongsToMany(Keyword::class, 'etno_item_keyword')->orderByPivot('sort_order');
+        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->orderByPivot('sort_order');
     }
 
     public function researchCollections(): BelongsToMany
     {
-        return $this->belongsToMany(ResearchCollection::class, 'etno_item_research_collection')->orderByPivot('sort_order');
+        return $this->belongsToMany(ResearchCollection::class, 'etno_document_research_collection')->orderByPivot('sort_order');
     }
 
-    public function document(): BelongsTo
+    public function items(): HasMany
     {
-        return $this->belongsTo(Document::class, 'document_id');
+        return $this->hasMany(Item::class, 'document_id');
     }
 }

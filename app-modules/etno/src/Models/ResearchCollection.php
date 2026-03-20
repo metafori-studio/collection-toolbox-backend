@@ -16,7 +16,7 @@ class ResearchCollection extends Model
 
     protected $guarded = [];
 
-    public $translatable = [
+    protected array $translatable = [
         'title',
     ];
 
