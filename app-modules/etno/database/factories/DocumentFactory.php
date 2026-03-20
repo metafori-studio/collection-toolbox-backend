@@ -7,7 +7,13 @@ use Illuminate\Support\Str;
 use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
+use Metafori\Core\Models\Country;
+use Metafori\Core\Models\District;
+use Metafori\Core\Models\Location;
+use Metafori\Core\Models\Municipality;
+use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
+use Metafori\Core\Models\Region;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
@@ -15,15 +21,14 @@ use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
-use Metafori\Etno\Models\Item;
 use Metafori\Etno\Models\Project;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Item>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Document>
  */
-class ItemFactory extends Factory
+class DocumentFactory extends Factory
 {
-    protected $model = Item::class;
+    protected $model = Document::class;
 
     /**
      * Define the model's default state.
@@ -54,6 +59,15 @@ class ItemFactory extends Factory
         [$timePeriodStart, $timePeriodEnd, $timePeriodSettings] = $buildDateRange();
         [$submissionStart, $submissionEnd, $submissionSettings] = $buildDateRange();
         [$publicationStart, $publicationEnd, $publicationSettings] = $buildDateRange();
+
+        $localityClass = fake()->randomElement([
+            Country::class,
+            Region::class,
+            District::class,
+            Municipality::class,
+            MunicipalityPart::class,
+            Location::class,
+        ]);
 
         return [
             'id' => Str::uuid()->toString(),
@@ -94,7 +108,8 @@ class ItemFactory extends Factory
             'production_methods' => fake()->optional()->randomElements(ProductionMethod::cases(), fake()->numberBetween(0, 2)),
 
             // Relations
-            'document_id' => Document::factory(),
+            'locality_type' => (new $localityClass)->getMorphClass(),
+            'locality_id' => $localityClass::factory(),
             'project_id' => Project::factory(),
             'institution_id' => Organization::factory(),
         ];

@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Models;
 
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,7 +25,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Document extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     protected $table = 'etno_documents';
 
