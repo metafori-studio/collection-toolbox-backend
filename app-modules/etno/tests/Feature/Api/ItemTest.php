@@ -40,7 +40,6 @@ it('can show a complete item with all relations', function () {
         ->hasResearchers(2)
         ->hasKeywords(2)
         ->hasResearchCollections(2)
-        ->hasLocalities(2)
         ->hasOriginators(2)
         ->create();
 
@@ -54,7 +53,6 @@ it('can show a complete item with all relations', function () {
         ->assertJsonCount(2, 'data.researchers')
         ->assertJsonCount(2, 'data.keywords')
         ->assertJsonCount(2, 'data.research_collections')
-        ->assertJsonCount(2, 'data.localities')
         ->assertJsonCount(2, 'data.originators')
         ->assertJsonPath('data.institution.id', $item->institution_id)
         ->assertJsonPath('data.project.id', $item->project_id);

@@ -31,7 +31,7 @@ class ItemRepository
                 'originators.person',
                 'keywords',
                 'researchCollections',
-                'localities.locality' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith + [
+                'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith + [
                     Location::class => [
                         'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
                     ],

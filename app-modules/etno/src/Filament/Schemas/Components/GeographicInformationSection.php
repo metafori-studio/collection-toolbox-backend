@@ -3,7 +3,7 @@
 namespace Metafori\Etno\Filament\Schemas\Components;
 
 use Filament\Schemas\Components\Section;
-use Metafori\Etno\Filament\Forms\Components\LocalitiesRepeater;
+use Metafori\Etno\Filament\Forms\Components\LocalitySelect;
 use Metafori\Etno\Filament\Forms\Components\LocationNoteInput;
 
 class GeographicInformationSection extends Section
@@ -14,7 +14,7 @@ class GeographicInformationSection extends Section
 
         $this->heading('Geographic Information')
             ->schema([
-                LocalitiesRepeater::make('localities'),
+                LocalitySelect::make('locality'),
                 LocationNoteInput::make('location_note')
                     ->translatableTabs(),
             ]);
