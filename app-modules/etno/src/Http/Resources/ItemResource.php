@@ -4,12 +4,12 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Metafori\Core\Filament\Resources\CountryResource;
-use Metafori\Core\Filament\Resources\DistrictResource;
-use Metafori\Core\Filament\Resources\LocationResource;
-use Metafori\Core\Filament\Resources\MunicipalityPartResource;
-use Metafori\Core\Filament\Resources\MunicipalityResource;
+use Metafori\Core\Http\Resources\CountryResource;
+use Metafori\Core\Http\Resources\DistrictResource;
 use Metafori\Core\Http\Resources\KeywordResource;
+use Metafori\Core\Http\Resources\LocationResource;
+use Metafori\Core\Http\Resources\MunicipalityPartResource;
+use Metafori\Core\Http\Resources\MunicipalityResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
 use Metafori\Core\Http\Resources\RegionResource;
