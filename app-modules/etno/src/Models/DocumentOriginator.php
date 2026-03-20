@@ -15,7 +15,7 @@ class DocumentOriginator extends Model
 
     protected $guarded = [];
 
-    protected $translatable = ['label'];
+    protected array $translatable = ['label'];
 
     public function document(): BelongsTo
     {

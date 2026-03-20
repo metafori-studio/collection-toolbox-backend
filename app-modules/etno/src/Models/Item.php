@@ -34,7 +34,7 @@ class Item extends Model
 
     protected $guarded = [];
 
-    public array $translatable = [
+    protected array $translatable = [
         'title',
         'subtitle',
         'abstract',

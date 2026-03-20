@@ -16,7 +16,7 @@ class ItemOriginator extends Model
 
     protected $guarded = [];
 
-    protected $translatable = ['label'];
+    protected array $translatable = ['label'];
 
     public function item(): BelongsTo
     {
