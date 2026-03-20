@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +10,7 @@ use Spatie\Translatable\HasTranslations;
 
 class ResearchCollection extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
 
     protected $table = 'etno_research_collections';
 

@@ -4,6 +4,7 @@ namespace Metafori\Core\Providers;
 
 use AbdulmajeedJamaan\FilamentTranslatableTabs\TranslatableTabs;
 use Closure;
+use Faker\Generator;
 use Filament\Forms\Components\Field;
 use Filament\Panel;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -18,6 +19,8 @@ use Locale;
 use Metafori\Core\Auth\Passwords\PasswordBrokerManager;
 use Metafori\Core\CorePlugin;
 use Metafori\Core\Facades\Frontend as FrontendFacade;
+use Metafori\Core\Faker\Providers\OrcidProvider;
+use Metafori\Core\Faker\Providers\RorIdProvider;
 use Metafori\Core\Models\Permission;
 use Metafori\Core\Models\Role;
 use Metafori\Core\Notifications\SetPassword;
@@ -29,6 +32,13 @@ class CoreServiceProvider extends ServiceProvider
     {
         config(['permission.models.permission' => Permission::class]);
         config(['permission.models.role' => Role::class]);
+
+        $this->app->extend(Generator::class, function (Generator $faker) {
+            $faker->addProvider(new RorIdProvider($faker));
+            $faker->addProvider(new OrcidProvider($faker));
+
+            return $faker;
+        });
 
         $this->mergeConfigFrom(__DIR__.'/../../config/frontend.php', 'frontend');
 
