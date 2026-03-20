@@ -7,7 +7,13 @@ use Illuminate\Support\Str;
 use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
+use Metafori\Core\Models\Country;
+use Metafori\Core\Models\District;
+use Metafori\Core\Models\Location;
+use Metafori\Core\Models\Municipality;
+use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
+use Metafori\Core\Models\Region;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
@@ -55,6 +61,15 @@ class ItemFactory extends Factory
         [$submissionStart, $submissionEnd, $submissionSettings] = $buildDateRange();
         [$publicationStart, $publicationEnd, $publicationSettings] = $buildDateRange();
 
+        $localityClass = fake()->randomElement([
+            Country::class,
+            Region::class,
+            District::class,
+            Municipality::class,
+            MunicipalityPart::class,
+            Location::class,
+        ]);
+
         return [
             'id' => Str::uuid()->toString(),
             'doi' => fake()->optional()->numerify('10.####/#######'),
@@ -94,6 +109,8 @@ class ItemFactory extends Factory
             'production_methods' => fake()->optional()->randomElements(ProductionMethod::cases(), fake()->numberBetween(0, 2)),
 
             // Relations
+            'locality_type' => (new $localityClass)->getMorphClass(),
+            'locality_id' => $localityClass::factory(),
             'project_id' => Project::factory(),
             'institution_id' => Organization::factory(),
         ];

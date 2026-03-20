@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -78,9 +79,9 @@ class Item extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
-    public function localities(): HasMany
+    public function locality(): MorphTo
     {
-        return $this->hasMany(ItemLocality::class, 'item_id')->orderBy('sort_order');
+        return $this->morphTo();
     }
 
     public function authors(): BelongsToMany
