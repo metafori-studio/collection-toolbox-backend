@@ -21,15 +21,14 @@ use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
-use Metafori\Etno\Models\Item;
 use Metafori\Etno\Models\Project;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Item>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Document>
  */
-class ItemFactory extends Factory
+class DocumentFactory extends Factory
 {
-    protected $model = Item::class;
+    protected $model = Document::class;
 
     /**
      * Define the model's default state.
@@ -111,7 +110,6 @@ class ItemFactory extends Factory
             // Relations
             'locality_type' => (new $localityClass)->getMorphClass(),
             'locality_id' => $localityClass::factory(),
-            'document_id' => Document::factory(),
             'project_id' => Project::factory(),
             'institution_id' => Organization::factory(),
         ];
