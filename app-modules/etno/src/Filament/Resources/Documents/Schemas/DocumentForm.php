@@ -1,11 +1,11 @@
 <?php
 
-namespace Metafori\Etno\Filament\Resources\Items\Schemas;
+namespace Metafori\Etno\Filament\Resources\Documents\Schemas;
 
 use Filament\Schemas\Schema;
 use Metafori\Etno\Filament\Schemas\SharedMetadataSchema;
 
-class ItemForm
+class DocumentForm
 {
     public static function configure(Schema $schema): Schema
     {
