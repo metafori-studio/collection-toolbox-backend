@@ -17,6 +17,6 @@ class PersonSelect extends Select
 
     public function withOptionForm(): static
     {
-        return $this->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema)->getComponents());
+        return $this->createOptionForm(fn (Schema $schema) => PersonForm::configure($schema));
     }
 }
