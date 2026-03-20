@@ -1,16 +1,16 @@
 <?php
 
-namespace Metafori\Etno\Filament\Resources\Items\Pages;
+namespace Metafori\Etno\Filament\Resources\Documents\Pages;
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
-use Metafori\Etno\Filament\Resources\Items\ItemResource;
+use Metafori\Etno\Filament\Resources\Documents\DocumentResource;
 
-class EditItem extends EditRecord
+class EditDocument extends EditRecord
 {
-    protected static string $resource = ItemResource::class;
+    protected static string $resource = DocumentResource::class;
 
     protected function getHeaderActions(): array
     {
