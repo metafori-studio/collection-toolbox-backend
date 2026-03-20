@@ -4,13 +4,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Metafori\Core\Filament\Resources\UserResource\Pages\CreateUser;
 use Metafori\Core\Models\User;
-use Metafori\Core\Notifications\QueuedResetPassword;
+use Metafori\Core\Notifications\SetPassword;
 
 use function Pest\Livewire\livewire;
 
 uses(RefreshDatabase::class);
 
-it('can create a user and sends a password reset link', function () {
+it('can create a user and sends a password set link', function () {
     Notification::fake();
 
     $this->actingAs(User::factory()->create());
@@ -34,6 +34,6 @@ it('can create a user and sends a password reset link', function () {
 
     Notification::assertSentTo(
         [$createdUser],
-        QueuedResetPassword::class
+        SetPassword::class
     );
 });

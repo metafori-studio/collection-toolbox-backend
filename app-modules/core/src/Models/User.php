@@ -6,7 +6,7 @@ namespace Metafori\Core\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Metafori\Core\Notifications\QueuedResetPassword;
+use Metafori\Core\Notifications\SetPassword;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -42,6 +42,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'password_set_token',
         'remember_token',
     ];
 
@@ -59,8 +60,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function sendPasswordResetNotification($token): void
+    /**
+     * Send the password set notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordSetNotification($token)
     {
-        $this->notify(new QueuedResetPassword($token));
+        $this->notify(new SetPassword($token));
     }
 }
