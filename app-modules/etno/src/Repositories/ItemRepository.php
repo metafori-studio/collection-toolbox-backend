@@ -3,7 +3,10 @@
 namespace Metafori\Etno\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Cache;
 use Metafori\Core\Models\District;
 use Metafori\Core\Models\Location;
 use Metafori\Core\Models\Municipality;
@@ -49,5 +52,26 @@ class ItemRepository
                 'originators.person',
             ])
             ->paginate();
+    }
+
+    public function mapPoints(): Collection
+    {
+        return Cache::rememberForever(
+            'etno.item.map-points',
+            fn () => Item::query()
+                ->with(['locality'])
+                ->whereHas(
+                    'locality',
+                    fn (Builder $query) => $query
+                        ->whereNotNull('latitude')
+                        ->whereNotNull('longitude')
+                )
+                ->get()
+        );
+    }
+
+    public function invalidateMapPointsCache(): void
+    {
+        Cache::forget('etno.item.map-points');
     }
 }

@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Http\Controllers\Api;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Metafori\Etno\Http\Resources\ItemMapPointResource;
 use Metafori\Etno\Http\Resources\ItemResource;
 use Metafori\Etno\Repositories\ItemRepository;
 
@@ -27,5 +28,12 @@ class ItemController
         $item = $this->repository->findOrFail($id);
 
         return new ItemResource($item);
+    }
+
+    public function mapPoints()
+    {
+        $mapPoints = $this->repository->mapPoints();
+
+        return ItemMapPointResource::collection($mapPoints);
     }
 }
