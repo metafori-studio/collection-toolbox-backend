@@ -1,5 +1,6 @@
 <?php
 
+use Metafori\Core\Models\Location;
 use Metafori\Etno\Models\Item;
 
 use function Pest\Laravel\getJson;
@@ -62,4 +63,21 @@ it('returns 404 for non-existent item', function () {
     $response = getJson(route('api.etno.items.show', 'invalid-id'));
 
     $response->assertStatus(404);
+});
+
+it('can fetch map points', function () {
+    $localityWithCoords = Location::factory()->withCoordinates()->create();
+    $localityWithoutCoords = Location::factory()->withoutCoordinates()->create();
+
+    $item = Item::factory()->for($localityWithCoords, 'locality')->create();
+    Item::factory()->for($localityWithoutCoords, 'locality')->create();
+    Item::factory()->withoutLocality()->create();
+
+    $response = getJson(route('api.etno.items.map-points'));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $item->id)
+        ->assertJsonPath('data.0.latitude', (float) $localityWithCoords->latitude)
+        ->assertJsonPath('data.0.longitude', (float) $localityWithCoords->longitude);
 });

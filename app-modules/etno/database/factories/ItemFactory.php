@@ -115,4 +115,12 @@ class ItemFactory extends Factory
             'institution_id' => Organization::factory(),
         ];
     }
+
+    public function withoutLocality(): static
+    {
+        return $this->state(fn () => [
+            'locality_type' => null,
+            'locality_id' => null,
+        ]);
+    }
 }
