@@ -5,16 +5,14 @@ namespace Metafori\Archeo\Filament\Resources;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
+use Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 use Metafori\Archeo\Models\Activity;
 
 class ActivityResource extends Resource
@@ -135,18 +133,6 @@ class ActivityResource extends Resource
                             ->label(__('archeo::activities.fields.size_category'))
                             ->required(),
                     ]),
-
-                Schemas\Components\Section::make(__('archeo::activities.sections.attachments'))
-                    ->schema([
-                        SpatieMediaLibraryFileUpload::make('attachments')
-                            ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
-                            ->disk(config('archeo.media_disk', 'local'))
-                            ->multiple()
-                            ->reorderable()
-                            ->downloadable()
-                            ->openable()
-                            ->columnSpanFull(),
-                    ]),
             ]);
     }
 
@@ -154,15 +140,6 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('attachments')
-                    ->label(__('archeo::activities.fields.gallery'))
-                    ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
-                    ->conversion('thumb')
-                    ->disk(config('archeo.media_disk', 'local'))
-                    ->circular()
-                    ->stacked()
-                    ->limit(3),
-
                 Tables\Columns\TextColumn::make('activity_number')
                     ->label(__('archeo::activities.fields.activity_number'))
                     ->searchable()
@@ -227,16 +204,6 @@ class ActivityResource extends Resource
     {
         return $schema
             ->schema([
-                Schemas\Components\Section::make(__('archeo::activities.sections.gallery'))
-                    ->schema([
-                        SpatieMediaLibraryImageEntry::make('attachments')
-                            ->label('')
-                            ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
-                            ->conversion('thumb')
-                            ->disk(config('archeo.media_disk', 'local'))
-                            ->limit(10),
-                    ]),
-
                 Schemas\Components\Section::make(__('archeo::activities.sections.general'))
                     ->schema([
                         TextEntry::make('activity_number')
@@ -255,7 +222,7 @@ class ActivityResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\GalleriesRelationManager::class,
         ];
     }
 

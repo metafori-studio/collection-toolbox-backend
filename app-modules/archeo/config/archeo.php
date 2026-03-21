@@ -11,6 +11,11 @@ return [
     */
     'table_name' => 'archeo_activities',
 
+    /**
+     * The name of the table used to store galleries.
+     */
+    'galleries_table_name' => 'archeo_galleries',
+
     /*
     |--------------------------------------------------------------------------
     | Media Collections

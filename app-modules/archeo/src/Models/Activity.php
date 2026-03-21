@@ -4,6 +4,7 @@ namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -54,6 +55,11 @@ class Activity extends Model implements HasMedia
         'wgs84_coordinate_y' => 'decimal:6',
     ];
 
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(Gallery::class);
+    }
+
     /**
      * Get the formatted coordinates (Lat, Long).
      */
@@ -72,8 +78,7 @@ class Activity extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(config('archeo.media_collections.attachments', 'activity_attachments'))
-            ->useDisk(config('archeo.media_disk', 'local'));
+        // No default attachments collection anymore, handled via Galleries relation
     }
 
     public function registerMediaConversions(?Media $media = null): void

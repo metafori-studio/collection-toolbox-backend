@@ -5,8 +5,6 @@ return [
         'general' => 'General Information',
         'location' => 'Location Details',
         'research' => 'Research & Dating',
-        'attachments' => 'Attachments',
-        'gallery' => 'Gallery',
     ],
     'fields' => [
         'activity_number' => 'Activity Number',
@@ -38,6 +36,9 @@ return [
         'site_type_original' => 'Site Type (Original)',
         'size_category' => 'Size Category',
         'gallery' => 'Gallery',
+        'gallery_title' => 'Title',
+        'gallery_description' => 'Description',
+        'gallery_images' => 'Images',
     ],
     'actions' => [
         'import_excel' => [
