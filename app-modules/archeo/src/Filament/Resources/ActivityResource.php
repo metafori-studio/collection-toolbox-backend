@@ -20,6 +20,16 @@ class ActivityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'activity_number', 'cvs_number', 'registration_year', 'activity_type',
+            'cadastral_area', 'municipality', 'position', 'district',
+            'research_leader', 'author_ns', 'institution', 'action_number',
+            'site_type_original', 'size_category', 'file_name',
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -145,31 +155,40 @@ class ActivityResource extends Resource
                     ->label(__('archeo::activities.fields.activity_number'))
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('cvs_number')
-                    ->label(__('archeo::activities.fields.cvs_number_short'))
-                    ->sortable(),
+
+                ...array_map(fn ($field) => Tables\Columns\TextColumn::make($field)
+                    ->label(__("archeo::activities.fields.{$field}"))
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true), [
+                        'cvs_number',
+                        'action_number',
+                        'registration_year',
+                        'district',
+                        'position',
+                        'research_leader',
+                        'author_ns',
+                        'institution',
+                        'cadastral_area',
+                    ]),
+
                 Tables\Columns\TextColumn::make('activity_type')
                     ->label(__('archeo::activities.fields.activity_type'))
                     ->searchable()
                     ->limit(30),
+
                 Tables\Columns\TextColumn::make('municipality')
                     ->label(__('archeo::activities.fields.municipality'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('cadastral_area')
-                    ->label(__('archeo::activities.fields.cadastral_area'))
-                    ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('activity_year_start')
                     ->label(__('archeo::activities.fields.year_start_short'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('activity_year_end')
-                    ->label(__('archeo::activities.fields.year_end_short'))
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\IconColumn::make('has_gis_link')
                     ->boolean()
                     ->label(__('archeo::activities.fields.gis_short'))
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('file_name')
                     ->label(__('archeo::activities.fields.file_name'))
                     ->searchable()
