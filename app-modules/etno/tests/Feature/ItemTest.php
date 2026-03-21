@@ -61,11 +61,20 @@ it('does not invalidate map points cache when locality name is updated', functio
 });
 
 it('invalidates map points cache when locality coordinates are updated', function () {
-    $locality = Location::factory()->withCoordinates()->create();
+    $latitude = fake()->unique(reset: true)->latitude();
+    $longitude = fake()->unique()->longitude();
+
+    $locality = Location::factory()->create([
+        'latitude' => $latitude,
+        'longitude' => $longitude,
+    ]);
     Item::factory()->for($locality, 'locality')->create();
 
     Cache::set('etno.item.map-points', []);
-    $locality->update(['latitude' => fake()->latitude()]);
+    $locality->update([
+        'latitude' => fake()->unique()->latitude(),
+        'longitude' => fake()->unique()->longitude(),
+    ]);
 
     expect(Cache::has('etno.item.map-points'))->toBeFalse();
 });
