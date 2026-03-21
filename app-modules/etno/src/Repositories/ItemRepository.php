@@ -16,6 +16,8 @@ use Metafori\Etno\Models\Item;
 
 class ItemRepository
 {
+    protected const MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
+
     public function findOrFail(string $id): Item
     {
         $morphWith = [
@@ -57,9 +59,20 @@ class ItemRepository
     public function mapPoints(): Collection
     {
         return Cache::rememberForever(
-            'etno.item.map-points',
+            self::MAP_POINTS_CACHE_KEY,
             fn () => Item::query()
-                ->with(['locality'])
+                ->select([
+                    'id',
+                    'locality_id',
+                    'locality_type',
+                ])
+                ->with(['locality' => function ($query) {
+                    $query->select([
+                        'id',
+                        'latitude',
+                        'longitude',
+                    ]);
+                }])
                 ->whereHas(
                     'locality',
                     fn (Builder $query) => $query
@@ -72,6 +85,6 @@ class ItemRepository
 
     public function invalidateMapPointsCache(): void
     {
-        Cache::forget('etno.item.map-points');
+        Cache::forget(self::MAP_POINTS_CACHE_KEY);
     }
 }
