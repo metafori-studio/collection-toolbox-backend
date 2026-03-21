@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Metafori\Core\Models\Contracts\Locality;
+use Metafori\Core\Models\Concerns\Locality;
+use Metafori\Core\Models\Contracts\Locality as LocalityContract;
 use Spatie\Translatable\HasTranslations;
 
-class District extends Model implements Locality
+class District extends Model implements LocalityContract
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, Locality, SoftDeletes;
 
     protected $guarded = [];
 
