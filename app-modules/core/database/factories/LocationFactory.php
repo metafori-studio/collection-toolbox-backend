@@ -36,8 +36,8 @@ class LocationFactory extends Factory
             'name' => [
                 'en' => fake()->city(),
             ],
-            'latitude' => fake()->optional()->latitude(),
-            'longitude' => fake()->optional()->longitude(),
+            'latitude' => fake()->latitude(),
+            'longitude' => fake()->longitude(),
         ];
     }
 }
