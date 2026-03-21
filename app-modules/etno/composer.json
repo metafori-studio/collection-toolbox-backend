@@ -5,6 +5,7 @@
 	"version": "1.0",
 	"license": "proprietary",
 	"require": {
+        "laravel/scout": "^10.24",
 		"metafori/core": "*"
 	},
 	"autoload": {

@@ -25,7 +25,6 @@ return new class extends Migration
         });
 
         Schema::create('etno_document_researchers', function (Blueprint $table) {
-            $table->id();
             $table->string('document_id');
             $table->foreign('document_id')
                 ->references('id')
@@ -37,7 +36,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['document_id', 'person_id']);
+            $table->primary(['document_id', 'person_id']);
         });
 
         Schema::create('etno_document_originators', function (Blueprint $table) {

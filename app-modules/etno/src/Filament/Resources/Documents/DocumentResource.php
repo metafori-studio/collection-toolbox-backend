@@ -32,6 +32,13 @@ class DocumentResource extends Resource
         return DocumentsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\ItemsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

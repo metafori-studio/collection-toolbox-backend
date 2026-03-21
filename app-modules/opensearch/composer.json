@@ -1,0 +1,27 @@
+{
+	"name": "metafori/opensearch",
+	"description": "",
+	"type": "library",
+	"version": "1.0",
+	"license": "proprietary",
+	"require": {
+        "laravel/scout": "^10.24",
+        "opensearch-project/opensearch-php": "^2.5"
+    },
+	"autoload": {
+		"psr-4": {
+			"Metafori\\Opensearch\\": "src/",
+			"Metafori\\Opensearch\\Tests\\": "tests/",
+			"Metafori\\Opensearch\\Database\\Factories\\": "database/factories/",
+			"Metafori\\Opensearch\\Database\\Seeders\\": "database/seeders/"
+		}
+	},
+	"minimum-stability": "stable",
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Metafori\\Opensearch\\Providers\\OpensearchServiceProvider"
+			]
+		}
+	}
+}

@@ -9,11 +9,11 @@ enum License: string implements HasLabel
 {
     use HasTranslatedLabel;
 
-    case CC_BY = 'cc-by';
-    case CC_BY_NC = 'cc-by-nc';
-    case CC_BY_NC_ND = 'cc-by-nc-nd';
-    case CC_BY_NC_SA = 'cc-by-nc-sa';
-    case CC_BY_ND = 'cc-by-nd';
-    case CC_BY_SA = 'cc-by-sa';
-    case CC0 = 'cc0';
+    case CcBy = 'cc-by';
+    case CcByNc = 'cc-by-nc';
+    case CcByNcNd = 'cc-by-nc-nd';
+    case CcByNcSa = 'cc-by-nc-sa';
+    case CcByNd = 'cc-by-nd';
+    case CcBySa = 'cc-by-sa';
+    case Cc0 = 'cc0';
 }
