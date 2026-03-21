@@ -16,6 +16,11 @@ return [
      */
     'galleries_table_name' => 'archeo_galleries',
 
+    /**
+     * The name of the table used to store user-activity assignments.
+     */
+    'assignments_table_name' => 'archeo_activity_assignments',
+
     /*
     |--------------------------------------------------------------------------
     | Media Collections

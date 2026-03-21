@@ -20,6 +20,11 @@ class Activity extends Model implements HasMedia
         return config('archeo.table_name', 'archeo_activities');
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'activity_number';
+    }
+
     protected $fillable = [
         'activity_number',
         'activity_year_start',
