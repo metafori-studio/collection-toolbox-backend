@@ -78,8 +78,8 @@ class ActivityExcelParser
                         'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
                         'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
                         'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                        'coordinate_x' => $row[$mapping['coordinate_x'] ?? 'T'] ?? null,
-                        'coordinate_y' => $row[$mapping['coordinate_y'] ?? 'U'] ?? null,
+                        'wgs84_coordinate_x' => $row[$mapping['wgs84_coordinate_x'] ?? 'T'] ?? null,
+                        'wgs84_coordinate_y' => $row[$mapping['wgs84_coordinate_y'] ?? 'U'] ?? null,
                         'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
                     ]
                 );

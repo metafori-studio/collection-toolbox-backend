@@ -27,8 +27,8 @@ class Activity extends Model implements HasMedia
         'position',
         'district',
         'localization_degree',
-        'coordinate_x',
-        'coordinate_y',
+        'wgs84_coordinate_x',
+        'wgs84_coordinate_y',
         'has_gis_link',
         'cvs_number',
         'research_leader',
@@ -47,6 +47,8 @@ class Activity extends Model implements HasMedia
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
         'has_gis_link' => 'boolean',
+        'wgs84_coordinate_x' => 'decimal:6',
+        'wgs84_coordinate_y' => 'decimal:6',
     ];
 
     public function registerMediaCollections(): void

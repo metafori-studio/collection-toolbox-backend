@@ -52,8 +52,8 @@ return [
         'dating_site_type' => 'Q',
         'localization_degree' => 'R',
         'has_gis_link' => 'S',
-        'coordinate_x' => 'T',
-        'coordinate_y' => 'U',
+        'wgs84_coordinate_x' => 'T',
+        'wgs84_coordinate_y' => 'U',
         'size_category' => 'V',
     ],
 ];
