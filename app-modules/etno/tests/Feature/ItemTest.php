@@ -12,6 +12,13 @@ it('invalidates map points cache when item locality is created', function () {
     expect(Cache::has('etno.item.map-points'))->toBeFalse();
 });
 
+it('does not invalidate map points cache when item without locality is created', function () {
+    Cache::set('etno.item.map-points', []);
+    Item::factory()->withoutLocality()->create();
+
+    expect(Cache::has('etno.item.map-points'))->toBeTrue();
+});
+
 it('does not invalidate map points cache when item title is updated', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
     $item = Item::factory()->for($localityWithCoordinates, 'locality')->create();
@@ -69,6 +76,17 @@ it('invalidates map points cache when locality is deleted', function () {
 
     Cache::set('etno.item.map-points', []);
     $locality->delete();
+
+    expect(Cache::has('etno.item.map-points'))->toBeFalse();
+});
+
+it('invalidates map points cache when item with locality is restored', function () {
+    $localityWithCoordinates = Location::factory()->withCoordinates()->create();
+    $item = Item::factory()->for($localityWithCoordinates, 'locality')->create();
+    $item->delete();
+
+    Cache::set('etno.item.map-points', []);
+    $item->restore();
 
     expect(Cache::has('etno.item.map-points'))->toBeFalse();
 });
