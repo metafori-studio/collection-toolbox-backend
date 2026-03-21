@@ -3,15 +3,17 @@
 namespace Metafori\Core\Database\Seeders\Locality;
 
 use Illuminate\Database\Seeder;
-use Metafori\Core\Enums\LocalityType;
-use Metafori\Core\Models\Locality;
+use Metafori\Core\Models\Country;
+use Metafori\Core\Models\District;
+use Metafori\Core\Models\Municipality;
+use Metafori\Core\Models\Region;
 
 class SlovakiaSeeder extends Seeder
 {
     public function run(): void
     {
-        $country = Locality::firstOrCreate(
-            ['type' => LocalityType::COUNTRY],
+        $country = Country::firstOrCreate(
+            ['name->sk' => 'Slovensko'],
             ['name' => ['sk' => 'Slovensko']]
         );
 
@@ -19,18 +21,17 @@ class SlovakiaSeeder extends Seeder
         $handle = fopen($csvPath, 'r');
 
         $regionsMap = [];
-        $citiesMap = [];
-        $boroughsMap = [];
+        $districtsMap = [];
+        $municipalitiesMap = [];
 
         try {
             while (($data = fgetcsv($handle, separator: ';')) !== false) {
-                [$regionName, $cityName, $boroughName] = $data;
+                [$regionName, $districtName, $municipalityName] = $data;
 
                 if (! isset($regionsMap[$regionName])) {
-                    $region = Locality::firstOrCreate(
+                    $region = Region::firstOrCreate(
                         [
-                            'type' => LocalityType::REGION,
-                            'parent_id' => $country->id,
+                            'country_id' => $country->id,
                             'name->sk' => $regionName,
                         ],
                         [
@@ -41,35 +42,33 @@ class SlovakiaSeeder extends Seeder
                 }
                 $regionId = $regionsMap[$regionName];
 
-                $cityKey = "$regionId|$cityName";
-                if (! isset($citiesMap[$cityKey])) {
-                    $city = Locality::firstOrCreate(
+                $districtKey = "$regionId|$districtName";
+                if (! isset($districtsMap[$districtKey])) {
+                    $district = District::firstOrCreate(
                         [
-                            'type' => LocalityType::CITY,
-                            'parent_id' => $regionId,
-                            'name->sk' => $cityName,
+                            'region_id' => $regionId,
+                            'name->sk' => $districtName,
                         ],
                         [
-                            'name' => ['sk' => $cityName],
+                            'name' => ['sk' => $districtName],
                         ]
                     );
-                    $citiesMap[$cityKey] = $city->id;
+                    $districtsMap[$districtKey] = $district->id;
                 }
-                $cityId = $citiesMap[$cityKey];
+                $districtId = $districtsMap[$districtKey];
 
-                $boroughKey = "$cityId|$boroughName";
-                if (! isset($boroughsMap[$boroughKey])) {
-                    $borough = Locality::firstOrCreate(
+                $municipalityKey = "$districtId|$municipalityName";
+                if (! isset($municipalitiesMap[$municipalityKey])) {
+                    $municipality = Municipality::firstOrCreate(
                         [
-                            'type' => LocalityType::BOROUGH,
-                            'parent_id' => $cityId,
-                            'name->sk' => $boroughName,
+                            'district_id' => $districtId,
+                            'name->sk' => $municipalityName,
                         ],
                         [
-                            'name' => ['sk' => $boroughName],
+                            'name' => ['sk' => $municipalityName],
                         ]
                     );
-                    $boroughsMap[$boroughKey] = $borough->id;
+                    $municipalitiesMap[$municipalityKey] = $municipality->id;
                 }
             }
             $this->command->info('Localities imported successfully!');

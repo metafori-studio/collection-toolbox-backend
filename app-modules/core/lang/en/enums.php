@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'DatePrecision' => [
+        'year' => 'year',
+        'month' => 'month',
+        'day' => 'day',
+    ],
     'Language' => [
         'aar' => 'Afar',
         'abk' => 'Abkhazian',
@@ -499,12 +504,7 @@ return [
         'cc-by-sa' => 'CC BY-SA',
         'cc0' => 'CC0',
     ],
-    'LocalityType' => [
-        'country' => 'Country',
-        'region' => 'Region',
-        'district' => 'District',
-        'city' => 'City',
-        'borough' => 'Borough',
-        'custom' => 'Custom',
+    'Role' => [
+        'admin' => 'admin',
     ],
 ];

@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'DatePrecision' => [
+        'year' => 'rok',
+        'month' => 'mesiac',
+        'day' => 'deň',
+    ],
     'Language' => [
         'aar' => 'afarčina',
         'abk' => 'abcházčina',
@@ -499,12 +504,7 @@ return [
         'cc-by-sa' => 'CC BY-SA',
         'cc0' => 'CC0',
     ],
-    'LocalityType' => [
-        'country' => 'Štát',
-        'region' => 'Kraj',
-        'district' => 'Okres',
-        'city' => 'Obec',
-        'borough' => 'Časť obce',
-        'custom' => 'Vlastné',
+    'Role' => [
+        'admin' => 'admin',
     ],
 ];

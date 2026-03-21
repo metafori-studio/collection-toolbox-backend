@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Metafori\Core\Models\Person;
@@ -9,13 +10,13 @@ use Spatie\Translatable\HasTranslations;
 
 class ItemOriginator extends Model
 {
-    use HasTranslations;
+    use HasFactory, HasTranslations;
 
     protected $table = 'etno_item_originators';
 
     protected $guarded = [];
 
-    protected $translatable = ['label'];
+    protected array $translatable = ['label'];
 
     public function item(): BelongsTo
     {

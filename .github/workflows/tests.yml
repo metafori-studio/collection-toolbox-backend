@@ -1,6 +1,9 @@
 name: Run tests and linters
 
-on: pull_request
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   tests:
@@ -10,7 +13,7 @@ jobs:
       postgres:
         image: postgres:18
         env:
-          POSTGRES_DB: collection_toolbox_backend
+          POSTGRES_DB: testing
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: ''
           POSTGRES_HOST_AUTH_METHOD: trust
