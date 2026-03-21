@@ -6,6 +6,7 @@ use Metafori\Etno\Repositories\ItemRepository;
 
 beforeEach(function () {
     $this->repository = app(ItemRepository::class);
+    $this->repository->invalidateMapPointsCache();
 });
 
 it('includes newly created item with locality in map points', function () {
