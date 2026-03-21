@@ -6,10 +6,13 @@ use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 use Metafori\Archeo\Models\Activity;
@@ -151,6 +154,15 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('attachments')
+                    ->label(__('archeo::activities.fields.gallery'))
+                    ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
+                    ->conversion('thumb')
+                    ->disk(config('archeo.media_disk', 'local'))
+                    ->circular()
+                    ->stacked()
+                    ->limit(3),
+
                 Tables\Columns\TextColumn::make('activity_number')
                     ->label(__('archeo::activities.fields.activity_number'))
                     ->searchable()
@@ -201,12 +213,42 @@ class ActivityResource extends Resource
                     ->label(__('archeo::activities.fields.has_gis_link')),
             ])
             ->actions([
+                Actions\ViewAction::make(),
                 Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Actions\BulkActionGroup::make([
                     Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Schemas\Components\Section::make(__('archeo::activities.sections.gallery'))
+                    ->schema([
+                        SpatieMediaLibraryImageEntry::make('attachments')
+                            ->label('')
+                            ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
+                            ->conversion('thumb')
+                            ->disk(config('archeo.media_disk', 'local'))
+                            ->limit(10),
+                    ]),
+
+                Schemas\Components\Section::make(__('archeo::activities.sections.general'))
+                    ->schema([
+                        TextEntry::make('activity_number')
+                            ->label(__('archeo::activities.fields.activity_number')),
+                        TextEntry::make('cvs_number')
+                            ->label(__('archeo::activities.fields.cvs_number')),
+                        TextEntry::make('activity_type')
+                            ->label(__('archeo::activities.fields.activity_type')),
+                        TextEntry::make('municipality')
+                            ->label(__('archeo::activities.fields.municipality')),
+                    ])
+                    ->columns(4),
             ]);
     }
 
@@ -222,6 +264,7 @@ class ActivityResource extends Resource
         return [
             'index' => Pages\ListActivities::route('/'),
             'create' => Pages\CreateActivity::route('/create'),
+            'view' => Pages\ViewActivity::route('/{record}'),
             'edit' => Pages\EditActivity::route('/{record}/edit'),
         ];
     }

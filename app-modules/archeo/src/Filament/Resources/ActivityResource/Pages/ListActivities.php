@@ -8,8 +8,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
+use Metafori\Archeo\Jobs\ImportActivitiesJob;
 use Metafori\Archeo\Models\Activity;
-use Metafori\Archeo\Services\ActivityExcelParser;
 
 class ListActivities extends ListRecords
 {
@@ -36,27 +36,21 @@ class ListActivities extends ListRecords
                         ->disk('local')
                         ->directory('temp-imports'),
                 ])
-                ->action(function (array $data, ActivityExcelParser $parser): void {
+                ->action(function (array $data): void {
                     $filePath = Storage::disk('local')->path($data['file']);
                     $originalFileName = basename($data['file']);
 
-                    try {
-                        $count = $parser->importFromPath($filePath, $originalFileName);
+                    ImportActivitiesJob::dispatch(
+                        $filePath,
+                        $originalFileName,
+                        auth()->user()
+                    );
 
-                        Notification::make()
-                            ->title(__('archeo::activities.notifications.import_success.title'))
-                            ->body(__('archeo::activities.notifications.import_success.body', ['count' => $count]))
-                            ->success()
-                            ->send();
-                    } catch (\Exception $e) {
-                        Notification::make()
-                            ->title(__('archeo::activities.notifications.import_failed.title'))
-                            ->body($e->getMessage())
-                            ->danger()
-                            ->send();
-                    } finally {
-                        Storage::disk('local')->delete($data['file']);
-                    }
+                    Notification::make()
+                        ->title(__('archeo::activities.notifications.import_queued.title'))
+                        ->body(__('archeo::activities.notifications.import_queued.body'))
+                        ->info()
+                        ->send();
                 }),
         ];
     }

@@ -87,6 +87,11 @@ class ActivityExcelParser
             }
         });
 
+        // Delete the temporary file
+        if (file_exists($localPath)) {
+            unlink($localPath);
+        }
+
         return $insertedCount;
     }
 

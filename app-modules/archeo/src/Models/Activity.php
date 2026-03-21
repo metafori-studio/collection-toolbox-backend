@@ -2,9 +2,12 @@
 
 namespace Metafori\Archeo\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Activity extends Model implements HasMedia
 {
@@ -51,9 +54,32 @@ class Activity extends Model implements HasMedia
         'wgs84_coordinate_y' => 'decimal:6',
     ];
 
+    /**
+     * Get the formatted coordinates (Lat, Long).
+     */
+    protected function coordinates(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if ($this->wgs84_coordinate_x === null || $this->wgs84_coordinate_y === null) {
+                    return null;
+                }
+
+                return "WGS84: {$this->wgs84_coordinate_x}, {$this->wgs84_coordinate_y}";
+            }
+        );
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(config('archeo.media_collections.attachments', 'activity_attachments'))
             ->useDisk(config('archeo.media_disk', 'local'));
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')
+            ->fit(Fit::Contain, 300, 300)
+            ->nonQueued();
     }
 }

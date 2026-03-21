@@ -6,6 +6,7 @@ return [
         'location' => 'Location Details',
         'research' => 'Research & Dating',
         'attachments' => 'Attachments',
+        'gallery' => 'Gallery',
     ],
     'fields' => [
         'activity_number' => 'Activity Number',
@@ -36,6 +37,7 @@ return [
         'dating_site_type' => 'Dating - Site Type',
         'site_type_original' => 'Site Type (Original)',
         'size_category' => 'Size Category',
+        'gallery' => 'Gallery',
     ],
     'actions' => [
         'import_excel' => [
@@ -46,6 +48,10 @@ return [
         ],
     ],
     'notifications' => [
+        'import_queued' => [
+            'title' => 'Import Queued',
+            'body' => 'The import process has started in the background. you will be notified when it is complete.',
+        ],
         'import_success' => [
             'title' => 'Import Successful',
             'body' => 'Successfully imported :count activities.',
