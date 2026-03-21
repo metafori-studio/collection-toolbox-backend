@@ -22,13 +22,9 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "metafori/archeo": "*",
         "metafori/etno": "*",
-<<<<<<< HEAD
         "phpoffice/phpspreadsheet": "^5.5",
         "spatie/laravel-medialibrary": "^11.21",
-||||||| f30cc997
-=======
         "metafori/opensearch": "*",
->>>>>>> main
         "tpetry/laravel-postgresql-enhanced": "^3.5"
     },
     "require-dev": {

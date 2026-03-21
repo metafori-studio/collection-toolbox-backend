@@ -2,32 +2,51 @@
 
 namespace Metafori\Archeo\Services;
 
+use Exception;
 use Illuminate\Support\Facades\DB;
+use Metafori\Archeo\Exceptions\ExcelRowValidationException;
+use Metafori\Archeo\Exceptions\InvalidFileFormatException;
 use Metafori\Archeo\Models\Activity;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ActivityExcelParser
 {
+    /**
+     * @throws InvalidFileFormatException
+     * @throws Exception
+     */
     public function importFromPath(string $localPath, string $originalFileName): int
     {
-        $spreadsheet = IOFactory::load($localPath);
+        try {
+            $spreadsheet = IOFactory::load($localPath);
+        } catch (Exception $e) {
+            throw InvalidFileFormatException::unreadable($localPath);
+        }
+
         $sheet = $spreadsheet->getSheet(0);
         $rows = $sheet->toArray(null, true, true, true);
 
-        // Remove header row
-        array_shift($rows);
+        if (count($rows) <= 1) {
+            throw InvalidFileFormatException::empty();
+        }
 
+        // Keep track of original row indices (starting from 1)
+        // Header is row 1, data starts at row 2
+        $dataRows = array_slice($rows, 1, null, true);
         $insertedCount = 0;
 
-        DB::transaction(function () use ($rows, $originalFileName, &$insertedCount) {
-            foreach ($rows as $row) {
+        DB::transaction(function () use ($dataRows, $originalFileName, &$insertedCount) {
+            foreach ($dataRows as $rowIndex => $row) {
+                // PHPSpreadsheet toArray index starts at 1, but if we did array_shift it's gone.
+                // Using array_slice with true as 4th arg preserves keys.
                 $activityNumber = $row['A'] ?? null;
 
                 if (empty($activityNumber)) {
-                    continue;
+                    throw ExcelRowValidationException::missingActivityNumber($rowIndex);
                 }
 
-                $years = $this->parseYears($row['D'] ?? '');
+                $yearStr = $row['D'] ?? '';
+                $years = $this->parseYears($yearStr, $rowIndex);
 
                 Activity::query()->updateOrCreate(
                     ['activity_number' => $activityNumber],
@@ -64,19 +83,37 @@ class ActivityExcelParser
         return $insertedCount;
     }
 
-    protected function parseYears(string $yearStr): array
+    /**
+     * @throws ExcelRowValidationException
+     */
+    protected function parseYears(string $yearStr, int $rowIndex): array
     {
-        $yearStr = (string) $yearStr;
+        $yearStr = (string) trim($yearStr);
+
+        if (empty($yearStr)) {
+            throw new ExcelRowValidationException($rowIndex, 'Activity year (Column D) is required.');
+        }
+
         if (str_contains($yearStr, '-')) {
             $parts = explode('-', $yearStr);
+            $start = trim($parts[0]);
+            $end = trim($parts[1]);
+
+            if (! is_numeric($start) || ! is_numeric($end)) {
+                throw ExcelRowValidationException::invalidYear($rowIndex, $yearStr);
+            }
 
             return [
-                'start' => (int) trim($parts[0]),
-                'end' => (int) trim($parts[1]),
+                'start' => (int) $start,
+                'end' => (int) $end,
             ];
         }
 
-        $year = (int) trim($yearStr);
+        if (! is_numeric($yearStr)) {
+            throw ExcelRowValidationException::invalidYear($rowIndex, $yearStr);
+        }
+
+        $year = (int) $yearStr;
 
         return ['start' => $year, 'end' => $year];
     }
