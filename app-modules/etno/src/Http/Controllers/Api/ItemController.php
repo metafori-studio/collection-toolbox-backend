@@ -30,7 +30,7 @@ class ItemController
         return new ItemResource($item);
     }
 
-    public function mapPoints()
+    public function mapPoints(): ResourceCollection
     {
         $mapPoints = $this->repository->mapPoints();
 
