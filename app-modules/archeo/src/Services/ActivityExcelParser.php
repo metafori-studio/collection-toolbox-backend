@@ -42,14 +42,14 @@ class ActivityExcelParser
                 $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
 
                 if (empty($activityNumber)) {
-                    throw ExcelRowValidationException::missingActivityNumber($rowIndex);
+                    continue;
                 }
 
                 // Sanitize activity number to only include digits
                 $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
 
                 if (empty($activityNumber)) {
-                    throw new ExcelRowValidationException($rowIndex, __('archeo::activities.import.errors.invalid_activity_number'));
+                    continue;
                 }
 
                 $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';

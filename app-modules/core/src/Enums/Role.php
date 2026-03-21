@@ -11,11 +11,15 @@ enum Role: string implements HasColor, HasLabel
     use HasTranslatedLabel;
 
     case Admin = 'admin';
+    case ArcheoAdmin = 'archeo_admin';
+    case ArcheoReadonly = 'archeo_readonly';
 
     public function getColor(): string|array|null
     {
         return match ($this) {
             self::Admin => 'danger',
+            self::ArcheoAdmin => 'info',
+            self::ArcheoReadonly => 'gray',
         };
     }
 }

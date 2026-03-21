@@ -19,6 +19,7 @@ return [
     | Names of media collections used by the activity model.
     |
     */
+    'media_disk' => env('ARCHEO_MEDIA_DISK', 'local'),
     'media_collections' => [
         'attachments' => 'activity_attachments',
     ],

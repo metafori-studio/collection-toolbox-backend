@@ -51,6 +51,7 @@ class Activity extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(config('archeo.media_collections.attachments', 'activity_attachments'));
+        $this->addMediaCollection(config('archeo.media_collections.attachments', 'activity_attachments'))
+            ->useDisk(config('archeo.media_disk', 'local'));
     }
 }

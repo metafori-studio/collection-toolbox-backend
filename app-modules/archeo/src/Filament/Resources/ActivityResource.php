@@ -127,6 +127,7 @@ class ActivityResource extends Resource
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('attachments')
                             ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
+                            ->disk(config('archeo.media_disk', 'local'))
                             ->multiple()
                             ->reorderable()
                             ->downloadable()

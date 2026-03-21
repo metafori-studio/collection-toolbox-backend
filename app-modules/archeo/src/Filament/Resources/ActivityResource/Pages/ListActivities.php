@@ -8,6 +8,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
+use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Services\ActivityExcelParser;
 
 class ListActivities extends ListRecords
@@ -23,6 +24,7 @@ class ListActivities extends ListRecords
                 ->label(__('archeo::activities.actions.import_excel.label'))
                 ->icon('heroicon-o-document-arrow-up')
                 ->color('info')
+                ->visible(fn (): bool => auth()->user()->can('import', Activity::class))
                 ->form([
                     FileUpload::make('file')
                         ->label(__('archeo::activities.actions.import_excel.fields.file'))

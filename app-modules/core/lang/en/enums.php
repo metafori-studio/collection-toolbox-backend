@@ -505,6 +505,8 @@ return [
         'cc0' => 'CC0',
     ],
     'Role' => [
-        'admin' => 'admin',
+        'admin' => 'Admin',
+        'archeo_admin' => 'Archeo Admin',
+        'archeo_readonly' => 'Archeo Read-only',
     ],
 ];
