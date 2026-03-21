@@ -24,90 +24,109 @@ class ActivityResource extends Resource
     {
         return $schema
             ->schema([
-                Schemas\Components\Section::make('General Information')
+                Schemas\Components\Section::make(__('archeo::activities.sections.general'))
                     ->schema([
                         Schemas\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('activity_number')
+                                    ->label(__('archeo::activities.fields.activity_number'))
                                     ->required()
                                     ->unique(ignoreRecord: true),
                                 Forms\Components\TextInput::make('activity_type')
+                                    ->label(__('archeo::activities.fields.activity_type'))
                                     ->required(),
                                 Forms\Components\TextInput::make('cvs_number')
+                                    ->label(__('archeo::activities.fields.cvs_number'))
                                     ->numeric()
                                     ->required(),
                             ]),
                         Schemas\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('activity_year_start')
+                                    ->label(__('archeo::activities.fields.activity_year_start'))
                                     ->numeric()
                                     ->required(),
                                 Forms\Components\TextInput::make('activity_year_end')
+                                    ->label(__('archeo::activities.fields.activity_year_end'))
                                     ->numeric()
                                     ->required(),
                                 Forms\Components\TextInput::make('registration_year')
+                                    ->label(__('archeo::activities.fields.registration_year'))
                                     ->numeric(),
                             ]),
                         Schemas\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('action_number'),
+                                Forms\Components\TextInput::make('action_number')
+                                    ->label(__('archeo::activities.fields.action_number')),
                                 Forms\Components\TextInput::make('file_name')
+                                    ->label(__('archeo::activities.fields.file_name'))
                                     ->disabled()
                                     ->dehydrated(false),
                             ]),
                     ]),
 
-                Schemas\Components\Section::make('Location Details')
+                Schemas\Components\Section::make(__('archeo::activities.sections.location'))
                     ->schema([
                         Schemas\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('municipality'),
-                                Forms\Components\TextInput::make('cadastral_area'),
-                                Forms\Components\TextInput::make('district'),
-                                Forms\Components\TextInput::make('position'),
+                                Forms\Components\TextInput::make('municipality')
+                                    ->label(__('archeo::activities.fields.municipality')),
+                                Forms\Components\TextInput::make('cadastral_area')
+                                    ->label(__('archeo::activities.fields.cadastral_area')),
+                                Forms\Components\TextInput::make('district')
+                                    ->label(__('archeo::activities.fields.district')),
+                                Forms\Components\TextInput::make('position')
+                                    ->label(__('archeo::activities.fields.position')),
                             ]),
                         Schemas\Components\Grid::make(3)
                             ->schema([
                                 Forms\Components\TextInput::make('localization_degree')
+                                    ->label(__('archeo::activities.fields.localization_degree'))
                                     ->numeric(),
                                 Forms\Components\TextInput::make('coordinate_x')
+                                    ->label(__('archeo::activities.fields.coordinate_x'))
                                     ->numeric()
                                     ->step('0.000001'),
                                 Forms\Components\TextInput::make('coordinate_y')
+                                    ->label(__('archeo::activities.fields.coordinate_y'))
                                     ->numeric()
                                     ->step('0.000001'),
                             ]),
                         Forms\Components\Toggle::make('has_gis_link')
-                            ->label('Has GIS Link'),
+                            ->label(__('archeo::activities.fields.has_gis_link')),
                     ]),
 
-                Schemas\Components\Section::make('Research & Dating')
+                Schemas\Components\Section::make(__('archeo::activities.sections.research'))
                     ->schema([
                         Schemas\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('research_leader')
+                                    ->label(__('archeo::activities.fields.research_leader'))
                                     ->required(),
-                                Forms\Components\TextInput::make('institution'),
+                                Forms\Components\TextInput::make('institution')
+                                    ->label(__('archeo::activities.fields.institution')),
                                 Forms\Components\Textarea::make('author_ns')
-                                    ->label('Author - NS')
+                                    ->label(__('archeo::activities.fields.author_ns'))
                                     ->required()
                                     ->columnSpanFull(),
                             ]),
                         Forms\Components\TagsInput::make('dating_ns')
-                            ->label('Dating - NS'),
+                            ->label(__('archeo::activities.fields.dating_ns')),
                         Forms\Components\TagsInput::make('dating_ceans')
-                            ->label('Dating - CEANS'),
+                            ->label(__('archeo::activities.fields.dating_ceans')),
                         Forms\Components\TagsInput::make('dating_site_type')
-                            ->label('Dating - Site Type'),
-                        Forms\Components\TextInput::make('site_type_original'),
+                            ->label(__('archeo::activities.fields.dating_site_type')),
+                        Forms\Components\TextInput::make('site_type_original')
+                            ->label(__('archeo::activities.fields.site_type_original')),
                         Forms\Components\TextInput::make('size_category')
+                            ->label(__('archeo::activities.fields.size_category'))
                             ->required(),
                     ]),
 
-                Schemas\Components\Section::make('Attachments')
+                Schemas\Components\Section::make(__('archeo::activities.sections.attachments'))
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('attachments')
-                            ->collection('activity_attachments')
+                            ->collection(config('archeo.media_collections.attachments', 'activity_attachments'))
                             ->multiple()
                             ->reorderable()
                             ->downloadable()
@@ -122,37 +141,44 @@ class ActivityResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('activity_number')
+                    ->label(__('archeo::activities.fields.activity_number'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('cvs_number')
-                    ->label('ČVS')
+                    ->label(__('archeo::activities.fields.cvs_number_short'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('activity_type')
+                    ->label(__('archeo::activities.fields.activity_type'))
                     ->searchable()
                     ->limit(30),
                 Tables\Columns\TextColumn::make('municipality')
+                    ->label(__('archeo::activities.fields.municipality'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('cadastral_area')
+                    ->label(__('archeo::activities.fields.cadastral_area'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('activity_year_start')
-                    ->label('Year Start')
+                    ->label(__('archeo::activities.fields.year_start_short'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('activity_year_end')
-                    ->label('Year End')
+                    ->label(__('archeo::activities.fields.year_end_short'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('has_gis_link')
                     ->boolean()
-                    ->label('GIS')
+                    ->label(__('archeo::activities.fields.gis_short'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('file_name')
+                    ->label(__('archeo::activities.fields.file_name'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('activity_type'),
-                Tables\Filters\TernaryFilter::make('has_gis_link'),
+                Tables\Filters\SelectFilter::make('activity_type')
+                    ->label(__('archeo::activities.fields.activity_type')),
+                Tables\Filters\TernaryFilter::make('has_gis_link')
+                    ->label(__('archeo::activities.fields.has_gis_link')),
             ])
             ->actions([
                 Actions\EditAction::make(),

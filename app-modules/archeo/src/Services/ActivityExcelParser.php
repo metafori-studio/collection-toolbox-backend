@@ -36,44 +36,51 @@ class ActivityExcelParser
         $insertedCount = 0;
 
         DB::transaction(function () use ($dataRows, $originalFileName, &$insertedCount) {
+            $mapping = config('archeo.import_mapping');
+
             foreach ($dataRows as $rowIndex => $row) {
-                // PHPSpreadsheet toArray index starts at 1, but if we did array_shift it's gone.
-                // Using array_slice with true as 4th arg preserves keys.
-                $activityNumber = $row['A'] ?? null;
+                $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
 
                 if (empty($activityNumber)) {
                     throw ExcelRowValidationException::missingActivityNumber($rowIndex);
                 }
 
-                $yearStr = $row['D'] ?? '';
+                // Sanitize activity number to only include digits
+                $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
+
+                if (empty($activityNumber)) {
+                    throw new ExcelRowValidationException($rowIndex, __('archeo::activities.import.errors.invalid_activity_number'));
+                }
+
+                $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
                 $years = $this->parseYears($yearStr, $rowIndex);
 
                 Activity::query()->updateOrCreate(
                     ['activity_number' => $activityNumber],
                     [
                         'file_name' => $originalFileName,
-                        'cvs_number' => (int) ($row['B'] ?? 0),
-                        'registration_year' => (int) ($row['C'] ?? 0),
+                        'cvs_number' => (int) ($row[$mapping['cvs_number'] ?? 'B'] ?? 0),
+                        'registration_year' => (int) ($row[$mapping['registration_year'] ?? 'C'] ?? 0),
                         'activity_year_start' => $years['start'],
                         'activity_year_end' => $years['end'],
-                        'activity_type' => $row['E'] ?? '',
-                        'cadastral_area' => $row['F'] ?? null,
-                        'municipality' => $row['G'] ?? null,
-                        'position' => $row['H'] ?? null,
-                        'district' => $row['I'] ?? null,
-                        'research_leader' => $row['J'] ?? '',
-                        'author_ns' => $row['K'] ?? '',
-                        'institution' => $row['L'] ?? null,
-                        'action_number' => $row['M'] ?? null,
-                        'dating_ns' => $this->parseArray($row['N'] ?? null),
-                        'dating_ceans' => $this->parseArray($row['O'] ?? null),
-                        'site_type_original' => $row['P'] ?? null,
-                        'dating_site_type' => $this->parseArray($row['Q'] ?? null),
-                        'localization_degree' => (int) ($row['R'] ?? 0),
-                        'has_gis_link' => filter_var($row['S'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                        'coordinate_x' => $row['T'] ?? null,
-                        'coordinate_y' => $row['U'] ?? null,
-                        'size_category' => $row['V'] ?? '',
+                        'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
+                        'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
+                        'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
+                        'position' => $row[$mapping['position'] ?? 'H'] ?? null,
+                        'district' => $row[$mapping['district'] ?? 'I'] ?? null,
+                        'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
+                        'author_ns' => $row[$mapping['author_ns'] ?? 'K'] ?? '',
+                        'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
+                        'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
+                        'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
+                        'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
+                        'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
+                        'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
+                        'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
+                        'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                        'coordinate_x' => $row[$mapping['coordinate_x'] ?? 'T'] ?? null,
+                        'coordinate_y' => $row[$mapping['coordinate_y'] ?? 'U'] ?? null,
+                        'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
                     ]
                 );
                 $insertedCount++;
@@ -91,7 +98,22 @@ class ActivityExcelParser
         $yearStr = (string) trim($yearStr);
 
         if (empty($yearStr)) {
-            throw new ExcelRowValidationException($rowIndex, 'Activity year (Column D) is required.');
+            throw new ExcelRowValidationException($rowIndex, __('archeo::activities.import.errors.year_required'));
+        }
+
+        // Handle comma-separated years (e.g., "2022, 2023")
+        if (str_contains($yearStr, ',')) {
+            $years = array_map('trim', explode(',', $yearStr));
+            $years = array_filter($years, 'is_numeric');
+
+            if (empty($years)) {
+                throw ExcelRowValidationException::invalidYear($rowIndex, $yearStr);
+            }
+
+            return [
+                'start' => (int) min($years),
+                'end' => (int) max($years),
+            ];
         }
 
         if (str_contains($yearStr, '-')) {

@@ -6,16 +6,19 @@ class ExcelRowValidationException extends ActivityImportException
 {
     public function __construct(int $rowNumber, string $message)
     {
-        parent::__construct("Row {$rowNumber}: {$message}");
+        parent::__construct(__('archeo::activities.import.row_error', [
+            'row' => $rowNumber,
+            'message' => $message,
+        ]));
     }
 
     public static function missingActivityNumber(int $rowNumber): self
     {
-        return new self($rowNumber, 'Missing activity number (Column A).');
+        return new self($rowNumber, __('archeo::activities.import.errors.missing_activity_number'));
     }
 
     public static function invalidYear(int $rowNumber, string $yearValue): self
     {
-        return new self($rowNumber, "Invalid year format '{$yearValue}' in Column D. Expected 'YYYY' or 'YYYY-YYYY'.");
+        return new self($rowNumber, __('archeo::activities.import.errors.invalid_year', ['value' => $yearValue]));
     }
 }

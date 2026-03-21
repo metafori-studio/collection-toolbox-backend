@@ -20,12 +20,12 @@ class ListActivities extends ListRecords
             Actions\CreateAction::make(),
 
             Actions\Action::make('importExcel')
-                ->label('Import Excel')
+                ->label(__('archeo::activities.actions.import_excel.label'))
                 ->icon('heroicon-o-document-arrow-up')
                 ->color('info')
                 ->form([
                     FileUpload::make('file')
-                        ->label('Excel File')
+                        ->label(__('archeo::activities.actions.import_excel.fields.file'))
                         ->acceptedFileTypes([
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'application/vnd.ms-excel',
@@ -42,13 +42,13 @@ class ListActivities extends ListRecords
                         $count = $parser->importFromPath($filePath, $originalFileName);
 
                         Notification::make()
-                            ->title('Import Successful')
-                            ->body("Successfully imported {$count} activities.")
+                            ->title(__('archeo::activities.notifications.import_success.title'))
+                            ->body(__('archeo::activities.notifications.import_success.body', ['count' => $count]))
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title('Import Failed')
+                            ->title(__('archeo::activities.notifications.import_failed.title'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

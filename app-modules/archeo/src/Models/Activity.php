@@ -10,7 +10,10 @@ class Activity extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $table = 'archeo_activities';
+    public function getTable(): string
+    {
+        return config('archeo.table_name', 'archeo_activities');
+    }
 
     protected $fillable = [
         'activity_number',
@@ -48,6 +51,6 @@ class Activity extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('activity_attachments');
+        $this->addMediaCollection(config('archeo.media_collections.attachments', 'activity_attachments'));
     }
 }
