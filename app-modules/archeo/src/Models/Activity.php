@@ -5,6 +5,7 @@ namespace Metafori\Archeo\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Metafori\Archeo\Services\CoordinateTransformer;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -51,8 +52,8 @@ class Activity extends Model implements HasMedia
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
         'has_gis_link' => 'boolean',
-        'wgs84_coordinate_x' => 'decimal:6',
-        'wgs84_coordinate_y' => 'decimal:6',
+        'wgs84_coordinate_x' => 'float',
+        'wgs84_coordinate_y' => 'float',
     ];
 
     public function galleries(): HasMany
@@ -61,19 +62,37 @@ class Activity extends Model implements HasMedia
     }
 
     /**
-     * Get the formatted coordinates (Lat, Long).
+     * Get GCS (WGS84) Latitude translated from S-JTSK.
      */
-    protected function coordinates(): Attribute
+    protected function gcsLatitude(): Attribute
     {
-        return Attribute::make(
-            get: function () {
-                if ($this->wgs84_coordinate_x === null || $this->wgs84_coordinate_y === null) {
-                    return null;
-                }
-
-                return "WGS84: {$this->wgs84_coordinate_x}, {$this->wgs84_coordinate_y}";
+        return Attribute::get(function () {
+            if (! $this->wgs84_coordinate_x || ! $this->wgs84_coordinate_y) {
+                return null;
             }
-        );
+
+            return app(CoordinateTransformer::class)->sjtskToWgs84(
+                (float) $this->wgs84_coordinate_x,
+                (float) $this->wgs84_coordinate_y
+            )['latitude'] ?? null;
+        });
+    }
+
+    /**
+     * Get GCS (WGS84) Longitude translated from S-JTSK.
+     */
+    protected function gcsLongitude(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! $this->wgs84_coordinate_x || ! $this->wgs84_coordinate_y) {
+                return null;
+            }
+
+            return app(CoordinateTransformer::class)->sjtskToWgs84(
+                (float) $this->wgs84_coordinate_x,
+                (float) $this->wgs84_coordinate_y
+            )['longitude'] ?? null;
+        });
     }
 
     public function registerMediaCollections(): void
