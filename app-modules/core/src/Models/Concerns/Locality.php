@@ -4,11 +4,11 @@ namespace Metafori\Core\Models\Concerns;
 
 trait Locality
 {
-    public function casts(): array
+    protected function initializeLocality(): void
     {
-        return [
+        $this->mergeCasts([
             'latitude' => 'decimal:6',
             'longitude' => 'decimal:6',
-        ];
+        ]);
     }
 }
