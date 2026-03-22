@@ -12,12 +12,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class ActivityExcelParser
 {
     /**
-     * @return array{count: int, errors: array}
+     * @return array{count: int, created: int, updated: int, errors: array}
      *
      * @throws InvalidFileFormatException
      * @throws Exception
      */
-    public function importFromPath(string $localPath, string $originalFileName): array
+    public function importFromPath(string $localPath, int $importId): array
     {
         try {
             $spreadsheet = IOFactory::load($localPath);
@@ -40,7 +40,7 @@ class ActivityExcelParser
         $errors = [];
         $processedActivityNumbers = [];
 
-        DB::transaction(function () use ($dataRows, $originalFileName, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
+        DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
             $mapping = config('archeo.import_mapping');
 
             foreach ($dataRows as $rowIndex => $row) {
@@ -83,7 +83,7 @@ class ActivityExcelParser
                     Activity::query()->updateOrCreate(
                         ['activity_number' => $activityNumber],
                         [
-                            'file_name' => $originalFileName,
+                            'import_id' => $importId,
                             'cvs_number' => (int) ($row[$mapping['cvs_number'] ?? 'B'] ?? 0),
                             'registration_year' => (int) ($row[$mapping['registration_year'] ?? 'C'] ?? 0),
                             'activity_year_start' => $years['start'],

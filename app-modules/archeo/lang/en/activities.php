@@ -17,7 +17,7 @@ return [
         'year_end_short' => 'Year End',
         'registration_year' => 'Registration Year',
         'action_number' => 'Action Number',
-        'file_name' => 'File Name',
+        'import_id' => 'Import ID',
         'municipality' => 'Municipality',
         'cadastral_area' => 'Cadastral Area',
         'district' => 'District',

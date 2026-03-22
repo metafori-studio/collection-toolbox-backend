@@ -28,7 +28,7 @@ class ActivityResource extends Resource
             'activity_number', 'cvs_number', 'registration_year', 'activity_type',
             'cadastral_area', 'municipality', 'position', 'district',
             'research_leader', 'author_ns', 'institution', 'action_number',
-            'site_type_original', 'size_category', 'file_name',
+            'site_type_original', 'size_category', 'import_id',
         ];
     }
 
@@ -70,8 +70,8 @@ class ActivityResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('action_number')
                                     ->label(__('archeo::activities.fields.action_number')),
-                                Forms\Components\TextInput::make('file_name')
-                                    ->label(__('archeo::activities.fields.file_name'))
+                                Forms\Components\TextInput::make('import_id')
+                                    ->label(__('archeo::activities.fields.import_id'))
                                     ->disabled()
                                     ->dehydrated(false),
                             ]),
@@ -185,8 +185,8 @@ class ActivityResource extends Resource
                     ->label(__('archeo::activities.fields.gis_short'))
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('file_name')
-                    ->label(__('archeo::activities.fields.file_name'))
+                Tables\Columns\TextColumn::make('import_id')
+                    ->label(__('archeo::activities.fields.import_id'))
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

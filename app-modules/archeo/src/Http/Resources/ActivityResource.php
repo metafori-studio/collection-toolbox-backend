@@ -31,7 +31,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string[]|null $dating_site_type
  * @property string|null $site_type_original
  * @property string $size_category
- * @property string|null $file_name
+ * @property string|null $import_id
  */
 class ActivityResource extends JsonResource
 {
@@ -64,7 +64,7 @@ class ActivityResource extends JsonResource
      *     dating_site_type: string[]|null,
      *     site_type_original: string|null,
      *     size_category: string,
-     *     file_name: string|null,
+     *     import_id: string|null,
      *     created_at: string,
      *     updated_at: string,
      *     galleries: array<int, GalleryResource>
@@ -98,7 +98,7 @@ class ActivityResource extends JsonResource
             'dating_site_type' => $this->dating_site_type,
             'site_type_original' => $this->site_type_original,
             'size_category' => $this->size_category,
-            'file_name' => $this->file_name,
+            'import_id' => $this->import_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'galleries' => GalleryResource::collection($this->whenLoaded('galleries')),

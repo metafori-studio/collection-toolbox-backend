@@ -4,6 +4,7 @@ namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Metafori\Archeo\Services\CoordinateTransformer;
 use Metafori\Core\Models\User;
@@ -50,7 +51,7 @@ class Activity extends Model implements HasMedia
         'dating_site_type',
         'site_type_original',
         'size_category',
-        'file_name',
+        'import_id',
     ];
 
     protected $casts = [
@@ -66,6 +67,11 @@ class Activity extends Model implements HasMedia
     public function galleries(): HasMany
     {
         return $this->hasMany(Gallery::class);
+    }
+
+    public function import(): BelongsTo
+    {
+        return $this->belongsTo(ActivityImport::class, 'import_id');
     }
 
     public function assignments(): HasMany
