@@ -39,6 +39,9 @@ return [
         'gallery_title' => 'Title',
         'gallery_description' => 'Description',
         'gallery_images' => 'Images',
+        'assigned_user' => 'Assigned User',
+        'expires_at' => 'Expires At',
+        'remaining_time' => 'Remaining Access',
     ],
     'actions' => [
         'import_excel' => [

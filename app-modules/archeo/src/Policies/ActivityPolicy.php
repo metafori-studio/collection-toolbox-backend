@@ -9,12 +9,21 @@ class ActivityPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin', 'archeo_readonly']);
+        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+            return true;
+        }
+
+        // Allow if user is assigned to at least one active activity
+        return $user->activityAssignments()->where('expires_at', '>', now())->exists();
     }
 
     public function view(User $user, Activity $activity): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin', 'archeo_readonly']);
+        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+            return true;
+        }
+
+        return $activity->isAssignedTo($user);
     }
 
     public function create(User $user): bool

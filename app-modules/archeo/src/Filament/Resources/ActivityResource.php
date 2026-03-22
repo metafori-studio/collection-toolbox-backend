@@ -11,6 +11,7 @@ use Filament\Schemas;
 use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 use Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 use Metafori\Archeo\Models\Activity;
@@ -219,10 +220,26 @@ class ActivityResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+        $query = parent::getEloquentQuery();
+
+        if ($user->hasRole(['admin', 'archeo_admin'])) {
+            return $query;
+        }
+
+        return $query->whereHas('assignments', function (Builder $query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->where('expires_at', '>', now());
+        });
+    }
+
     public static function getRelations(): array
     {
         return [
             RelationManagers\GalleriesRelationManager::class,
+            RelationManagers\AssignmentsRelationManager::class,
         ];
     }
 

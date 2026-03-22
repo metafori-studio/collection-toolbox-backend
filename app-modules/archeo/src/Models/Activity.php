@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Metafori\Archeo\Services\CoordinateTransformer;
+use Metafori\Core\Models\User;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -64,6 +65,22 @@ class Activity extends Model implements HasMedia
     public function galleries(): HasMany
     {
         return $this->hasMany(Gallery::class);
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(ActivityAssignment::class);
+    }
+
+    /**
+     * Check if the activity is assigned to a specific user and access is not expired.
+     */
+    public function isAssignedTo(User $user): bool
+    {
+        return $this->assignments()
+            ->where('user_id', $user->id)
+            ->where('expires_at', '>', now())
+            ->exists();
     }
 
     /**
