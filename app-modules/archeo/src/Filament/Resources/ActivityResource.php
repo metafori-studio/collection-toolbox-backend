@@ -22,12 +22,14 @@ class ActivityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $recordTitleAttribute = 'activity_number';
+
     public static function getGloballySearchableAttributes(): array
     {
         return [
             'activity_number', 'cvs_number', 'registration_year', 'activity_type',
             'cadastral_area', 'municipality', 'position', 'district',
-            'research_leader', 'author_ns', 'institution', 'action_number',
+            'research_leader', 'institution', 'action_number',
             'site_type_original', 'size_category', 'import_id',
         ];
     }
@@ -43,6 +45,10 @@ class ActivityResource extends Resource
                                 Forms\Components\TextInput::make('activity_number')
                                     ->label(__('archeo::activities.fields.activity_number'))
                                     ->required()
+                                    ->regex('/^\d+$/')
+                                    ->validationMessages([
+                                        'regex' => 'The :attribute must only contain digits.',
+                                    ])
                                     ->unique(ignoreRecord: true),
                                 Forms\Components\TextInput::make('activity_type')
                                     ->label(__('archeo::activities.fields.activity_type'))
@@ -162,7 +168,9 @@ class ActivityResource extends Resource
 
                 Tables\Columns\TextColumn::make('author_ns')
                     ->label(__('archeo::activities.fields.author_ns'))
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereJsonContains('author_ns', $search);
+                    })
                     ->badge()
                     ->separator(',')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -192,7 +200,8 @@ class ActivityResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('activity_type')
-                    ->label(__('archeo::activities.fields.activity_type')),
+                    ->label(__('archeo::activities.fields.activity_type'))
+                    ->options(fn () => Activity::query()->distinct()->pluck('activity_type', 'activity_type')->toArray()),
                 Tables\Filters\TernaryFilter::make('has_gis_link')
                     ->label(__('archeo::activities.fields.has_gis_link')),
             ])
@@ -231,8 +240,12 @@ class ActivityResource extends Resource
         $user = auth()->user();
         $query = parent::getEloquentQuery();
 
-        if ($user->hasRole(['admin', 'archeo_admin'])) {
+        if ($user && $user->hasRole(['admin', 'archeo_admin'])) {
             return $query;
+        }
+
+        if (! $user) {
+            return $query->whereRaw('1=0'); // No results for unauthenticated users
         }
 
         return $query->whereHas('assignments', function (Builder $query) use ($user) {

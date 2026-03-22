@@ -32,6 +32,7 @@ class ListActivities extends ListRecords
                             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             'application/vnd.ms-excel',
                         ])
+                        ->maxSize(10240) // 10MB
                         ->required()
                         ->disk('local')
                         ->directory('temp-imports'),

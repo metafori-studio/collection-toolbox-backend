@@ -47,12 +47,12 @@ class AssignmentsRelationManager extends RelationManager
                     ->label(__('archeo::activities.fields.expires_at'))
                     ->dateTime()
                     ->sortable()
-                    ->color(fn ($state): string => $state->isPast() ? 'danger' : 'success'),
+                    ->color(fn ($state): ?string => $state?->isPast() ? 'danger' : 'success'),
 
                 Tables\Columns\TextColumn::make('remaining')
                     ->label(__('archeo::activities.fields.remaining_time'))
-                    ->getStateUsing(fn ($record) => $record->expires_at->diffForHumans())
-                    ->color(fn ($record) => $record->expires_at->isPast() ? 'danger' : 'gray'),
+                    ->getStateUsing(fn ($record): ?string => $record->expires_at?->diffForHumans() ?? '-')
+                    ->color(fn ($record): ?string => $record->expires_at?->isPast() ? 'danger' : 'gray'),
             ])
             ->filters([
                 //

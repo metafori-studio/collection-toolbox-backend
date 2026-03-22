@@ -77,10 +77,7 @@ class ActivityExcelParser
                     $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
                     $years = $this->parseYears($yearStr, $rowIndex);
 
-                    $activity = Activity::query()->where('activity_number', $activityNumber)->first();
-                    $isNew = ! $activity;
-
-                    Activity::query()->updateOrCreate(
+                    $activity = Activity::query()->updateOrCreate(
                         ['activity_number' => $activityNumber],
                         [
                             'import_id' => $importId,
@@ -109,7 +106,7 @@ class ActivityExcelParser
                         ]
                     );
 
-                    if ($isNew) {
+                    if ($activity->wasRecentlyCreated) {
                         $createdCount++;
                     } else {
                         $updatedCount++;
@@ -159,10 +156,15 @@ class ActivityExcelParser
 
         if (str_contains($yearStr, '-')) {
             $parts = explode('-', $yearStr);
+
+            if (count($parts) !== 2) {
+                throw ExcelRowValidationException::invalidYear($rowIndex, $yearStr);
+            }
+
             $start = trim($parts[0]);
             $end = trim($parts[1]);
 
-            if (! is_numeric($start) || ! is_numeric($end)) {
+            if ($start === '' || $end === '' || ! is_numeric($start) || ! is_numeric($end)) {
                 throw ExcelRowValidationException::invalidYear($rowIndex, $yearStr);
             }
 

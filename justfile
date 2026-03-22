@@ -34,7 +34,7 @@ die: stop-monitoring stop-databases stop-storage
 
 run:
     @npm run build
-    @npx concurrently -c "#93c5fd,#c4b5fd" \
+    @npx concurrently --kill-others -c "#93c5fd,#c4b5fd" \
         "php artisan octane:start --server=frankenphp --host=127.0.0.1 --port=8000" \
-        "php artisan queue:work --tries=3" \
+        "php artisan queue:work --tries=3 --timeout=0" \
         --names=server,worker

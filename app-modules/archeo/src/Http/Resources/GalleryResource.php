@@ -30,17 +30,23 @@ class GalleryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $expires = now()->addMinutes(20);
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'images' => $this->getMedia('gallery_images')->map(fn ($media) => [
-                'name' => $media->file_name,
-                'url' => $media->getTemporaryUrl(now()->addMinutes(20)),
-                'thumb' => $media->getTemporaryUrl(now()->addMinutes(20), 'thumb'),
-                'size' => $media->human_readable_size,
-                'mime_type' => $media->mime_type,
-            ]),
+            'images' => $this->getMedia('gallery_images')->map(function ($media) use ($expires) {
+                $isS3 = $media->disk === 's3';
+
+                return [
+                    'name' => $media->file_name,
+                    'url' => $isS3 ? $media->getTemporaryUrl($expires) : $media->getUrl(),
+                    'thumb' => $isS3 ? $media->getTemporaryUrl($expires, 'thumb') : $media->getUrl('thumb'),
+                    'size' => $media->human_readable_size,
+                    'mime_type' => $media->mime_type,
+                ];
+            }),
         ];
     }
 }
