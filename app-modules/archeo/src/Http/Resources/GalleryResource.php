@@ -20,8 +20,8 @@ class GalleryResource extends JsonResource
             'description' => $this->description,
             'images' => $this->getMedia('gallery_images')->map(fn ($media) => [
                 'name' => $media->file_name,
-                'url' => $media->getUrl(),
-                'thumb' => $media->getUrl('thumb'),
+                'url' => $media->getTemporaryUrl(now()->addMinutes(20)),
+                'thumb' => $media->getTemporaryUrl(now()->addMinutes(20), 'thumb'),
                 'size' => $media->human_readable_size,
                 'mime_type' => $media->mime_type,
             ]),

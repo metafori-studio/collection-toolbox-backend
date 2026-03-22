@@ -34,8 +34,7 @@ class Gallery extends Model implements HasMedia
     {
         $this->addMediaCollection('gallery_images')
             ->useDisk(config('archeo.media_disk', 'local'))
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'])
-            ->withMaxFileSize(1024 * 1024 * 500); // 500MB
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']);
     }
 
     public function registerMediaConversions(?Media $media = null): void
