@@ -29,6 +29,8 @@ use Metafori\Etno\Models\Project;
  */
 class ItemFactory extends Factory
 {
+    use Concerns\HasLocality;
+
     protected $model = Item::class;
 
     /**
@@ -121,14 +123,6 @@ class ItemFactory extends Factory
     {
         return $this->state([
             'document_overrides' => Item::INHERITABLES,
-        ]);
-    }
-
-    public function withoutLocality(): static
-    {
-        return $this->state([
-            'locality_type' => null,
-            'locality_id' => null,
         ]);
     }
 }
