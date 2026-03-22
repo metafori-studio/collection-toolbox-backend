@@ -84,9 +84,9 @@ class Activity extends Model implements HasMedia
     }
 
     /**
-     * Get GCS (WGS84) Latitude translated from S-JTSK.
+     * Get GCS (WGS84) Latitude and Longitude translated from S-JTSK.
      */
-    protected function gcsLatitude(): Attribute
+    protected function gcsCoordinates(): Attribute
     {
         return Attribute::get(function () {
             if (! $this->wgs84_coordinate_x || ! $this->wgs84_coordinate_y) {
@@ -96,30 +96,8 @@ class Activity extends Model implements HasMedia
             return app(CoordinateTransformer::class)->sjtskToWgs84(
                 (float) $this->wgs84_coordinate_x,
                 (float) $this->wgs84_coordinate_y
-            )['latitude'] ?? null;
+            );
         });
-    }
-
-    /**
-     * Get GCS (WGS84) Longitude translated from S-JTSK.
-     */
-    protected function gcsLongitude(): Attribute
-    {
-        return Attribute::get(function () {
-            if (! $this->wgs84_coordinate_x || ! $this->wgs84_coordinate_y) {
-                return null;
-            }
-
-            return app(CoordinateTransformer::class)->sjtskToWgs84(
-                (float) $this->wgs84_coordinate_x,
-                (float) $this->wgs84_coordinate_y
-            )['longitude'] ?? null;
-        });
-    }
-
-    public function registerMediaCollections(): void
-    {
-        // No default attachments collection anymore, handled via Galleries relation
     }
 
     public function registerMediaConversions(?Media $media = null): void
