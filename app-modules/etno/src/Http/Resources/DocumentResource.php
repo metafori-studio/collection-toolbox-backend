@@ -4,7 +4,6 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\MissingValue;
 use Metafori\Core\Http\Resources\CountryResource;
 use Metafori\Core\Http\Resources\DistrictResource;
 use Metafori\Core\Http\Resources\KeywordResource;
@@ -21,34 +20,13 @@ use Metafori\Core\Models\Location;
 use Metafori\Core\Models\Municipality;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
-use Metafori\Etno\Models\Item;
+use Metafori\Etno\Models\Document;
 
 /**
- * @mixin Item
+ * @mixin Document
  */
-class ItemResource extends JsonResource
+class DocumentResource extends JsonResource
 {
-    protected DocumentResource $documentResource;
-
-    protected function getDocumentResource(): DocumentResource
-    {
-        return $this->documentResource ??= $this->resource->document->toResource();
-    }
-
-    public function __get($key): mixed
-    {
-        return $this->isInheritableAndInherited($key)
-            ? $this->getDocumentResource()->{$key}
-            : parent::__get($key);
-    }
-
-    protected function whenLoaded($relation, $value = null, $default = new MissingValue)
-    {
-        return $this->isInheritableAndInherited($relation)
-            ? $this->getDocumentResource()->whenLoaded($relation, $value, $default)
-            : parent::whenLoaded($relation, $value, $default);
-    }
-
     /**
      * Transform the resource into an array.
      *

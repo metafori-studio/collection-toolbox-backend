@@ -21,9 +21,10 @@ use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
+use Metafori\Etno\Models\Contracts\Inheritable;
 use Spatie\Translatable\HasTranslations;
 
-class Item extends Model
+class Item extends Model implements Inheritable
 {
     use HasFactory, HasTranslations, SoftDeletes;
 
@@ -34,6 +35,50 @@ class Item extends Model
     protected $keyType = 'string';
 
     protected $guarded = [];
+
+    protected $with = ['document'];
+
+    protected $attributes = [
+        'document_overrides' => '[]',
+    ];
+
+    public const array INHERITABLES = [
+        'doi',
+        'title',
+        'subtitle',
+        'abstract',
+        'general_note',
+        'terms_of_use',
+        'location_note',
+        'content_note',
+        'technical_note',
+        'type',
+        'extent',
+        'extent_unit',
+        'language',
+        'accrual_method',
+        'collection_method',
+        'access_rights',
+        'license',
+        'production_methods',
+        'time_period_start',
+        'time_period_end',
+        'time_period_settings',
+        'submission_date_start',
+        'submission_date_end',
+        'submission_date_settings',
+        'publication_date_start',
+        'publication_date_end',
+        'publication_date_settings',
+        'institution',
+        'project',
+        'locality',
+        'authors',
+        'researchers',
+        'originators',
+        'keywords',
+        'researchCollections',
+    ];
 
     protected array $translatable = [
         'title',
@@ -66,6 +111,7 @@ class Item extends Model
             'license' => License::class,
             'production_methods' => AsEnumCollection::of(ProductionMethod::class),
             'extent_unit' => ExtentUnit::class,
+            'document_overrides' => 'array',
         ];
     }
 
@@ -112,5 +158,42 @@ class Item extends Model
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class, 'document_id');
+    }
+
+    public function isInheritable(string $attribute): bool
+    {
+        return \in_array($attribute, self::INHERITABLES);
+    }
+
+    public function isInherited(string $attribute): bool
+    {
+        if (! $this->isInheritable($attribute)) {
+            throw new \LogicException("Attribute {$attribute} is not inheritable.");
+        }
+
+        return ! \in_array($attribute, $this->document_overrides ?? []);
+    }
+
+    public function isInheritableAndInherited(string $attribute): bool
+    {
+        return $this->isInheritable($attribute) && $this->isInherited($attribute);
+    }
+
+    public function getParentValue(string $attribute, ?string $locale = null, bool $useFallbackLocale = true): mixed
+    {
+        if (! $parent = $this->getParent()) {
+            throw new \LogicException('No parent document found.');
+        }
+
+        if ($locale && $parent->isTranslatableAttribute($attribute)) {
+            return $parent->getTranslation($attribute, $locale, $useFallbackLocale);
+        }
+
+        return $parent->{$attribute};
+    }
+
+    public function getParent(): ?Document
+    {
+        return $this->document;
     }
 }

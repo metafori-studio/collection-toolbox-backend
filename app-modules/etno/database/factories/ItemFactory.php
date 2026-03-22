@@ -117,9 +117,16 @@ class ItemFactory extends Factory
         ];
     }
 
+    public function withDocumentOverrides(): static
+    {
+        return $this->state([
+            'document_overrides' => Item::INHERITABLES,
+        ]);
+    }
+
     public function withoutLocality(): static
     {
-        return $this->state(fn () => [
+        return $this->state([
             'locality_type' => null,
             'locality_id' => null,
         ]);

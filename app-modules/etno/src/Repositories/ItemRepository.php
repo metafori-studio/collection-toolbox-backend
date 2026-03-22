@@ -5,6 +5,7 @@ namespace Metafori\Etno\Repositories;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Core\Models\District;
@@ -27,32 +28,35 @@ class ItemRepository
             MunicipalityPart::class => ['municipality.district.region.country'],
         ];
 
+        $with = [
+            'institution',
+            'project',
+            'authors',
+            'researchers',
+            'originators.person',
+            'keywords',
+            'researchCollections',
+            'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
+                ...$morphWith,
+                Location::class => [
+                    'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
+                ],
+            ]),
+        ];
+
         return Item::query()
-            ->with([
-                'institution',
-                'project',
-                'authors',
-                'researchers',
-                'originators.person',
-                'keywords',
-                'researchCollections',
-                'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith + [
-                    Location::class => [
-                        'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
-                    ],
-                ]),
-            ])
+            ->with(self::withInherited($with))
             ->findOrFail($id);
     }
 
     public function paginate(): LengthAwarePaginator
     {
         return Item::query()
-            ->with([
+            ->with(self::withInherited([
                 'authors',
                 'researchers',
                 'originators.person',
-            ])
+            ]))
             ->paginate();
     }
 
@@ -86,5 +90,13 @@ class ItemRepository
     public function invalidateMapPointsCache(): void
     {
         Cache::forget(self::MAP_POINTS_CACHE_KEY);
+    }
+
+    protected static function withInherited(array $with): array
+    {
+        return [
+            ...$with,
+            'document' => fn (BelongsTo $belongsTo) => $belongsTo->with($with),
+        ];
     }
 }

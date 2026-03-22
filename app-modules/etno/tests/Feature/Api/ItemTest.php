@@ -11,6 +11,7 @@ it('can list items', function () {
         ->hasAuthors(2)
         ->hasResearchers(2)
         ->hasOriginators(2)
+        ->withDocumentOverrides()
         ->create();
 
     $response = getJson(route('api.etno.items.index'));
@@ -42,6 +43,7 @@ it('can show a complete item with all relations', function () {
         ->hasKeywords(2)
         ->hasResearchCollections(2)
         ->hasOriginators(2)
+        ->withDocumentOverrides()
         ->create();
 
     $response = getJson(route('api.etno.items.show', $item->id));
