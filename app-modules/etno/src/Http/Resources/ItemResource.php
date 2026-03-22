@@ -4,6 +4,7 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Http\Resources\CountryResource;
 use Metafori\Core\Http\Resources\DistrictResource;
 use Metafori\Core\Http\Resources\KeywordResource;
@@ -20,6 +21,7 @@ use Metafori\Core\Models\Location;
 use Metafori\Core\Models\Municipality;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
+use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Item;
 
 /**
@@ -63,19 +65,19 @@ class ItemResource extends JsonResource
             'collection_method' => $this->collection_method,
             'access_rights' => $this->access_rights,
             'license' => $this->license,
-            /** @var \Metafori\Etno\Enums\ProductionMethod[] */
+            /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
             'time_period_start' => $this->time_period_start,
             'time_period_end' => $this->time_period_end,
-            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
+            /** @var array{is_range: bool, precision: DatePrecision}|null */
             'time_period_settings' => $this->time_period_settings,
             'submission_date_start' => $this->submission_date_start,
             'submission_date_end' => $this->submission_date_end,
-            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
+            /** @var array{is_range: bool, precision: DatePrecision}|null */
             'submission_date_settings' => $this->submission_date_settings,
             'publication_date_start' => $this->publication_date_start,
             'publication_date_end' => $this->publication_date_end,
-            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
+            /** @var array{is_range: bool, precision: DatePrecision}|null */
             'publication_date_settings' => $this->publication_date_settings,
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),

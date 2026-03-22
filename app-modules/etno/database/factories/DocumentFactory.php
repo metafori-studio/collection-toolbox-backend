@@ -24,7 +24,7 @@ use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Project;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Document>
+ * @extends Factory<Document>
  */
 class DocumentFactory extends Factory
 {

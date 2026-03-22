@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Metafori\Core\Models\Country;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\Country>
+ * @extends Factory<Country>
  */
 class CountryFactory extends Factory
 {

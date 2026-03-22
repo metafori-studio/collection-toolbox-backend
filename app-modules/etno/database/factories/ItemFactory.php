@@ -25,7 +25,7 @@ use Metafori\Etno\Models\Item;
 use Metafori\Etno\Models\Project;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Item>
+ * @extends Factory<Item>
  */
 class ItemFactory extends Factory
 {

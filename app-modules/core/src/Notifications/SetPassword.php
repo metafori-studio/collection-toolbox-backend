@@ -2,6 +2,7 @@
 
 namespace Metafori\Core\Notifications;
 
+use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
@@ -25,7 +26,7 @@ class SetPassword extends Notification
     /**
      * The callback that should be used to build the mail message.
      *
-     * @var (\Closure(mixed, string): MailMessage|\Illuminate\Contracts\Mail\Mailable)|null
+     * @var (\Closure(mixed, string): MailMessage|Mailable)|null
      */
     public static $toMailCallback;
 
@@ -111,7 +112,7 @@ class SetPassword extends Notification
     /**
      * Set a callback that should be used when building the notification mail message.
      *
-     * @param  \Closure(mixed, string): (MailMessage|\Illuminate\Contracts\Mail\Mailable)  $callback
+     * @param  \Closure(mixed, string): (MailMessage|Mailable)  $callback
      * @return void
      */
     public static function toMailUsing($callback)

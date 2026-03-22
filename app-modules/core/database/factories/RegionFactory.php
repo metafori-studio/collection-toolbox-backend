@@ -7,7 +7,7 @@ use Metafori\Core\Models\Country;
 use Metafori\Core\Models\Region;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\Region>
+ * @extends Factory<Region>
  */
 class RegionFactory extends Factory
 {
