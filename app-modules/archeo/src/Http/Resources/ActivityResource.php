@@ -5,12 +5,70 @@ namespace Metafori\Archeo\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property int $id
+ * @property string $activity_number
+ * @property int $activity_year_start
+ * @property int $activity_year_end
+ * @property string $activity_type
+ * @property string|null $action_number
+ * @property int|null $registration_year
+ * @property string|null $cadastral_area
+ * @property string|null $municipality
+ * @property string|null $position
+ * @property string|null $district
+ * @property int|null $localization_degree
+ * @property float|null $wgs84_coordinate_x
+ * @property float|null $wgs84_coordinate_y
+ * @property array{latitude: float, longitude: float}|null $gcs_coordinates
+ * @property bool $has_gis_link
+ * @property int $cvs_number
+ * @property string $research_leader
+ * @property string[]|null $author_ns
+ * @property string|null $institution
+ * @property string[]|null $dating_ns
+ * @property string[]|null $dating_ceans
+ * @property string[]|null $dating_site_type
+ * @property string|null $site_type_original
+ * @property string $size_category
+ * @property string|null $file_name
+ */
 class ActivityResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     id: int,
+     *     activity_number: string,
+     *     activity_year_start: int,
+     *     activity_year_end: int,
+     *     activity_type: string,
+     *     action_number: string|null,
+     *     registration_year: int|null,
+     *     cadastral_area: string|null,
+     *     municipality: string|null,
+     *     position: string|null,
+     *     district: string|null,
+     *     localization_degree: int|null,
+     *     wgs84_coordinate_x: float|null,
+     *     wgs84_coordinate_y: float|null,
+     *     gcs_coordinates: array{latitude: float, longitude: float}|null,
+     *     has_gis_link: bool,
+     *     cvs_number: int,
+     *     research_leader: string,
+     *     author_ns: string[]|null,
+     *     institution: string|null,
+     *     dating_ns: string[]|null,
+     *     dating_ceans: string[]|null,
+     *     dating_site_type: string[]|null,
+     *     site_type_original: string|null,
+     *     size_category: string,
+     *     file_name: string|null,
+     *     created_at: string,
+     *     updated_at: string,
+     *     galleries: array<int, GalleryResource>
+     * }
      */
     public function toArray(Request $request): array
     {

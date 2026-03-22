@@ -5,12 +5,28 @@ namespace Metafori\Archeo\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string|null $description
+ */
 class GalleryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @return array{
+     *     id: int,
+     *     title: string,
+     *     description: string|null,
+     *     images: array<int, array{
+     *         name: string,
+     *         url: string,
+     *         thumb: string,
+     *         size: string,
+     *         mime_type: string
+     *     }>
+     * }
      */
     public function toArray(Request $request): array
     {

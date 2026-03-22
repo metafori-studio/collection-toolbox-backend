@@ -38,11 +38,3 @@ run:
         "php artisan octane:start --server=frankenphp --host=127.0.0.1 --port=8000" \
         "php artisan queue:work --tries=3" \
         --names=server,worker
-
-# Build the production Docker image
-docker-build:
-    @docker compose build
-
-# Run the orchestrated production environment (App + DB + Exporter)
-docker-run:
-    @docker compose up -d
