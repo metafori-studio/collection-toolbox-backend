@@ -57,6 +57,7 @@ class Activity extends Model implements HasMedia
         'dating_ns' => 'array',
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
+        'author_ns' => 'array',
         'has_gis_link' => 'boolean',
         'wgs84_coordinate_x' => 'float',
         'wgs84_coordinate_y' => 'float',

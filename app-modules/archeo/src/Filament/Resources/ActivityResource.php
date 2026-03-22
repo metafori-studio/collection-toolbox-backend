@@ -117,11 +117,11 @@ class ActivityResource extends Resource
                                     ->required(),
                                 Forms\Components\TextInput::make('institution')
                                     ->label(__('archeo::activities.fields.institution')),
-                                Forms\Components\Textarea::make('author_ns')
-                                    ->label(__('archeo::activities.fields.author_ns'))
-                                    ->required()
-                                    ->columnSpanFull(),
                             ]),
+                        Forms\Components\TagsInput::make('author_ns')
+                            ->label(__('archeo::activities.fields.author_ns'))
+                            ->required()
+                            ->columnSpanFull(),
                         Forms\Components\TagsInput::make('dating_ns')
                             ->label(__('archeo::activities.fields.dating_ns')),
                         Forms\Components\TagsInput::make('dating_ceans')
@@ -156,10 +156,16 @@ class ActivityResource extends Resource
                         'district',
                         'position',
                         'research_leader',
-                        'author_ns',
                         'institution',
                         'cadastral_area',
                     ]),
+
+                Tables\Columns\TextColumn::make('author_ns')
+                    ->label(__('archeo::activities.fields.author_ns'))
+                    ->searchable()
+                    ->badge()
+                    ->separator(',')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('activity_type')
                     ->label(__('archeo::activities.fields.activity_type'))

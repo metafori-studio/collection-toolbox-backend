@@ -27,17 +27,29 @@ class ImportActivitiesJob implements ShouldQueue
     public function handle(ActivityExcelParser $parser): void
     {
         try {
-            $count = $parser->importFromPath($this->filePath, $this->originalFileName);
+            $result = $parser->importFromPath($this->filePath, $this->originalFileName);
 
-            Notification::make()
+            $body = "Created: {$result['created']}";
+
+            $notification = Notification::make()
                 ->title(__('archeo::activities.notifications.import_success.title'))
-                ->body(__('archeo::activities.notifications.import_success.body', ['count' => $count]))
-                ->success()
-                ->sendToDatabase($this->user);
+                ->body($body)
+                ->success();
+
+            if (! empty($result['errors'])) {
+                // Ensure errors are displayed on separate lines
+                $errorList = implode("\n", $result['errors']);
+
+                $notification->warning()
+                    ->body($body."\n\nFailed:\n".$errorList)
+                    ->persistent();
+            }
+
+            $notification->sendToDatabase($this->user);
         } catch (Throwable $e) {
             Notification::make()
                 ->title(__('archeo::activities.notifications.import_failed.title'))
-                ->body($e->getMessage())
+                ->body('A system error occurred during import. Please check the file format or contact support.')
                 ->danger()
                 ->sendToDatabase($this->user);
 

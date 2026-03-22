@@ -12,10 +12,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class ActivityExcelParser
 {
     /**
+     * @return array{count: int, errors: array}
+     *
      * @throws InvalidFileFormatException
      * @throws Exception
      */
-    public function importFromPath(string $localPath, string $originalFileName): int
+    public function importFromPath(string $localPath, string $originalFileName): array
     {
         try {
             $spreadsheet = IOFactory::load($localPath);
@@ -33,61 +35,100 @@ class ActivityExcelParser
         // Keep track of original row indices (starting from 1)
         // Header is row 1, data starts at row 2
         $dataRows = array_slice($rows, 1, null, true);
-        $insertedCount = 0;
+        $createdCount = 0;
+        $updatedCount = 0;
+        $errors = [];
+        $processedActivityNumbers = [];
 
-        DB::transaction(function () use ($dataRows, $originalFileName, &$insertedCount) {
+        DB::transaction(function () use ($dataRows, $originalFileName, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
             $mapping = config('archeo.import_mapping');
 
             foreach ($dataRows as $rowIndex => $row) {
-                $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
+                try {
+                    // Silently skip completely empty rows
+                    if (empty(array_filter($row, fn ($cell) => ! is_null($cell) && $cell !== ''))) {
+                        continue;
+                    }
 
-                if (empty($activityNumber)) {
-                    continue;
+                    $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
+
+                    if (empty($activityNumber)) {
+                        $errors[] = "Row {$rowIndex}: Missing activity number.";
+
+                        continue;
+                    }
+
+                    // Sanitize activity number to only include digits
+                    $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
+
+                    if (empty($activityNumber)) {
+                        $errors[] = "Row {$rowIndex}: Invalid activity number format.";
+
+                        continue;
+                    }
+
+                    // Check if we already processed this activity number in current import
+                    if (in_array($activityNumber, $processedActivityNumbers)) {
+                        $errors[] = "Row {$rowIndex} (Activity: {$activityNumber}): Duplicate activity number in this file. Skipping.";
+
+                        continue;
+                    }
+
+                    $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
+                    $years = $this->parseYears($yearStr, $rowIndex);
+
+                    $activity = Activity::query()->where('activity_number', $activityNumber)->first();
+                    $isNew = ! $activity;
+
+                    Activity::query()->updateOrCreate(
+                        ['activity_number' => $activityNumber],
+                        [
+                            'file_name' => $originalFileName,
+                            'cvs_number' => (int) ($row[$mapping['cvs_number'] ?? 'B'] ?? 0),
+                            'registration_year' => (int) ($row[$mapping['registration_year'] ?? 'C'] ?? 0),
+                            'activity_year_start' => $years['start'],
+                            'activity_year_end' => $years['end'],
+                            'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
+                            'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
+                            'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
+                            'position' => $row[$mapping['position'] ?? 'H'] ?? null,
+                            'district' => $row[$mapping['district'] ?? 'I'] ?? null,
+                            'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
+                            'author_ns' => $this->parseArray($row[$mapping['author_ns'] ?? 'K'] ?? null),
+                            'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
+                            'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
+                            'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
+                            'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
+                            'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
+                            'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
+                            'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
+                            'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                            'wgs84_coordinate_x' => $row[$mapping['wgs84_coordinate_x'] ?? 'T'] ?? null,
+                            'wgs84_coordinate_y' => $row[$mapping['wgs84_coordinate_y'] ?? 'U'] ?? null,
+                            'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
+                        ]
+                    );
+
+                    if ($isNew) {
+                        $createdCount++;
+                    } else {
+                        $updatedCount++;
+                    }
+
+                    $processedActivityNumbers[] = $activityNumber;
+                } catch (Exception $e) {
+                    $id = $activityNumber ?? 'Unknown';
+                    $errors[] = "Row {$rowIndex} (Activity: {$id}): ".$e->getMessage();
                 }
-
-                // Sanitize activity number to only include digits
-                $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
-
-                if (empty($activityNumber)) {
-                    continue;
-                }
-
-                $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
-                $years = $this->parseYears($yearStr, $rowIndex);
-
-                Activity::query()->updateOrCreate(
-                    ['activity_number' => $activityNumber],
-                    [
-                        'file_name' => $originalFileName,
-                        'cvs_number' => (int) ($row[$mapping['cvs_number'] ?? 'B'] ?? 0),
-                        'registration_year' => (int) ($row[$mapping['registration_year'] ?? 'C'] ?? 0),
-                        'activity_year_start' => $years['start'],
-                        'activity_year_end' => $years['end'],
-                        'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
-                        'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
-                        'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
-                        'position' => $row[$mapping['position'] ?? 'H'] ?? null,
-                        'district' => $row[$mapping['district'] ?? 'I'] ?? null,
-                        'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
-                        'author_ns' => $row[$mapping['author_ns'] ?? 'K'] ?? '',
-                        'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
-                        'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
-                        'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
-                        'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
-                        'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
-                        'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
-                        'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
-                        'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                        'wgs84_coordinate_x' => $row[$mapping['wgs84_coordinate_x'] ?? 'T'] ?? null,
-                        'wgs84_coordinate_y' => $row[$mapping['wgs84_coordinate_y'] ?? 'U'] ?? null,
-                        'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
-                    ]
-                );
-                $insertedCount++;
             }
         });
 
-        return $insertedCount;
+        return [
+            'created' => $createdCount,
+            'updated' => $updatedCount,
+            'count' => $createdCount + $updatedCount,
+            'errors' => $errors,
+        ];
     }
 
     /**
