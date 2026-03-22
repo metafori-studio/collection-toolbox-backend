@@ -72,8 +72,8 @@ return [
         'dating_site_type' => 'Q',
         'localization_degree' => 'R',
         'has_gis_link' => 'S',
-        'wgs84_coordinate_x' => 'T',
-        'wgs84_coordinate_y' => 'U',
+        'coordinate_x' => 'T',
+        'coordinate_y' => 'U',
         'size_category' => 'V',
     ],
 ];

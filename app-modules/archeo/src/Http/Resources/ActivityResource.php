@@ -18,8 +18,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string|null $position
  * @property string|null $district
  * @property int|null $localization_degree
- * @property float|null $wgs84_coordinate_x
- * @property float|null $wgs84_coordinate_y
+ * @property float|null $coordinate_x
+ * @property float|null $coordinate_y
  * @property array{latitude: float, longitude: float}|null $gcs_coordinates
  * @property bool $has_gis_link
  * @property int $cvs_number
@@ -51,8 +51,8 @@ class ActivityResource extends JsonResource
      *     position: string|null,
      *     district: string|null,
      *     localization_degree: int|null,
-     *     wgs84_coordinate_x: float|null,
-     *     wgs84_coordinate_y: float|null,
+     *     coordinate_x: float|null,
+     *     coordinate_y: float|null,
      *     gcs_coordinates: array{latitude: float, longitude: float}|null,
      *     has_gis_link: bool,
      *     cvs_number: int,
@@ -85,8 +85,8 @@ class ActivityResource extends JsonResource
             'position' => $this->position,
             'district' => $this->district,
             'localization_degree' => $this->localization_degree,
-            'wgs84_coordinate_x' => $this->wgs84_coordinate_x,
-            'wgs84_coordinate_y' => $this->wgs84_coordinate_y,
+            'coordinate_x' => $this->coordinate_x,
+            'coordinate_y' => $this->coordinate_y,
             'gcs_coordinates' => $this->gcs_coordinates,
             'has_gis_link' => $this->has_gis_link,
             'cvs_number' => $this->cvs_number,

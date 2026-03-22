@@ -38,8 +38,8 @@ class Activity extends Model implements HasMedia
         'position',
         'district',
         'localization_degree',
-        'wgs84_coordinate_x',
-        'wgs84_coordinate_y',
+        'coordinate_x',
+        'coordinate_y',
         'has_gis_link',
         'cvs_number',
         'research_leader',
@@ -59,8 +59,8 @@ class Activity extends Model implements HasMedia
         'dating_site_type' => 'array',
         'author_ns' => 'array',
         'has_gis_link' => 'boolean',
-        'wgs84_coordinate_x' => 'float',
-        'wgs84_coordinate_y' => 'float',
+        'coordinate_x' => 'float',
+        'coordinate_y' => 'float',
     ];
 
     public function galleries(): HasMany
@@ -90,13 +90,13 @@ class Activity extends Model implements HasMedia
     protected function gcsCoordinates(): Attribute
     {
         return Attribute::get(function () {
-            if (! $this->wgs84_coordinate_x || ! $this->wgs84_coordinate_y) {
+            if (! $this->coordinate_x || ! $this->coordinate_y) {
                 return null;
             }
 
             return app(CoordinateTransformer::class)->sjtskToWgs84(
-                (float) $this->wgs84_coordinate_x,
-                (float) $this->wgs84_coordinate_y
+                (float) $this->coordinate_x,
+                (float) $this->coordinate_y
             );
         });
     }

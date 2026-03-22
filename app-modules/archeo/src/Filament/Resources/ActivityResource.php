@@ -95,11 +95,11 @@ class ActivityResource extends Resource
                                 Forms\Components\TextInput::make('localization_degree')
                                     ->label(__('archeo::activities.fields.localization_degree'))
                                     ->numeric(),
-                                Forms\Components\TextInput::make('wgs84_coordinate_x')
+                                Forms\Components\TextInput::make('coordinate_x')
                                     ->label(__('archeo::activities.fields.coordinate_x'))
                                     ->numeric()
                                     ->step('0.000001'),
-                                Forms\Components\TextInput::make('wgs84_coordinate_y')
+                                Forms\Components\TextInput::make('coordinate_y')
                                     ->label(__('archeo::activities.fields.coordinate_y'))
                                     ->numeric()
                                     ->step('0.000001'),
