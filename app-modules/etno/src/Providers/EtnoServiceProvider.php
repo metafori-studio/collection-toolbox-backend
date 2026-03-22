@@ -11,7 +11,9 @@ use Metafori\Core\Models\Municipality;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
 use Metafori\Etno\EtnoPlugin;
+use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
+use Metafori\Etno\Observers\DocumentObserver;
 use Metafori\Etno\Observers\ItemObserver;
 use Metafori\Etno\Observers\LocalityObserver;
 
@@ -33,6 +35,7 @@ class EtnoServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'etno');
 
         Item::observe(ItemObserver::class);
+        Document::observe(DocumentObserver::class);
 
         $localityModels = [
             Country::class,
