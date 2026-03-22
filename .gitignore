@@ -40,3 +40,7 @@ Thumbs.db
 
 # Nix
 .nix-data
+
+**/caddy
+frankenphp
+frankenphp-worker.php

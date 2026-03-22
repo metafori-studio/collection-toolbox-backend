@@ -8,7 +8,7 @@ start:
 setup:
     @composer run setup
 
-run:
+dev:
     @composer run dev
 
 start-storage:
@@ -31,3 +31,10 @@ stop-monitoring:
 
 all: start-storage start-databases start-monitoring
 die: stop-monitoring stop-databases stop-storage
+
+run:
+    @npm run build
+    @npx concurrently -c "#93c5fd,#c4b5fd" \
+        "php artisan octane:start --server=frankenphp --host=127.0.0.1 --port=8000" \
+        "php artisan queue:work --tries=3" \
+        --names=server,worker

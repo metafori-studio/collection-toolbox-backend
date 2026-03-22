@@ -54,7 +54,7 @@ return [
     'notifications' => [
         'import_queued' => [
             'title' => 'Import Queued',
-            'body' => 'The import process has started in the background. you will be notified when it is complete.',
+            'body' => 'The import process has started in the background. You will be notified when it is complete.',
         ],
         'import_success' => [
             'title' => 'Import Successful',
