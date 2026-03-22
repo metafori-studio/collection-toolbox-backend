@@ -5,22 +5,10 @@ namespace Metafori\Etno\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\MissingValue;
-use Metafori\Core\Http\Resources\CountryResource;
-use Metafori\Core\Http\Resources\DistrictResource;
 use Metafori\Core\Http\Resources\KeywordResource;
-use Metafori\Core\Http\Resources\LocationResource;
-use Metafori\Core\Http\Resources\MunicipalityPartResource;
-use Metafori\Core\Http\Resources\MunicipalityResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
-use Metafori\Core\Http\Resources\RegionResource;
-use Metafori\Core\Models\Contracts\Locality;
-use Metafori\Core\Models\Country;
-use Metafori\Core\Models\District;
-use Metafori\Core\Models\Location;
-use Metafori\Core\Models\Municipality;
-use Metafori\Core\Models\MunicipalityPart;
-use Metafori\Core\Models\Region;
+use Metafori\Etno\Http\Resources\Concerns\ResolvesLocality;
 use Metafori\Etno\Models\Item;
 
 /**
@@ -28,6 +16,8 @@ use Metafori\Etno\Models\Item;
  */
 class ItemResource extends JsonResource
 {
+    use ResolvesLocality;
+
     protected DocumentResource $documentResource;
 
     protected function getDocumentResource(): DocumentResource
@@ -101,16 +91,7 @@ class ItemResource extends JsonResource
             'publication_date_settings' => $this->publication_date_settings,
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
-            'locality' => $this->whenLoaded('locality', function (Locality $locality): CountryResource|RegionResource|DistrictResource|MunicipalityResource|MunicipalityPartResource|LocationResource {
-                return match (true) {
-                    $locality instanceof Country => new CountryResource($locality),
-                    $locality instanceof Region => new RegionResource($locality),
-                    $locality instanceof District => new DistrictResource($locality),
-                    $locality instanceof Municipality => new MunicipalityResource($locality),
-                    $locality instanceof MunicipalityPart => new MunicipalityPartResource($locality),
-                    $locality instanceof Location => new LocationResource($locality),
-                };
-            }),
+            'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),
             'authors' => PersonResource::collection($this->whenLoaded('authors')),
             'researchers' => PersonResource::collection($this->whenLoaded('researchers')),
             'originators' => OriginatorResource::collection($this->whenLoaded('originators')),
