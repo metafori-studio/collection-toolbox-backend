@@ -180,7 +180,7 @@ class Item extends Model implements Inheritable
             throw new \LogicException("Attribute {$attribute} is not inheritable.");
         }
 
-        return ! \in_array($attribute, $this->document_overrides ?? []);
+        return ! \in_array($attribute, $this->document_overrides);
     }
 
     public function isInheritableAndInherited(string $attribute): bool
