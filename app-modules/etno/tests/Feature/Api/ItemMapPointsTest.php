@@ -133,3 +133,42 @@ it('does not include item in map points when document is deleted', function () {
     $response = getJson(route('api.etno.items.map-points'));
     expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->id);
 });
+
+it('returns map points as a sequential array when items are filtered out', function () {
+    $locality1 = Location::factory()->withCoordinates()->create();
+    $document1 = Document::factory()->for($locality1, 'locality');
+    $item1 = Item::factory()->for($document1, 'document')->create();
+
+    $document2 = Document::factory()->withoutLocality();
+    $item2 = Item::factory()->for($document2, 'document')->create();
+
+    $locality3 = Location::factory()->withCoordinates()->create();
+    $document3 = Document::factory()->for($locality3, 'locality');
+    $item3 = Item::factory()->for($document3, 'document')->create();
+
+    $response = getJson(route('api.etno.items.map-points'));
+    $response->assertStatus(200);
+
+    $data = collect($response->json('data'));
+
+    expect($data)->toHaveCount(2)
+        ->and($data->pluck('id'))->toContain($item1->id, $item3->id)
+        ->and($data->pluck('id'))->not->toContain($item2->id);
+
+    $response->assertJsonPath('data.0.id', $item1->id);
+    $response->assertJsonPath('data.1.id', $item3->id);
+});
+
+it('includes item in map points when document is restored', function () {
+    $localityWithCoordinates = Location::factory()->withCoordinates()->create();
+    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $item = Item::factory()->for($document, 'document')->create();
+    $item->document->delete();
+
+    getJson(route('api.etno.items.map-points'));
+
+    $item->document->restore();
+
+    $response = getJson(route('api.etno.items.map-points'));
+    expect(collect($response->json('data'))->pluck('id'))->toContain($item->id);
+});
