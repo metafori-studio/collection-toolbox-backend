@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -90,6 +91,14 @@ class Item extends Model implements Inheritable
         'content_note',
         'technical_note',
     ];
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope(
+            'document',
+            fn (Builder $builder) => $builder->whereHas('document')
+        );
+    }
 
     public function casts(): array
     {
