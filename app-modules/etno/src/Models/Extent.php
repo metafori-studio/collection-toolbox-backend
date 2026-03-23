@@ -11,10 +11,10 @@ class Extent implements Arrayable
 
     public ?ExtentUnit $unit;
 
-    public function __construct(?string $value = null, ExtentUnit|string|null $unit = null)
+    public function __construct(?string $value = null, ?string $unit = null)
     {
         $this->value = $value;
-        $this->unit = $unit instanceof ExtentUnit ? $unit : ExtentUnit::tryFrom($unit);
+        $this->unit = ExtentUnit::tryFrom($unit);
     }
 
     public function toArray(): array
