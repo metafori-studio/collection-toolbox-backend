@@ -2,4 +2,11 @@
 
 namespace Metafori\Core\Models\Contracts;
 
-interface Locality {}
+/**
+ * @property-read float|null $latitude
+ * @property-read float|null $longitude
+ */
+interface Locality
+{
+    public function hasCoordinates(): bool;
+}

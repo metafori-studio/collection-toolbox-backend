@@ -19,16 +19,14 @@ class LocalityObserver
 
     public function deleted(Locality $locality): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $locality */
-        if ($locality->latitude !== null && $locality->longitude !== null) {
+        if ($locality->hasCoordinates()) {
             $this->repository->invalidateMapPointsCache();
         }
     }
 
     public function restored(Locality $locality): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $locality */
-        if ($locality->latitude !== null && $locality->longitude !== null) {
+        if ($locality->hasCoordinates()) {
             $this->repository->invalidateMapPointsCache();
         }
     }
