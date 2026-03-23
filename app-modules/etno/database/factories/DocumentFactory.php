@@ -28,6 +28,8 @@ use Metafori\Etno\Models\Project;
  */
 class DocumentFactory extends Factory
 {
+    use Concerns\HasLocality;
+
     protected $model = Document::class;
 
     /**

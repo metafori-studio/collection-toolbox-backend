@@ -3,8 +3,8 @@
 namespace Metafori\Etno\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Core\Models\District;
@@ -27,64 +27,77 @@ class ItemRepository
             MunicipalityPart::class => ['municipality.district.region.country'],
         ];
 
+        $with = [
+            'institution',
+            'project',
+            'authors',
+            'researchers',
+            'originators.person',
+            'keywords',
+            'researchCollections',
+            'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
+                ...$morphWith,
+                Location::class => [
+                    'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
+                ],
+            ]),
+        ];
+
         return Item::query()
-            ->with([
-                'institution',
-                'project',
-                'authors',
-                'researchers',
-                'originators.person',
-                'keywords',
-                'researchCollections',
-                'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith + [
-                    Location::class => [
-                        'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
-                    ],
-                ]),
-            ])
+            ->with(self::withDocument($with))
             ->findOrFail($id);
     }
 
     public function paginate(): LengthAwarePaginator
     {
         return Item::query()
-            ->with([
+            ->with(self::withDocument([
                 'authors',
                 'researchers',
                 'originators.person',
-            ])
+            ]))
             ->paginate();
     }
 
     public function mapPoints(): Collection
     {
+        $with = [
+            'locality' => fn (MorphTo $query) => $query->select([
+                'id',
+                'latitude',
+                'longitude',
+            ]),
+        ];
+
         return Cache::rememberForever(
             self::MAP_POINTS_CACHE_KEY,
-            fn () => Item::query()
+            Item::query()
                 ->select([
                     'id',
                     'locality_id',
                     'locality_type',
+                    'document_id',
+                    'document_overrides',
                 ])
-                ->with(['locality' => function ($query) {
-                    $query->select([
-                        'id',
-                        'latitude',
-                        'longitude',
-                    ]);
-                }])
-                ->whereHas(
-                    'locality',
-                    fn (Builder $query) => $query
-                        ->whereNotNull('latitude')
-                        ->whereNotNull('longitude')
-                )
-                ->get()
+                ->with(self::withDocument($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
+                    'id',
+                    'locality_id',
+                    'locality_type',
+                ])))
+                ->get(...)
         );
     }
 
     public function invalidateMapPointsCache(): void
     {
         Cache::forget(self::MAP_POINTS_CACHE_KEY);
+    }
+
+    protected static function withDocument(array $with, ?\Closure $documentWith = null): array
+    {
+        return [
+            ...$with,
+            'document' => fn (BelongsTo $belongsTo) => tap($belongsTo->with($with), $documentWith),
+        ];
     }
 }

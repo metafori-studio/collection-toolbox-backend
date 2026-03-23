@@ -11,4 +11,10 @@ trait Locality
             'longitude' => 'decimal:6',
         ]);
     }
+
+    public function hasCoordinates(): bool
+    {
+        return $this->latitude !== null
+            && $this->longitude !== null;
+    }
 }

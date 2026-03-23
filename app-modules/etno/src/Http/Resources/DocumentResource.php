@@ -7,16 +7,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
-use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
 use Metafori\Etno\Http\Resources\Concerns\ResolvesLocality;
-use Metafori\Etno\Models\Item;
+use Metafori\Etno\Models\Document;
 
 /**
- * @mixin Item
+ * @mixin Document
  */
-class ItemResource extends JsonResource
+class DocumentResource extends JsonResource
 {
-    use InheritsDocument, ResolvesLocality;
+    use ResolvesLocality;
 
     /**
      * Transform the resource into an array.
