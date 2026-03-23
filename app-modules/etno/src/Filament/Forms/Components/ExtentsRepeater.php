@@ -13,6 +13,7 @@ class ExtentsRepeater extends Repeater
 
         $this->label('Extents')
             ->reorderableWithButtons()
+            ->defaultItems(0)
             ->schema([
                 FusedGroup::make()
                     ->schema([
