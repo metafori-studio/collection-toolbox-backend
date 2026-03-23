@@ -21,7 +21,7 @@ class Extent implements Arrayable
     {
         return [
             'value' => $this->value,
-            'unit' => $this->unit,
+            'unit' => $this->unit?->value,
         ];
     }
 }
