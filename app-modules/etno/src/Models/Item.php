@@ -150,19 +150,6 @@ class Item extends Model implements Inheritable
         return $this->isInheritable($attribute) && $this->isInherited($attribute);
     }
 
-    public function getParentValue(string $attribute, ?string $locale = null, bool $useFallbackLocale = true): mixed
-    {
-        if (! $parent = $this->getParent()) {
-            throw new \LogicException('No parent document found.');
-        }
-
-        if ($locale && $parent->isTranslatableAttribute($attribute)) {
-            return $parent->getTranslation($attribute, $locale, $useFallbackLocale);
-        }
-
-        return $parent->{$attribute};
-    }
-
     public function getParent(): ?Document
     {
         return $this->document;
