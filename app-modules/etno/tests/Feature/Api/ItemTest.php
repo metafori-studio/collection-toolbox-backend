@@ -7,12 +7,13 @@ use Metafori\Etno\Models\Item;
 use function Pest\Laravel\getJson;
 
 it('can list items', function () {
-    Item::factory()
-        ->count(2)
+    $document = Document::factory()
         ->hasAuthors(2)
         ->hasResearchers(2)
-        ->hasOriginators(2)
-        ->withDocumentOverrides()
+        ->hasOriginators(2);
+    Item::factory()
+        ->count(2)
+        ->for($document, 'document')
         ->create();
 
     $response = getJson(route('api.etno.items.index'));
