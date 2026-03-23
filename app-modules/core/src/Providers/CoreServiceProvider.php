@@ -11,6 +11,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -53,6 +54,7 @@ class CoreServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::prependMiddlewareToGroup('api', EnsureFrontendRequestsAreStateful::class);
+        Route::prependMiddlewareToGroup('api', StartSession::class);
 
         ResetPassword::createUrlUsing(FrontendFacade::resetPasswordUrl(...));
         SetPassword::createUrlUsing(FrontendFacade::setPasswordUrl(...));
