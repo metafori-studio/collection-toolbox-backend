@@ -15,10 +15,10 @@ use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
+use Metafori\Etno\Casts\ExtentCollectionCast;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Spatie\Translatable\HasTranslations;
@@ -65,7 +65,7 @@ class Document extends Model
             'access_rights' => AccessRights::class,
             'license' => License::class,
             'production_methods' => AsEnumCollection::of(ProductionMethod::class),
-            'extent_unit' => ExtentUnit::class,
+            'extents' => ExtentCollectionCast::class,
         ];
     }
 

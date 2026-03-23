@@ -75,8 +75,12 @@ class DocumentFactory extends Factory
             'id' => Str::uuid()->toString(),
             'doi' => fake()->optional()->numerify('10.####/#######'),
             'type' => fake()->randomElement(ItemType::cases()),
-            'extent' => fake()->optional()->randomFloat(2, 1, 100),
-            'extent_unit' => fake()->optional()->randomElement(ExtentUnit::cases()),
+            'extents' => fake()->boolean() ? [
+                [
+                    'value' => (string) fake()->randomFloat(2, 1, 100),
+                    'unit' => fake()->randomElement(ExtentUnit::cases())->value,
+                ],
+            ] : null,
             'language' => fake()->optional()->randomElement(Language::cases()),
             'collection_method' => fake()->optional()->randomElement(CollectionMethod::cases()),
             'accrual_method' => fake()->optional()->randomElement(AccrualMethod::cases()),

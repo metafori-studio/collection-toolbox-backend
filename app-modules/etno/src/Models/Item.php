@@ -16,10 +16,10 @@ use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
+use Metafori\Etno\Casts\ExtentCollectionCast;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Contracts\Inheritable;
@@ -54,8 +54,7 @@ class Item extends Model implements Inheritable
         'content_note',
         'technical_note',
         'type',
-        'extent',
-        'extent_unit',
+        'extents',
         'language',
         'accrual_method',
         'collection_method',
@@ -119,7 +118,7 @@ class Item extends Model implements Inheritable
             'access_rights' => AccessRights::class,
             'license' => License::class,
             'production_methods' => AsEnumCollection::of(ProductionMethod::class),
-            'extent_unit' => ExtentUnit::class,
+            'extents' => ExtentCollectionCast::class,
             'document_overrides' => 'array',
         ];
     }

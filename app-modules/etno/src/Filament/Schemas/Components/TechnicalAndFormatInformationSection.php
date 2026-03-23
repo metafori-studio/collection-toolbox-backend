@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Filament\Schemas\Components;
 
 use Filament\Schemas\Components\Section;
+use Metafori\Etno\Filament\Forms\Components\ExtentsRepeater;
 use Metafori\Etno\Filament\Forms\Components\ProductionMethodsSelect;
 use Metafori\Etno\Filament\Forms\Components\TechnicalNoteInput;
 
@@ -14,7 +15,7 @@ class TechnicalAndFormatInformationSection extends Section
 
         $this->heading('Technical and Format Information')
             ->schema([
-                ExtentGroup::make()
+                ExtentsRepeater::make('extents')
                     ->columnSpanFull(),
                 ProductionMethodsSelect::make('production_methods'),
                 TechnicalNoteInput::make('technical_note')

@@ -47,8 +47,7 @@ class ItemResource extends JsonResource
             /** @var string|null */
             'technical_note' => $this->technical_note,
             'type' => $this->type,
-            'extent' => $this->extent,
-            'extent_unit' => $this->extent_unit,
+            'extents' => $this->extents,
             'language' => $this->language,
             'accrual_method' => $this->accrual_method,
             'collection_method' => $this->collection_method,
