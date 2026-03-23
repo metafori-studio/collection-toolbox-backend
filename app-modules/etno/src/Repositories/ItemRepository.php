@@ -79,7 +79,11 @@ class ItemRepository
                     'document_id',
                     'document_overrides',
                 ])
-                ->with($this->withDocument($with))
+                ->with(self::withDocument($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
+                    'id',
+                    'locality_id',
+                    'locality_type',
+                ])))
                 ->get(...)
         );
     }
@@ -89,11 +93,11 @@ class ItemRepository
         Cache::forget(self::MAP_POINTS_CACHE_KEY);
     }
 
-    protected static function withDocument(array $with): array
+    protected static function withDocument(array $with, ?\Closure $documentWith = null): array
     {
         return [
             ...$with,
-            'document' => fn (BelongsTo $belongsTo) => $belongsTo->with($with),
+            'document' => fn (BelongsTo $belongsTo) => tap($belongsTo->with($with), $documentWith),
         ];
     }
 }
