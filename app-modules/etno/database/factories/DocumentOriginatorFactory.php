@@ -8,7 +8,7 @@ use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\DocumentOriginator;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\ItemOriginator>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\DocumentOriginator>
  */
 class DocumentOriginatorFactory extends Factory
 {
