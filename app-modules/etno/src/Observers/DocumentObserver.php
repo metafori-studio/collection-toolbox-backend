@@ -18,14 +18,20 @@ class DocumentObserver
 
     public function deleted(Document $document): void
     {
-        if ($document->locality_id !== null) {
+        $shouldInvalidate = $document->locality_id !== null
+            || $document->items()->has('locality')->exists();
+
+        if ($shouldInvalidate) {
             $this->repository->invalidateMapPointsCache();
         }
     }
 
     public function restored(Document $document): void
     {
-        if ($document->locality_id !== null) {
+        $shouldInvalidate = $document->locality_id !== null
+            || $document->items()->has('locality')->exists();
+
+        if ($shouldInvalidate) {
             $this->repository->invalidateMapPointsCache();
         }
     }
