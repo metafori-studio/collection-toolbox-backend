@@ -3,7 +3,6 @@
 namespace Metafori\Etno\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,23 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Metafori\Core\Enums\Language;
-use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
-use Metafori\Etno\Casts\ExtentCollectionCast;
-use Metafori\Etno\Enums\AccessRights;
-use Metafori\Etno\Enums\AccrualMethod;
-use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\ItemType;
-use Metafori\Etno\Enums\ProductionMethod;
+use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Metafori\Etno\Models\Contracts\Inheritable;
-use Spatie\Translatable\HasTranslations;
 
 class Item extends Model implements Inheritable
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasDocumentMetadata, HasFactory, SoftDeletes;
 
     protected $table = 'etno_items';
 
@@ -80,17 +71,6 @@ class Item extends Model implements Inheritable
         'researchCollections',
     ];
 
-    protected array $translatable = [
-        'title',
-        'subtitle',
-        'abstract',
-        'general_note',
-        'terms_of_use',
-        'location_note',
-        'content_note',
-        'technical_note',
-    ];
-
     protected static function booted(): void
     {
         static::addGlobalScope(
@@ -102,35 +82,18 @@ class Item extends Model implements Inheritable
     public function casts(): array
     {
         return [
-            'time_period_start' => 'date',
-            'time_period_end' => 'date',
-            'time_period_settings' => 'json',
-            'submission_date_start' => 'date',
-            'submission_date_end' => 'date',
-            'submission_date_settings' => 'json',
-            'publication_date_start' => 'date',
-            'publication_date_end' => 'date',
-            'publication_date_settings' => 'json',
-            'type' => ItemType::class,
-            'language' => Language::class,
-            'accrual_method' => AccrualMethod::class,
-            'collection_method' => CollectionMethod::class,
-            'access_rights' => AccessRights::class,
-            'license' => License::class,
-            'production_methods' => AsEnumCollection::of(ProductionMethod::class),
-            'extents' => ExtentCollectionCast::class,
             'document_overrides' => 'array',
         ];
     }
 
     public function institution(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'institution_id');
+        return $this->belongsTo(Organization::class);
     }
 
     public function project(): BelongsTo
     {
-        return $this->belongsTo(Project::class, 'project_id');
+        return $this->belongsTo(Project::class);
     }
 
     public function locality(): MorphTo
@@ -150,7 +113,7 @@ class Item extends Model implements Inheritable
 
     public function originators(): HasMany
     {
-        return $this->hasMany(ItemOriginator::class, 'item_id')->orderBy('sort_order');
+        return $this->hasMany(ItemOriginator::class)->orderBy('sort_order');
     }
 
     public function keywords(): BelongsToMany
@@ -165,7 +128,7 @@ class Item extends Model implements Inheritable
 
     public function document(): BelongsTo
     {
-        return $this->belongsTo(Document::class, 'document_id');
+        return $this->belongsTo(Document::class);
     }
 
     public function isInheritable(string $attribute): bool
