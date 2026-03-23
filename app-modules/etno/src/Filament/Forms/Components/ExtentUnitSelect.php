@@ -12,7 +12,6 @@ class ExtentUnitSelect extends Select
         parent::setUp();
 
         $this->label('Extent Unit')
-            ->requiredWith('extent')
             ->options(ExtentUnit::class)
             ->sortedOptions()
             ->searchable();

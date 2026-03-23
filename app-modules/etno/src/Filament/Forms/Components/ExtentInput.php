@@ -11,7 +11,6 @@ class ExtentInput extends TextInput
         parent::setUp();
 
         $this->label('Extent')
-            ->requiredWith('extent_unit')
             ->maxLength(255);
     }
 }
