@@ -39,7 +39,7 @@ class GalleriesRelationManager extends RelationManager
                 SpatieMediaLibraryFileUpload::make('gallery_images')
                     ->label(__('archeo::activities.fields.gallery_images'))
                     ->collection('gallery_images')
-                    ->disk(config('archeo.media_disk', 'local'))
+                    ->disk(config('archeo.media_disk', Gallery::DEFAULT_MEDIA_DISK))
                     ->multiple()
                     ->reorderable()
                     ->columnSpanFull(),
@@ -67,7 +67,7 @@ class GalleriesRelationManager extends RelationManager
                         SpatieMediaLibraryImageEntry::make('gallery_images')
                             ->label('')
                             ->collection('gallery_images')
-                            ->disk(config('archeo.media_disk', 'local'))
+                            ->disk(config('archeo.media_disk', Gallery::DEFAULT_MEDIA_DISK))
                             ->conversion('thumb')
                             ->columnSpanFull(),
                     ]),
@@ -81,7 +81,7 @@ class GalleriesRelationManager extends RelationManager
                 SpatieMediaLibraryImageColumn::make('gallery_images')
                     ->label('')
                     ->collection('gallery_images')
-                    ->disk(config('archeo.media_disk', 'local'))
+                    ->disk(config('archeo.media_disk', Gallery::DEFAULT_MEDIA_DISK))
                     ->conversion('thumb')
                     ->circular()
                     ->stacked()

@@ -8,9 +8,11 @@ use Metafori\Core\Models\User;
 
 class ActivityAssignment extends Model
 {
+    protected const DEFAULT_TABLE_NAME = 'archeo_activity_assignments';
+
     public function getTable(): string
     {
-        return config('archeo.assignments_table_name', 'archeo_activity_assignments');
+        return config('archeo.assignments_table_name', self::DEFAULT_TABLE_NAME);
     }
 
     protected $fillable = [

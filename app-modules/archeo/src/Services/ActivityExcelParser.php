@@ -12,6 +12,34 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 class ActivityExcelParser
 {
     /**
+     * @deprecated Config-based mapping is deprecated. Use direct mapping in this class instead.
+     */
+    protected const DEFAULT_IMPORT_MAPPING = [
+        'activity_number' => 'A',
+        'cvs_number' => 'B',
+        'registration_year' => 'C',
+        'years' => 'D',
+        'activity_type' => 'E',
+        'cadastral_area' => 'F',
+        'municipality' => 'G',
+        'position' => 'H',
+        'district' => 'I',
+        'research_leader' => 'J',
+        'author_ns' => 'K',
+        'institution' => 'L',
+        'action_number' => 'M',
+        'dating_ns' => 'N',
+        'dating_ceans' => 'O',
+        'site_type_original' => 'P',
+        'dating_site_type' => 'Q',
+        'localization_degree' => 'R',
+        'has_gis_link' => 'S',
+        'coordinate_x' => 'T',
+        'coordinate_y' => 'U',
+        'size_category' => 'V',
+    ];
+
+    /**
      * @return array{count: int, created: int, updated: int, errors: array}
      *
      * @throws InvalidFileFormatException
@@ -41,7 +69,7 @@ class ActivityExcelParser
         $processedActivityNumbers = [];
 
         DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
-            $mapping = config('archeo.import_mapping');
+            $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
 
             foreach ($dataRows as $rowIndex => $row) {
                 try {
