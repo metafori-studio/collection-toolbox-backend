@@ -26,96 +26,96 @@ class ItemIndexRequest extends FormRequest
             /**
              * Map of filtering constraints.
              */
-            'filter' => ['nullable', 'array'],
+            'filter' => ['array'],
 
             /**
              * Filter by Item types (matches any if multiple given).
              */
-            'filter.type' => ['nullable', 'array'],
+            'filter.type' => ['array'],
             'filter.type.*' => ['string'],
 
             /**
              * Filter by languages (matches any if multiple given).
              */
-            'filter.language' => ['nullable', 'array'],
+            'filter.language' => ['array'],
             'filter.language.*' => ['string'],
 
             /**
              * Filter by accrual methods (matches any if multiple given).
              */
-            'filter.accrual_method' => ['nullable', 'array'],
+            'filter.accrual_method' => ['array'],
             'filter.accrual_method.*' => ['string'],
 
             /**
              * Filter by collection methods (matches any if multiple given).
              */
-            'filter.collection_method' => ['nullable', 'array'],
+            'filter.collection_method' => ['array'],
             'filter.collection_method.*' => ['string'],
 
             /**
              * Filter by access rights (matches any if multiple given).
              */
-            'filter.access_rights' => ['nullable', 'array'],
+            'filter.access_rights' => ['array'],
             'filter.access_rights.*' => ['string'],
 
             /**
              * Filter by licenses (matches any if multiple given).
              */
-            'filter.license' => ['nullable', 'array'],
+            'filter.license' => ['array'],
             'filter.license.*' => ['string'],
 
             /**
              * Filter by production methods (matches any if multiple given).
              */
-            'filter.production_methods' => ['nullable', 'array'],
+            'filter.production_methods' => ['array'],
             'filter.production_methods.*' => ['string'],
 
             /**
              * Filter by the IDs of related authors (matches any if multiple given).
              */
-            'filter.author.person_id' => ['nullable', 'array'],
+            'filter.author.person_id' => ['array'],
             'filter.author.person_id.*' => ['integer'],
 
             /**
              * Filter by the IDs of related researchers.
              */
-            'filter.researcher.person_id' => ['nullable', 'array'],
+            'filter.researcher.person_id' => ['array'],
             'filter.researcher.person_id.*' => ['integer'],
 
             /**
              * Filter by the IDs of related originators.
              */
-            'filter.originator.person_id' => ['nullable', 'array'],
+            'filter.originator.person_id' => ['array'],
             'filter.originator.person_id.*' => ['integer'],
 
             /**
              * Filter by the IDs of mapped keywords.
              */
-            'filter.keyword.id' => ['nullable', 'array'],
+            'filter.keyword.id' => ['array'],
             'filter.keyword.id.*' => ['integer'],
 
             /**
              * Filter by the IDs of related research collections.
              */
-            'filter.research_collection.id' => ['nullable', 'array'],
+            'filter.research_collection.id' => ['array'],
             'filter.research_collection.id.*' => ['integer'],
 
             /**
              * Filter by the ID of the related institution.
              */
-            'filter.institution.id' => ['nullable', 'array'],
+            'filter.institution.id' => ['array'],
             'filter.institution.id.*' => ['integer'],
 
             /**
              * Filter by the ID of the related project.
              */
-            'filter.project.id' => ['nullable', 'array'],
+            'filter.project.id' => ['array'],
             'filter.project.id.*' => ['integer'],
 
             /**
              * Filter by the mapped locality (format is `{type}:{id}`). Matches any if multiple given.
              */
-            'filter.locality' => ['nullable', 'array'],
+            'filter.locality' => ['array'],
             'filter.locality.*' => ['string'],
 
             /**
