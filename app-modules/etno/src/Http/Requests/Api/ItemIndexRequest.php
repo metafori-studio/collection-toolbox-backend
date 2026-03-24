@@ -2,7 +2,6 @@
 
 namespace Metafori\Etno\Http\Requests\Api;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ItemIndexRequest extends FormRequest
@@ -129,6 +128,4 @@ class ItemIndexRequest extends FormRequest
             'per_page' => ['nullable', 'integer', 'min:1'],
         ];
     }
-
-    protected function failedValidation(Validator $validator): void {}
 }
