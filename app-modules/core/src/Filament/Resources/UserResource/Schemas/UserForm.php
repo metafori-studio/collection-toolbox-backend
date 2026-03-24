@@ -22,11 +22,12 @@ class UserForm
                     ->required()
                     ->maxLength(255),
                 Select::make('roles')
+                    ->label(__('core::enums.Role.label'))
                     ->relationship('roles', 'name')
-                    ->getOptionLabelFromRecordUsing(fn (Role $role) => $role->label)
                     ->multiple()
                     ->preload()
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
             ]);
     }
 }

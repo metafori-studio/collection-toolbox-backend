@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Metafori\Archeo\Database\Seeders\ArcheoRoleSeeder;
+use Metafori\Core\Database\Seeders\RoleSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ArcheoRoleSeeder::class);
+        $this->call([
+            RoleSeeder::class,
+        ]);
     }
 }

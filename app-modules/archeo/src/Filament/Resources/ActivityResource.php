@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 use Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Core\Enums\Role;
 
 class ActivityResource extends Resource
 {
@@ -240,7 +241,7 @@ class ActivityResource extends Resource
         $user = auth()->user();
         $query = parent::getEloquentQuery();
 
-        if ($user && $user->hasRole(['admin', 'archeo_admin'])) {
+        if ($user && $user->hasRole(Role::Admin)) {
             return $query;
         }
 

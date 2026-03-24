@@ -505,6 +505,7 @@ return [
         'cc0' => 'CC0',
     ],
     'Role' => [
-        'admin' => 'admin',
+        'label' => 'Roly',
+        'admin' => 'Admin',
     ],
 ];

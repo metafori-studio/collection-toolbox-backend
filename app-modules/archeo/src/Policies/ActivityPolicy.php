@@ -3,13 +3,14 @@
 namespace Metafori\Archeo\Policies;
 
 use Metafori\Archeo\Models\Activity;
+use Metafori\Core\Enums\Role;
 use Metafori\Core\Models\User;
 
 class ActivityPolicy
 {
     public function viewAny(User $user): bool
     {
-        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+        if ($user->hasRole(Role::Admin)) {
             return true;
         }
 
@@ -19,7 +20,7 @@ class ActivityPolicy
 
     public function view(User $user, Activity $activity): bool
     {
-        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+        if ($user->hasRole(Role::Admin)) {
             return true;
         }
 
@@ -28,36 +29,36 @@ class ActivityPolicy
 
     public function create(User $user): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function update(User $user, Activity $activity): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function delete(User $user, Activity $activity): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function deleteAny(User $user): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function restore(User $user, Activity $activity): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function forceDelete(User $user, Activity $activity): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 
     public function import(User $user): bool
     {
-        return $user->hasRole(['admin', 'archeo_admin']);
+        return $user->hasRole(Role::Admin);
     }
 }
