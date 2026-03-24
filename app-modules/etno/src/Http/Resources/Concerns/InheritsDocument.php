@@ -36,7 +36,7 @@ trait InheritsDocument
 
     protected function resolveInheritableAttribute(string $attribute)
     {
-        if (! method_exists($this->resource, $attribute)) {
+        if (! $this->resource->isRelation($attribute)) {
             return $attribute;
         }
 
