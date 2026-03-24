@@ -117,16 +117,6 @@ class ItemIndexRequest extends FormRequest
              */
             'filter.locality' => ['array'],
             'filter.locality.*' => ['string'],
-
-            /**
-             * Filter for items starting on or after a specified date (`Y-m-d`).
-             */
-            'filter.time_period_start' => ['nullable', 'date'],
-
-            /**
-             * Filter for items ending on or before a specified date (`Y-m-d`).
-             */
-            'filter.time_period_end' => ['nullable', 'date'],
         ];
     }
 
