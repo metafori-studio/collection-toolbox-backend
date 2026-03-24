@@ -15,11 +15,11 @@ trait CanBeInherited
             return $this;
         }
 
-        $attributeName = $this->getName();
-        $action = ToggleInheritanceAction::make("{$attributeName}_toggle_inheritance")
-            ->attributeName($attributeName);
+        $name = $this->getName();
+        $action = ToggleInheritanceAction::make("{$name}_toggle_inheritance")
+            ->names([$name]);
 
-        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, $attributeName));
+        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, [$name]));
 
         return match (true) {
             $this instanceof MorphToSelect => $this->modifyTypeSelectUsing(static fn (Select $select) => $select->suffixAction($action)),

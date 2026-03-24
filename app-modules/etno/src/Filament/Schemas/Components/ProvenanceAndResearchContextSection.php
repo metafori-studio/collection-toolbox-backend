@@ -29,9 +29,12 @@ class ProvenanceAndResearchContextSection extends Section
                     ->inheritable($this->inheritable),
                 AccrualMethodSelect::make('accrual_method')
                     ->inheritable($this->inheritable),
-                SubmissionDateSection::make(),
-                PublicationDateSection::make(),
+                SubmissionDateSection::make()
+                    ->inheritable($this->inheritable),
+                PublicationDateSection::make()
+                    ->inheritable($this->inheritable),
                 TimePeriodSection::make()
+                    ->inheritable($this->inheritable)
                     ->columnSpanFull(),
             ])
             ->columns(2);

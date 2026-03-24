@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Tests\Feature\Filament;
 
+use Carbon\CarbonInterface;
 use Filament\Actions\Testing\TestAction;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -228,4 +229,65 @@ dataset('inheritable_inputs_relational_belongsto', [
 dataset('inheritable_inputs_relational_many', [
     'authors' => ['authors', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
     'researchers' => ['researchers', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
+]);
+
+it('saves and overrides correctly for precision date sections', function (string $sectionName, array $parentValues, array $overrideValues) {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $documentData = $parentValues;
+    $document = Document::factory()->create($documentData);
+
+    $itemData = ['document_id' => $document->id];
+    foreach (array_keys($parentValues) as $key) {
+        $itemData[$key] = null;
+    }
+
+    $item = Item::factory()->create($itemData);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm(array_merge($overrideValues, [
+            // @todo call toggle action instead
+            'document_overrides' => array_keys($overrideValues),
+        ]))
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    // Verify database
+    $item->refresh();
+
+    foreach ($overrideValues as $key => $value) {
+        if ($item->$key instanceof CarbonInterface) {
+            $formattedValue = match (true) {
+                \strlen($value) === 4 => $item->$key->format('Y'),
+                \strlen($value) === 7 => $item->$key->format('Y-m'),
+                default => $item->$key->format('Y-m-d'),
+            };
+            expect($formattedValue)->toEqual($value);
+        } else {
+            expect($item->$key)->toEqual($value);
+        }
+        expect($item->isInherited($key))->toBeFalse();
+    }
+})->with('inheritable_inputs_precision_date');
+
+dataset('inheritable_inputs_precision_date', [
+    'time_period' => [
+        'time_period',
+        ['time_period_start' => '2000-01-01', 'time_period_end' => '2010-12-31', 'time_period_settings' => ['precision' => 'year', 'is_range' => true]],
+        ['time_period_start' => '1900-01-01', 'time_period_end' => '1950-12-31', 'time_period_settings' => ['precision' => 'year', 'is_range' => true]],
+    ],
+    'publication_date' => [
+        'publication_date',
+        ['publication_date_start' => '2000-01-01', 'publication_date_end' => '2000-01-01', 'publication_date_settings' => ['precision' => 'day']],
+        ['publication_date_start' => '1900-01-01', 'publication_date_end' => '1900-01-01', 'publication_date_settings' => ['precision' => 'day']],
+    ],
+    'submission_date' => [
+        'submission_date',
+        ['submission_date_start' => '2000-01-01', 'submission_date_end' => '2000-01-31', 'submission_date_settings' => ['precision' => 'month']],
+        ['submission_date_start' => '1900-01-01', 'submission_date_end' => '1900-01-31', 'submission_date_settings' => ['precision' => 'month']],
+    ],
 ]);
