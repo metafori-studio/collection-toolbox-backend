@@ -2,6 +2,8 @@
 
 namespace Metafori\Etno\Http\Resources\Concerns;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Resources\MissingValue;
 use Metafori\Etno\Http\Resources\DocumentResource;
 
@@ -21,10 +23,16 @@ trait InheritsDocument
             : parent::__get($key);
     }
 
-    protected function whenLoaded($relation, $value = null, $default = new MissingValue)
+    protected function whenLoaded($relationship, $value = null, $default = new MissingValue)
     {
-        return $this->isInheritableAndInherited($relation)
-            ? $this->getDocumentResource()->whenLoaded($relation, $value, $default)
-            : parent::whenLoaded($relation, $value, $default);
+        $relation = $this->{$relationship}();
+
+        $attribute = $relation instanceof BelongsTo && ! $relation instanceof MorphTo
+            ? $relation->getForeignKeyName()
+            : $relationship;
+
+        return $this->isInheritableAndInherited($attribute)
+            ? $this->getDocumentResource()->whenLoaded($relationship, $value, $default)
+            : parent::whenLoaded($relationship, $value, $default);
     }
 }
