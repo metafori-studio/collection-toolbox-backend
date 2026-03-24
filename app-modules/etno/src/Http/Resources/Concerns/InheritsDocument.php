@@ -18,21 +18,32 @@ trait InheritsDocument
 
     public function __get($key): mixed
     {
-        return $this->isInheritableAndInherited($key)
+        $attribute = $this->resolveInheritableAttribute($key);
+
+        return $this->resource->isInheritableAndInherited($attribute)
             ? $this->getDocumentResource()->{$key}
             : parent::__get($key);
     }
 
     protected function whenLoaded($relationship, $value = null, $default = new MissingValue)
     {
-        $relation = $this->{$relationship}();
+        $attribute = $this->resolveInheritableAttribute($relationship);
 
-        $attribute = $relation instanceof BelongsTo && ! $relation instanceof MorphTo
-            ? $relation->getForeignKeyName()
-            : $relationship;
-
-        return $this->isInheritableAndInherited($attribute)
+        return $this->resource->isInheritableAndInherited($attribute)
             ? $this->getDocumentResource()->whenLoaded($relationship, $value, $default)
             : parent::whenLoaded($relationship, $value, $default);
+    }
+
+    protected function resolveInheritableAttribute(string $attribute)
+    {
+        if (! method_exists($this->resource, $attribute)) {
+            return $attribute;
+        }
+
+        $relation = $this->resource->{$attribute}();
+
+        return $relation instanceof BelongsTo && ! $relation instanceof MorphTo
+            ? $relation->getForeignKeyName()
+            : $attribute;
     }
 }
