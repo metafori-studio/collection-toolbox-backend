@@ -6,19 +6,25 @@ use Filament\Schemas\Components\Section;
 use Metafori\Etno\Filament\Forms\Components\ExtentsRepeater;
 use Metafori\Etno\Filament\Forms\Components\ProductionMethodsSelect;
 use Metafori\Etno\Filament\Forms\Components\TechnicalNoteInput;
+use Metafori\Etno\Filament\Schemas\Components\Concerns\HasInheritable;
 
 class TechnicalAndFormatInformationSection extends Section
 {
+    use HasInheritable;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->heading('Technical and Format Information')
-            ->schema([
+            ->schema(fn () => [
                 ExtentsRepeater::make('extents')
+                    ->inheritable($this->inheritable)
                     ->columnSpanFull(),
-                ProductionMethodsSelect::make('production_methods'),
+                ProductionMethodsSelect::make('production_methods')
+                    ->inheritable($this->inheritable),
                 TechnicalNoteInput::make('technical_note')
+                    ->inheritable($this->inheritable)
                     ->translatableTabs(),
             ])
             ->columns(2);
