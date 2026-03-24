@@ -117,6 +117,16 @@ class ItemIndexRequest extends FormRequest
              */
             'filter.locality' => ['array'],
             'filter.locality.*' => ['string'],
+
+            /**
+             * Page number for pagination.
+             */
+            'page' => ['nullable', 'integer', 'min:1'],
+
+            /**
+             * Number of items per page.
+             */
+            'per_page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 
