@@ -17,9 +17,11 @@ class Activity extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
+    protected const DEFAULT_TABLE_NAME = 'archeo_activities';
+
     public function getTable(): string
     {
-        return config('archeo.table_name', 'archeo_activities');
+        return config('archeo.table_name', self::DEFAULT_TABLE_NAME);
     }
 
     public function getRouteKeyName(): string
