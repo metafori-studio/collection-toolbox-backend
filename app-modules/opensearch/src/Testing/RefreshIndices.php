@@ -11,6 +11,8 @@ trait RefreshIndices
      */
     public function setUpRefreshIndices(): void
     {
+        config(['scout.driver' => 'opensearch']);
+
         $client = app(Client::class);
         $prefix = config('scout.prefix', '');
         $pattern = $prefix !== '' ? $prefix.'*' : '*';
