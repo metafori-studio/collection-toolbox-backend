@@ -8,6 +8,8 @@ use Metafori\Core\Models\Contracts\Locality;
 
 class ItemMapPointCollection extends ResourceCollection
 {
+    public $collects = ItemMapPointResource::class;
+
     /**
      * Transform the resource collection into an array.
      */
@@ -17,6 +19,6 @@ class ItemMapPointCollection extends ResourceCollection
             ->filter(fn (ItemMapPointResource $item) => $item
                 ->whenLoaded('locality', fn (Locality $locality) => $locality->hasCoordinates())
             )
-            ->toArray();
+            ->all();
     }
 }
