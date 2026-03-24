@@ -4,14 +4,16 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Metafori\Core\Http\Resources\PersonResource;
-use Metafori\Etno\Models\ItemOriginator;
+use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
+use Metafori\Etno\Models\Item;
 
 /**
- * @mixin ItemOriginator
+ * @mixin Item
  */
-class ItemOriginatorResource extends JsonResource
+class ItemMapPointResource extends JsonResource
 {
+    use InheritsDocument;
+
     /**
      * Transform the resource into an array.
      *
@@ -20,10 +22,10 @@ class ItemOriginatorResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            /** @var string */
             'id' => $this->id,
-            /** @var string|null */
-            'label' => $this->label,
-            'person' => new PersonResource($this->whenLoaded('person')),
+            'latitude' => $this->locality?->latitude,
+            'longitude' => $this->locality?->longitude,
         ];
     }
 }

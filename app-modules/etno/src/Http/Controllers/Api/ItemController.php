@@ -4,6 +4,7 @@ namespace Metafori\Etno\Http\Controllers\Api;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Metafori\Etno\Http\Resources\ItemMapPointCollection;
 use Metafori\Etno\Http\Resources\ItemResource;
 use Metafori\Etno\Models\Item;
 use Metafori\Etno\Repositories\ItemRepository;
@@ -29,5 +30,12 @@ class ItemController
         $item = $this->repository->findOrFail($id);
 
         return new ItemResource($item);
+    }
+
+    public function mapPoints(): ResourceCollection
+    {
+        $mapPoints = $this->repository->mapPoints();
+
+        return new ItemMapPointCollection($mapPoints);
     }
 }

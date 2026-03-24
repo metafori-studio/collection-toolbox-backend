@@ -3,6 +3,7 @@
 namespace Metafori\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Metafori\Core\Database\Factories\Concerns\HasCoordinates;
 use Metafori\Core\Models\District;
 use Metafori\Core\Models\Region;
 
@@ -11,6 +12,8 @@ use Metafori\Core\Models\Region;
  */
 class DistrictFactory extends Factory
 {
+    use HasCoordinates;
+
     protected $model = District::class;
 
     public function definition(): array
@@ -20,6 +23,8 @@ class DistrictFactory extends Factory
             'name' => [
                 'en' => fake()->city(),
             ],
+            'latitude' => fake()->latitude(),
+            'longitude' => fake()->longitude(),
         ];
     }
 }

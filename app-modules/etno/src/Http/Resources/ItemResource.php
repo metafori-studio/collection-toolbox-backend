@@ -4,24 +4,11 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Metafori\Core\Enums\DatePrecision;
-use Metafori\Core\Http\Resources\CountryResource;
-use Metafori\Core\Http\Resources\DistrictResource;
 use Metafori\Core\Http\Resources\KeywordResource;
-use Metafori\Core\Http\Resources\LocationResource;
-use Metafori\Core\Http\Resources\MunicipalityPartResource;
-use Metafori\Core\Http\Resources\MunicipalityResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
-use Metafori\Core\Http\Resources\RegionResource;
-use Metafori\Core\Models\Contracts\Locality;
-use Metafori\Core\Models\Country;
-use Metafori\Core\Models\District;
-use Metafori\Core\Models\Location;
-use Metafori\Core\Models\Municipality;
-use Metafori\Core\Models\MunicipalityPart;
-use Metafori\Core\Models\Region;
-use Metafori\Etno\Enums\ProductionMethod;
+use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
+use Metafori\Etno\Http\Resources\Concerns\ResolvesLocality;
 use Metafori\Etno\Models\Item;
 
 /**
@@ -29,6 +16,8 @@ use Metafori\Etno\Models\Item;
  */
 class ItemResource extends JsonResource
 {
+    use InheritsDocument, ResolvesLocality;
+
     /**
      * Transform the resource into an array.
      *
@@ -58,42 +47,33 @@ class ItemResource extends JsonResource
             /** @var string|null */
             'technical_note' => $this->technical_note,
             'type' => $this->type,
-            'extent' => $this->extent,
-            'extent_unit' => $this->extent_unit,
+            /** @var array{value: string, unit: \Metafori\Etno\Enums\ExtentUnit}[] */
+            'extents' => $this->extents,
             'language' => $this->language,
             'accrual_method' => $this->accrual_method,
             'collection_method' => $this->collection_method,
             'access_rights' => $this->access_rights,
             'license' => $this->license,
-            /** @var ProductionMethod[] */
+            /** @var \Metafori\Etno\Enums\ProductionMethod[] */
             'production_methods' => $this->production_methods,
             'time_period_start' => $this->time_period_start,
             'time_period_end' => $this->time_period_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'time_period_settings' => $this->time_period_settings,
             'submission_date_start' => $this->submission_date_start,
             'submission_date_end' => $this->submission_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'submission_date_settings' => $this->submission_date_settings,
             'publication_date_start' => $this->publication_date_start,
             'publication_date_end' => $this->publication_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'publication_date_settings' => $this->publication_date_settings,
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
-            'locality' => $this->whenLoaded('locality', function (Locality $locality): CountryResource|RegionResource|DistrictResource|MunicipalityResource|MunicipalityPartResource|LocationResource {
-                return match (true) {
-                    $locality instanceof Country => new CountryResource($locality),
-                    $locality instanceof Region => new RegionResource($locality),
-                    $locality instanceof District => new DistrictResource($locality),
-                    $locality instanceof Municipality => new MunicipalityResource($locality),
-                    $locality instanceof MunicipalityPart => new MunicipalityPartResource($locality),
-                    $locality instanceof Location => new LocationResource($locality),
-                };
-            }),
+            'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),
             'authors' => PersonResource::collection($this->whenLoaded('authors')),
             'researchers' => PersonResource::collection($this->whenLoaded('researchers')),
-            'originators' => ItemOriginatorResource::collection($this->whenLoaded('originators')),
+            'originators' => OriginatorResource::collection($this->whenLoaded('originators')),
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
         ];

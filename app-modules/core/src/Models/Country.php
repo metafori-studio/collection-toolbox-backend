@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Metafori\Core\Models\Contracts\Locality;
+use Metafori\Core\Models\Concerns\Locality;
+use Metafori\Core\Models\Contracts\Locality as LocalityContract;
 use Spatie\Translatable\HasTranslations;
 
-class Country extends Model implements Locality
+class Country extends Model implements LocalityContract
 {
-    use HasFactory, HasTranslations, SoftDeletes;
+    use HasFactory, HasTranslations, Locality, SoftDeletes;
 
     protected $guarded = [];
 
