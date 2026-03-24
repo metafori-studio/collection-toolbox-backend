@@ -2,23 +2,19 @@
 
 namespace Metafori\Etno\Filament\Schemas;
 
-use Filament\Schemas\Schema;
-
-class SharedMetadataSchema
+trait SharedMetadataSchema
 {
-    public static function apply(Schema $schema): Schema
+    protected static function components(bool $inheritable = false): array
     {
-        return $schema
-            ->components([
-                Components\BasicInformationSection::make(),
-                Components\DescriptiveInformationSection::make(),
-                Components\AuthorsAndCreatorsSection::make(),
-                Components\GeographicInformationSection::make(),
-                Components\TechnicalAndFormatInformationSection::make(),
-                Components\ProvenanceAndResearchContextSection::make(),
-                Components\RightsAndAccessSection::make(),
-                Components\AdditionalNotesSection::make(),
-            ])
-            ->columns(1);
+        return [
+            Components\BasicInformationSection::make()->inheritable($inheritable),
+            Components\DescriptiveInformationSection::make()->inheritable($inheritable),
+            Components\AuthorsAndCreatorsSection::make()->inheritable($inheritable),
+            Components\GeographicInformationSection::make()->inheritable($inheritable),
+            Components\TechnicalAndFormatInformationSection::make()->inheritable($inheritable),
+            Components\ProvenanceAndResearchContextSection::make()->inheritable($inheritable),
+            Components\RightsAndAccessSection::make()->inheritable($inheritable),
+            Components\AdditionalNotesSection::make()->inheritable($inheritable),
+        ];
     }
 }

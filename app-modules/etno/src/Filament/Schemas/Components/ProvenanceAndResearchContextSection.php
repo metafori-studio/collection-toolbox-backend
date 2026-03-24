@@ -7,24 +7,35 @@ use Metafori\Etno\Filament\Forms\Components\AccrualMethodSelect;
 use Metafori\Etno\Filament\Forms\Components\CollectionMethodSelect;
 use Metafori\Etno\Filament\Forms\Components\InstitutionSelect;
 use Metafori\Etno\Filament\Forms\Components\ProjectSelect;
+use Metafori\Etno\Filament\Schemas\Components\Concerns\HasInheritable;
 
 class ProvenanceAndResearchContextSection extends Section
 {
+    use HasInheritable;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->heading('Provenance and Research Context')
-            ->schema([
+            ->schema(fn () => [
                 InstitutionSelect::make('institution_id')
+                    ->inheritable($this->inheritable)
                     ->columnSpanFull(),
                 ProjectSelect::make('project_id')
+                    ->inheritable($this->inheritable)
                     ->columnSpanFull(),
-                CollectionMethodSelect::make('collection_method'),
-                AccrualMethodSelect::make('accrual_method'),
-                TimePeriodSection::make(),
-                SubmissionDateSection::make(),
-                PublicationDateSection::make(),
+                CollectionMethodSelect::make('collection_method')
+                    ->inheritable($this->inheritable),
+                AccrualMethodSelect::make('accrual_method')
+                    ->inheritable($this->inheritable),
+                SubmissionDateSection::make()
+                    ->inheritable($this->inheritable),
+                PublicationDateSection::make()
+                    ->inheritable($this->inheritable),
+                TimePeriodSection::make()
+                    ->inheritable($this->inheritable)
+                    ->columnSpanFull(),
             ])
             ->columns(2);
     }

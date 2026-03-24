@@ -1,9 +1,11 @@
 <?php
 
 use Metafori\Core\Models\Location;
+use Metafori\Core\Models\Organization;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
+use Metafori\Etno\Models\Project;
 use Metafori\Etno\Repositories\ItemRepository;
 use Metafori\Opensearch\Testing\RefreshIndices;
 
@@ -69,6 +71,27 @@ it('can show a complete item with all relations', function () {
         ->assertJsonCount(2, 'data.originators')
         ->assertJsonPath('data.institution.id', $item->document->institution_id)
         ->assertJsonPath('data.project.id', $item->document->project_id);
+});
+
+it('respects overrides for relationship values without falling back to inherited values', function () {
+    $document = Document::factory()->create([
+        'institution_id' => Organization::factory(),
+        'project_id' => Project::factory(),
+    ]);
+
+    $item = Item::factory()
+        ->for($document, 'document')
+        ->create([
+            'institution_id' => null,
+            'project_id' => null,
+            'document_overrides' => ['institution_id', 'project_id'],
+        ]);
+
+    $response = getJson(route('api.etno.items.show', $item->id));
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.institution', null)
+        ->assertJsonPath('data.project', null);
 });
 
 it('returns 404 for non-existent item', function () {

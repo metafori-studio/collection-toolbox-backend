@@ -10,24 +10,33 @@ use Metafori\Etno\Filament\Forms\Components\KeywordsSelect;
 use Metafori\Etno\Filament\Forms\Components\LanguageSelect;
 use Metafori\Etno\Filament\Forms\Components\SubtitleInput;
 use Metafori\Etno\Filament\Forms\Components\TitleInput;
+use Metafori\Etno\Filament\Schemas\Components\Concerns\HasInheritable;
 
 class DescriptiveInformationSection extends Section
 {
+    use HasInheritable;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->heading('Descriptive Information')
-            ->schema([
+            ->schema(fn () => [
                 TranslatableTabs::make()
                     ->schema([
-                        TitleInput::make('title'),
-                        SubtitleInput::make('subtitle'),
-                        AbstractInput::make('abstract'),
-                        ContentNoteInput::make('content_note'),
+                        TitleInput::make('title')
+                            ->inheritable($this->inheritable),
+                        SubtitleInput::make('subtitle')
+                            ->inheritable($this->inheritable),
+                        AbstractInput::make('abstract')
+                            ->inheritable($this->inheritable),
+                        ContentNoteInput::make('content_note')
+                            ->inheritable($this->inheritable),
                     ]),
-                KeywordsSelect::make('keywords'),
-                LanguageSelect::make('language'),
+                KeywordsSelect::make('keywords')
+                    ->inheritable($this->inheritable),
+                LanguageSelect::make('language')
+                    ->inheritable($this->inheritable),
             ])
             ->columns(1);
     }

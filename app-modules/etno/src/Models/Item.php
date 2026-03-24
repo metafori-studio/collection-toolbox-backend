@@ -68,8 +68,8 @@ class Item extends Model implements Inheritable
         'publication_date_start',
         'publication_date_end',
         'publication_date_settings',
-        'institution',
-        'project',
+        'institution_id',
+        'project_id',
         'locality',
         'authors',
         'researchers',
@@ -155,19 +155,6 @@ class Item extends Model implements Inheritable
     public function isInheritableAndInherited(string $attribute): bool
     {
         return $this->isInheritable($attribute) && $this->isInherited($attribute);
-    }
-
-    public function getParentValue(string $attribute, ?string $locale = null, bool $useFallbackLocale = true): mixed
-    {
-        if (! $parent = $this->getParent()) {
-            throw new \LogicException('No parent document found.');
-        }
-
-        if ($locale && $parent->isTranslatableAttribute($attribute)) {
-            return $parent->getTranslation($attribute, $locale, $useFallbackLocale);
-        }
-
-        return $parent->{$attribute};
     }
 
     public function getParent(): ?Document
