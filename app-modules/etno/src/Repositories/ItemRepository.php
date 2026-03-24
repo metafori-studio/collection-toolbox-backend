@@ -7,12 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
-use Metafori\Core\Models\District;
-use Metafori\Core\Models\Location;
-use Metafori\Core\Models\Municipality;
-use Metafori\Core\Models\MunicipalityPart;
-use Metafori\Core\Models\Region;
 use Metafori\Etno\Models\Item;
+use OpenSearch\Client;
 
 class ItemRepository
 {
@@ -20,43 +16,40 @@ class ItemRepository
 
     public function findOrFail(string $id): Item
     {
-        $morphWith = [
-            Region::class => ['country'],
-            District::class => ['region.country'],
-            Municipality::class => ['district.region.country'],
-            MunicipalityPart::class => ['municipality.district.region.country'],
-        ];
-
-        $with = [
-            'institution',
-            'project',
-            'authors',
-            'researchers',
-            'originators.person',
-            'keywords',
-            'researchCollections',
-            'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
-                ...$morphWith,
-                Location::class => [
-                    'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
-                ],
-            ]),
-        ];
-
         return Item::query()
-            ->with(self::withDocument($with))
+            ->with(Item::relations())
             ->findOrFail($id);
     }
 
-    public function paginate(): LengthAwarePaginator
+    public function paginate(array $filters = [], array $sorts = []): LengthAwarePaginator
     {
-        return Item::query()
-            ->with(self::withDocument([
+        $query = Item::search();
+
+        foreach ($filters as $field => $value) {
+            if (is_array($value)) {
+                $query->whereIn($field, $value);
+            } else {
+                $query->where($field, $value);
+            }
+        }
+
+        foreach ($sorts as $sort) {
+            $dir = str_starts_with($sort, '-') ? 'desc' : 'asc';
+            $field = ltrim($sort, '-');
+            $query->orderBy($field, $dir);
+        }
+
+        $query->query(function ($eloquentQuery) {
+            $eloquentQuery->with(Item::documentRelations([
                 'authors',
                 'researchers',
                 'originators.person',
-            ]))
-            ->paginate();
+            ]));
+        });
+
+        $perPage = request()->query('per_page', 15);
+
+        return $query->paginate($perPage);
     }
 
     public function mapPoints(): Collection
@@ -79,7 +72,7 @@ class ItemRepository
                     'document_id',
                     'document_overrides',
                 ])
-                ->with(self::withDocument($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
+                ->with(Item::documentRelations($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
                     'id',
                     'locality_id',
                     'locality_type',
@@ -93,11 +86,8 @@ class ItemRepository
         Cache::forget(self::MAP_POINTS_CACHE_KEY);
     }
 
-    protected static function withDocument(array $with, ?\Closure $documentWith = null): array
+    public function refreshIndex(): void
     {
-        return [
-            ...$with,
-            'document' => fn (BelongsTo $belongsTo) => tap($belongsTo->with($with), $documentWith),
-        ];
+        app(Client::class)->indices()->refresh(['index' => (new Item)->searchableAs()]);
     }
 }
