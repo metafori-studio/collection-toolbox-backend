@@ -5,7 +5,6 @@ namespace Metafori\Core\Filament\Resources\UserResource\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Metafori\Core\Models\Role;
 
 class UserForm
 {
