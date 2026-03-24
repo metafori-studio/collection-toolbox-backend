@@ -27,7 +27,9 @@ class DocumentObserver
             $this->repository->invalidateMapPointsCache();
         }
 
-        $document->items()->unsearchable();
+        $document->items()
+            ->withoutGlobalScope('document')
+            ->unsearchable();
     }
 
     public function restored(Document $document): void
