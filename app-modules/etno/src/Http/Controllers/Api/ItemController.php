@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Http\Controllers\Api;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Metafori\Etno\Http\Requests\Api\ItemIndexRequest;
 use Metafori\Etno\Http\Resources\ItemMapPointCollection;
 use Metafori\Etno\Http\Resources\ItemResource;
 use Metafori\Etno\Repositories\ItemRepository;
@@ -13,9 +14,13 @@ class ItemController
         private readonly ItemRepository $repository,
     ) {}
 
-    public function index(): ResourceCollection
+    public function index(ItemIndexRequest $request): ResourceCollection
     {
-        $items = $this->repository->paginate();
+        $filters = $request->validated('filter', []);
+        $sortQuery = $request->validated('sort');
+        $sorts = $sortQuery ? explode(',', $sortQuery) : [];
+
+        $items = $this->repository->paginate($filters, $sorts);
 
         return ItemResource::collection($items);
     }
