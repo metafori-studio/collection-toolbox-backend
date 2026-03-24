@@ -13,6 +13,5 @@ class ArcheoRoleSeeder extends Seeder
     public function run(): void
     {
         Role::firstOrCreate(['name' => 'archeo_admin', 'guard_name' => 'web']);
-        Role::firstOrCreate(['name' => 'archeo_readonly', 'guard_name' => 'web']);
     }
 }

@@ -507,6 +507,5 @@ return [
     'Role' => [
         'admin' => 'Admin',
         'archeo_admin' => 'Archeo Admin',
-        'archeo_readonly' => 'Archeo Read-only',
     ],
 ];

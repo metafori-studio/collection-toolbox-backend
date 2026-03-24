@@ -9,7 +9,7 @@ class ActivityPolicy
 {
     public function viewAny(User $user): bool
     {
-        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+        if ($user->hasRole(['admin', 'archeo_admin'])) {
             return true;
         }
 
@@ -19,7 +19,7 @@ class ActivityPolicy
 
     public function view(User $user, Activity $activity): bool
     {
-        if ($user->hasRole(['admin', 'archeo_admin', 'archeo_readonly'])) {
+        if ($user->hasRole(['admin', 'archeo_admin'])) {
             return true;
         }
 
