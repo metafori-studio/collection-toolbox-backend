@@ -12,6 +12,7 @@ enum Role: string implements HasColor, HasLabel
 
     case Admin = 'admin';
     case ArcheoAdmin = 'archeo_admin';
+    case ArcheoReadonly = 'archeo_readonly';
 
     public function getColor(): string|array|null
     {
