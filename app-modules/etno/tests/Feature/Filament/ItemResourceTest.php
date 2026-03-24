@@ -145,6 +145,58 @@ it('saves and overrides correctly for relational fields', function (string $colu
         ->and($item->isInherited($column))->toBeFalse();
 })->with('inheritable_inputs_relational_belongsto');
 
+it('saves and overrides correctly for relational many fields', function (string $column, \Closure $parentValue, \Closure $overrideValue) {
+    $parentValue = $parentValue();
+    $overrideValue = $overrideValue();
+
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $documentData = [
+        'extents' => null,
+        'time_period_start' => null,
+        'time_period_end' => null,
+        'submission_date_start' => null,
+        'submission_date_end' => null,
+        'publication_date_start' => null,
+        'publication_date_end' => null,
+    ];
+
+    $document = Document::factory()->create($documentData);
+    $document->{$column}()->sync($parentValue);
+
+    $itemData = [
+        'document_id' => $document->id,
+        'document_overrides' => [],
+        'extents' => null,
+        'time_period_start' => null,
+        'time_period_end' => null,
+        'submission_date_start' => null,
+        'submission_date_end' => null,
+        'publication_date_start' => null,
+        'publication_date_end' => null,
+    ];
+
+    $item = Item::factory()->create($itemData);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->callAction(TestAction::make($column.'_toggle_inheritance')->schemaComponent($column))
+        ->fillForm([
+            $column => $overrideValue,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    // Verify database
+    $item->refresh();
+
+    expect($item->{$column}->pluck('id')->toArray())->toEqual($overrideValue)
+        ->and($item->isInherited($column))->toBeFalse();
+})->with('inheritable_inputs_relational_many');
+
 dataset('inheritable_inputs_translatable', [
     'title' => ['title', ['en' => 'Parent Title EN', 'sk' => 'Parent Title SK'], ['en' => 'Overridden Title EN', 'sk' => 'Overridden Title SK']],
     'subtitle' => ['subtitle', ['en' => 'Parent Subtitle EN', 'sk' => 'Parent Subtitle SK'], ['en' => 'Overridden Subtitle EN', 'sk' => 'Overridden Subtitle SK']],
@@ -171,4 +223,9 @@ dataset('inheritable_inputs_primitive', [
 dataset('inheritable_inputs_relational_belongsto', [
     'institution_id' => ['institution_id', fn () => Organization::factory()->create()->id, fn () => Organization::factory()->create()->id],
     'project_id' => ['project_id', fn () => Project::factory()->create()->id, fn () => Project::factory()->create()->id],
+]);
+
+dataset('inheritable_inputs_relational_many', [
+    'authors' => ['authors', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
+    'researchers' => ['researchers', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
 ]);
