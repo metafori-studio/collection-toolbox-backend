@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property int $id
  * @property string $title
- * @property string|null $description
  */
 class GalleryResource extends JsonResource
 {
