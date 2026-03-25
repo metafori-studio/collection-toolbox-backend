@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Metafori\Core\Models\Concerns\Locality;
 use Metafori\Core\Models\Contracts\Locality as LocalityContract;
 use Spatie\Translatable\HasTranslations;
+use Stringable;
 
-class MunicipalityPart extends Model implements LocalityContract
+class MunicipalityPart extends Model implements LocalityContract, Stringable
 {
     use HasFactory, HasTranslations, Locality, SoftDeletes;
 
