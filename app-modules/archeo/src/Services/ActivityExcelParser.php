@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Metafori\Archeo\Exceptions\ExcelRowValidationException;
 use Metafori\Archeo\Exceptions\InvalidFileFormatException;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Archeo\Services\CoordinateTransformer;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ActivityExcelParser
@@ -70,6 +71,7 @@ class ActivityExcelParser
 
         DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
             $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
+            $transformer = new CoordinateTransformer();
 
             foreach ($dataRows as $rowIndex => $row) {
                 try {
@@ -105,6 +107,21 @@ class ActivityExcelParser
                     $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
                     $years = $this->parseYears($yearStr, $rowIndex);
 
+                    $coordinateX = $row[$mapping['coordinate_x'] ?? 'T'] ?? null;
+                    $coordinateY = $row[$mapping['coordinate_y'] ?? 'U'] ?? null;
+                    $latitude = null;
+                    $longitude = null;
+
+                    if ($coordinateX !== null && $coordinateY !== null && is_numeric($coordinateX) && is_numeric($coordinateY)) {
+                        $transformed = $transformer->sjtskToWgs84((float) $coordinateX, (float) $coordinateY);
+                        if ($transformed) {
+                            $latitude = $transformed['latitude'];
+                            $longitude = $transformed['longitude'];
+                        } else {
+                            $errors[] = "Row {$rowIndex} (Activity: {$activityNumber}): Failed to transform JTSK coordinates ($coordinateX, $coordinateY) to WGS84.";
+                        }
+                    }
+
                     $activity = Activity::query()->updateOrCreate(
                         ['activity_number' => $activityNumber],
                         [
@@ -128,8 +145,10 @@ class ActivityExcelParser
                             'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
                             'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
                             'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                            'coordinate_x' => $row[$mapping['coordinate_x'] ?? 'T'] ?? null,
-                            'coordinate_y' => $row[$mapping['coordinate_y'] ?? 'U'] ?? null,
+                            'coordinate_x' => $coordinateX,
+                            'coordinate_y' => $coordinateY,
+                            'latitude' => $latitude,
+                            'longitude' => $longitude,
                             'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
                         ]
                     );

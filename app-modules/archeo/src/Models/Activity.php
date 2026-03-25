@@ -10,6 +10,7 @@ class Activity extends Model
 
     protected $fillable = [
         'activity_number',
+        'import_id',
         'activity_year_start',
         'activity_year_end',
         'activity_type',
@@ -22,6 +23,8 @@ class Activity extends Model
         'localization_degree',
         'coordinate_x',
         'coordinate_y',
+        'latitude',
+        'longitude',
         'has_gis_link',
         'cvs_number',
         'research_leader',
@@ -35,6 +38,7 @@ class Activity extends Model
     ];
 
     protected $casts = [
+        'import_id' => 'integer',
         'dating_ns' => 'array',
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
