@@ -87,7 +87,6 @@ class GalleriesRelationManager extends RelationManager
                     ->stacked()
                     ->limit(3)
                     ->url(fn (Gallery $record): ?string => $record->getFirstMediaUrl('gallery_images'))
-                    ->openUrlInNewTab(),
 
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('archeo::activities.fields.gallery_title'))
