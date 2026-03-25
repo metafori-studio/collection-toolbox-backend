@@ -13,7 +13,7 @@ uses(RefreshDatabase::class);
 it('can create a user and sends a password set link', function () {
     Notification::fake();
 
-    $this->actingAs(User::factory()->create());
+    $this->actingAs(User::factory()->admin()->create());
 
     livewire(CreateUser::class)
         ->fillForm([
