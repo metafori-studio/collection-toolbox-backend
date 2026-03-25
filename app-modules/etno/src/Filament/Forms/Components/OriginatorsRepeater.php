@@ -6,9 +6,12 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Metafori\Core\Filament\Forms\Components\PersonSelect;
+use Metafori\Etno\Filament\Forms\Components\Concerns\CanBeInherited;
 
 class OriginatorsRepeater extends Repeater
 {
+    use CanBeInherited;
+
     protected function setUp(): void
     {
         parent::setUp();

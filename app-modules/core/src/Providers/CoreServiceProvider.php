@@ -9,6 +9,7 @@ use Filament\Forms\Components\Field;
 use Filament\Panel;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -21,7 +22,13 @@ use Metafori\Core\CorePlugin;
 use Metafori\Core\Facades\Frontend as FrontendFacade;
 use Metafori\Core\Faker\Providers\OrcidProvider;
 use Metafori\Core\Faker\Providers\RorIdProvider;
+use Metafori\Core\Models\Country;
+use Metafori\Core\Models\District;
+use Metafori\Core\Models\Location;
+use Metafori\Core\Models\Municipality;
+use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Permission;
+use Metafori\Core\Models\Region;
 use Metafori\Core\Models\Role;
 use Metafori\Core\Notifications\SetPassword;
 use Metafori\Core\Support\Frontend;
@@ -96,5 +103,14 @@ class CoreServiceProvider extends ServiceProvider
         RateLimiter::for('password.set', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
+
+        Relation::morphMap([
+            'country' => Country::class,
+            'region' => Region::class,
+            'district' => District::class,
+            'municipality' => Municipality::class,
+            'municipality_part' => MunicipalityPart::class,
+            'location' => Location::class,
+        ]);
     }
 }

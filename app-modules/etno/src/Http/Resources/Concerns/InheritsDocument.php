@@ -2,6 +2,8 @@
 
 namespace Metafori\Etno\Http\Resources\Concerns;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Resources\MissingValue;
 use Metafori\Etno\Http\Resources\DocumentResource;
 
@@ -16,15 +18,32 @@ trait InheritsDocument
 
     public function __get($key): mixed
     {
-        return $this->isInheritableAndInherited($key)
+        $attribute = $this->resolveInheritableAttribute($key);
+
+        return $this->resource->isInheritableAndInherited($attribute)
             ? $this->getDocumentResource()->{$key}
             : parent::__get($key);
     }
 
-    protected function whenLoaded($relation, $value = null, $default = new MissingValue)
+    protected function whenLoaded($relationship, $value = null, $default = new MissingValue)
     {
-        return $this->isInheritableAndInherited($relation)
-            ? $this->getDocumentResource()->whenLoaded($relation, $value, $default)
-            : parent::whenLoaded($relation, $value, $default);
+        $attribute = $this->resolveInheritableAttribute($relationship);
+
+        return $this->resource->isInheritableAndInherited($attribute)
+            ? $this->getDocumentResource()->whenLoaded($relationship, $value, $default)
+            : parent::whenLoaded($relationship, $value, $default);
+    }
+
+    protected function resolveInheritableAttribute(string $attribute)
+    {
+        if (! $this->resource->isRelation($attribute)) {
+            return $attribute;
+        }
+
+        $relation = $this->resource->{$attribute}();
+
+        return $relation instanceof BelongsTo && ! $relation instanceof MorphTo
+            ? $relation->getForeignKeyName()
+            : $attribute;
     }
 }

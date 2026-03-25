@@ -12,7 +12,5 @@ interface Inheritable
 
     public function isInheritableAndInherited(string $attribute): bool;
 
-    public function getParentValue(string $attribute, ?string $locale = null, bool $useFallbackLocale = true): mixed;
-
     public function getParent(): ?Model;
 }

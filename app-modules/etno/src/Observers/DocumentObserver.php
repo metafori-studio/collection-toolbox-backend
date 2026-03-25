@@ -14,6 +14,8 @@ class DocumentObserver
         if ($document->wasChanged('locality_id') || $document->wasChanged('locality_type')) {
             $this->repository->invalidateMapPointsCache();
         }
+
+        $document->items()->searchable();
     }
 
     public function deleted(Document $document): void
@@ -24,6 +26,10 @@ class DocumentObserver
         if ($shouldInvalidate) {
             $this->repository->invalidateMapPointsCache();
         }
+
+        $document->items()
+            ->withoutGlobalScope('document')
+            ->unsearchable();
     }
 
     public function restored(Document $document): void
@@ -34,5 +40,7 @@ class DocumentObserver
         if ($shouldInvalidate) {
             $this->repository->invalidateMapPointsCache();
         }
+
+        $document->items()->searchable();
     }
 }

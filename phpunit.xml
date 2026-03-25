@@ -27,5 +27,9 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="SCOUT_DRIVER" value="null"/>
+        <env name="APP_LOCALE" value="en"/>
+        <env name="APP_LOCALES" value="en,sk"/>
+        <env name="APP_FALLBACK_LOCALE" value="en"/>
     </php>
 </phpunit>
