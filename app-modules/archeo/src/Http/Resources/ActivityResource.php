@@ -98,9 +98,6 @@ class ActivityResource extends JsonResource
             'dating_site_type' => $this->dating_site_type,
             'site_type_original' => $this->site_type_original,
             'size_category' => $this->size_category,
-            'import_id' => $this->import_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
             'galleries' => GalleryResource::collection($this->whenLoaded('galleries')),
         ];
     }
