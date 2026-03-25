@@ -29,8 +29,6 @@ class GalleryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $expires = now()->addMinutes(20);
-
         return [
             'id' => $this->id,
             'title' => $this->title,
