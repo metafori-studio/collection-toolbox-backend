@@ -25,7 +25,7 @@ it('saves and overrides correctly for primitive fields', function (string $colum
     $parentValue = value($parentValue);
     $overrideValue = value($overrideValue);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [];
@@ -62,7 +62,7 @@ it('saves and overrides correctly for primitive fields', function (string $colum
 })->with('inheritable_inputs_primitive');
 
 it('saves and overrides correctly for translatable fields', function (string $column, array $parentValue, array $overrideValue) {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [];
@@ -97,7 +97,7 @@ it('saves and overrides correctly for relational fields', function (string $colu
     $parentValue = value($parentValue);
     $overrideValue = value($overrideValue);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [
@@ -150,7 +150,7 @@ it('saves and overrides correctly for relational many fields', function (string 
     $parentValue = $parentValue();
     $overrideValue = $overrideValue();
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [
@@ -232,7 +232,7 @@ dataset('inheritable_inputs_relational_many', [
 ]);
 
 it('saves and overrides correctly for precision date sections', function (string $sectionName, array $parentValues, array $overrideValues) {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = $parentValues;

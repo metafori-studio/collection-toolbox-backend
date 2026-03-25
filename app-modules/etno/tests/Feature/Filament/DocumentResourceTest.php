@@ -21,7 +21,7 @@ use function Pest\Livewire\livewire;
 it('saves correctly for primitive fields on document form', function (string $column, mixed $value) {
     $value = value($value);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $document = Document::factory()->create();
@@ -44,7 +44,7 @@ it('saves correctly for primitive fields on document form', function (string $co
 })->with('document_inputs_primitive');
 
 it('saves correctly for translatable fields on document form', function (string $column, array $value) {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $document = Document::factory()->create();
@@ -65,7 +65,7 @@ it('saves correctly for translatable fields on document form', function (string 
 it('saves correctly for relational fields on document form', function (string $column, mixed $value) {
     $value = value($value);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $document = Document::factory()->create();
