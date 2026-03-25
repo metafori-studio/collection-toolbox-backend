@@ -8,7 +8,6 @@ use Metafori\Core\Models\User;
 
 class ActivityAssignment extends Model
 {
-    protected const DEFAULT_TABLE_NAME = 'archeo_activity_assignments';
 
     public function getTable(): string
     {
