@@ -13,12 +13,9 @@ class ActivityPolicy
         if ($user->hasRole(Role::Admin)) {
             return true;
         }
-
-        // Allow if user is assigned to at least one active activity
-        return $user->activityAssignments()->where('expires_at', '>', now())->exists();
     }
 
-    public function view(User $user, Activity $activity): bool
+    public function viewDocument(User $user, Activity $activity): bool
     {
         if ($user->hasRole(Role::Admin)) {
             return true;
