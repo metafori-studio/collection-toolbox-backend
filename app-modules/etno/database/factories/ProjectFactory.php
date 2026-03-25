@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Metafori\Etno\Models\Project;
 
 /**
- * @extends Factory<Project>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\Project>
  */
 class ProjectFactory extends Factory
 {

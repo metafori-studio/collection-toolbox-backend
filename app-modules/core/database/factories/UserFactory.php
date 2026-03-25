@@ -5,10 +5,9 @@ namespace Metafori\Core\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Metafori\Core\Models\User;
 
 /**
- * @extends Factory<User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\User>
  */
 class UserFactory extends Factory
 {

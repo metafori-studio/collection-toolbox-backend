@@ -2,12 +2,10 @@
 
 namespace Metafori\Etno\Http\Controllers\Api;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Metafori\Etno\Http\Requests\Api\ItemIndexRequest;
 use Metafori\Etno\Http\Resources\ItemMapPointCollection;
 use Metafori\Etno\Http\Resources\ItemResource;
-use Metafori\Etno\Models\Item;
 use Metafori\Etno\Repositories\ItemRepository;
 
 class ItemController
@@ -28,7 +26,7 @@ class ItemController
     }
 
     /**
-     * @throws ModelNotFoundException<Item>
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Metafori\Etno\Models\Item>
      */
     public function show(string $id): ItemResource
     {

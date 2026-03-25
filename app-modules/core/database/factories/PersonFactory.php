@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Metafori\Core\Models\Person;
 
 /**
- * @extends Factory<Person>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\Person>
  */
 class PersonFactory extends Factory
 {

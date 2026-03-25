@@ -4,12 +4,9 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
-use Metafori\Etno\Enums\ExtentUnit;
-use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
 use Metafori\Etno\Http\Resources\Concerns\ResolvesLocality;
 use Metafori\Etno\Models\Item;
@@ -50,26 +47,26 @@ class ItemResource extends JsonResource
             /** @var string|null */
             'technical_note' => $this->technical_note,
             'type' => $this->type,
-            /** @var array{value: string, unit: ExtentUnit}[] */
+            /** @var array{value: string, unit: \Metafori\Etno\Enums\ExtentUnit}[] */
             'extents' => $this->extents,
             'language' => $this->language,
             'accrual_method' => $this->accrual_method,
             'collection_method' => $this->collection_method,
             'access_rights' => $this->access_rights,
             'license' => $this->license,
-            /** @var ProductionMethod[] */
+            /** @var \Metafori\Etno\Enums\ProductionMethod[] */
             'production_methods' => $this->production_methods,
             'time_period_start' => $this->time_period_start,
             'time_period_end' => $this->time_period_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'time_period_settings' => $this->time_period_settings,
             'submission_date_start' => $this->submission_date_start,
             'submission_date_end' => $this->submission_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'submission_date_settings' => $this->submission_date_settings,
             'publication_date_start' => $this->publication_date_start,
             'publication_date_end' => $this->publication_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
+            /** @var array{is_range: bool, precision: \Metafori\Core\Enums\DatePrecision}|null */
             'publication_date_settings' => $this->publication_date_settings,
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),

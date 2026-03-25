@@ -2,7 +2,6 @@
 
 namespace Metafori\Etno\Filament\Resources\Documents\RelationManagers;
 
-use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -30,7 +29,7 @@ class ItemsRelationManager extends RelationManager
                 SoftDeletingScope::class,
             ]))
             ->headerActions([
-                CreateAction::make(),
+                \Filament\Actions\CreateAction::make(),
             ]);
     }
 }

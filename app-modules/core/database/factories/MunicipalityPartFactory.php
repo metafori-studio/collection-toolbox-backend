@@ -8,7 +8,7 @@ use Metafori\Core\Models\Municipality;
 use Metafori\Core\Models\MunicipalityPart;
 
 /**
- * @extends Factory<MunicipalityPart>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\MunicipalityPart>
  */
 class MunicipalityPartFactory extends Factory
 {
