@@ -12,7 +12,7 @@ use OpenSearch\Client;
 
 class ItemRepository
 {
-    protected const MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
+    protected const string MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
 
     public function findOrFail(string $id): Item
     {
@@ -26,7 +26,11 @@ class ItemRepository
         $query = Item::search();
 
         foreach ($filters as $field => $value) {
-            if (is_array($value)) {
+            if (\is_array($value) && ! \array_is_list($value)) {
+                foreach ($value as $subKey => $subValue) {
+                    $query->whereIn("{$field}.{$subKey}", (array) $subValue);
+                }
+            } elseif (\is_array($value)) {
                 $query->whereIn($field, $value);
             } else {
                 $query->where($field, $value);
@@ -44,6 +48,7 @@ class ItemRepository
                 'authors',
                 'researchers',
                 'originators.person',
+                ...Item::localityRelations(),
             ]));
         });
 
