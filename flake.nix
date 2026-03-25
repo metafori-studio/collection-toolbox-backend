@@ -22,7 +22,7 @@
       in
       {
         devShells.default = pkgs.mkShell (
-          (metaforiInfra.devshell {
+          metaforiInfra.devshell {
             inherit pkgs metaforiInfra;
             enableDatabases = true;
             enableMonitoring = true;
@@ -30,7 +30,7 @@
             configOverrides = {
               postgresDb = "collection_toolbox_backend";
             };
-          })
+          }
         );
 
         packages.default = metaforiInfra.php { inherit pkgs; };

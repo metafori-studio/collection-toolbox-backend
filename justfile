@@ -8,7 +8,7 @@ start:
 setup:
     @composer run setup
 
-dev:
+run:
     @composer run dev
 
 start-storage:
