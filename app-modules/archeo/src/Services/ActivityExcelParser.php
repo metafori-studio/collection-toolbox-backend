@@ -106,13 +106,13 @@ class ActivityExcelParser
                     $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
                     $years = $this->parseYears($yearStr, $rowIndex);
 
-                    $coordinateX = $row[$mapping['coordinate_x'] ?? 'T'] ?? null;
-                    $coordinateY = $row[$mapping['coordinate_y'] ?? 'U'] ?? null;
+                    $coordinateX = $this->toNullableFloat($row[$mapping['coordinate_x'] ?? 'T'] ?? null);
+                    $coordinateY = $this->toNullableFloat($row[$mapping['coordinate_y'] ?? 'U'] ?? null);
                     $latitude = null;
                     $longitude = null;
 
-                    if ($coordinateX !== null && $coordinateY !== null && is_numeric($coordinateX) && is_numeric($coordinateY)) {
-                        $transformed = $transformer->sjtskToWgs84((float) $coordinateX, (float) $coordinateY);
+                    if ($coordinateX !== null && $coordinateY !== null) {
+                        $transformed = $transformer->sjtskToWgs84($coordinateX, $coordinateY);
                         if ($transformed) {
                             $latitude = $transformed['latitude'];
                             $longitude = $transformed['longitude'];
@@ -253,5 +253,18 @@ class ActivityExcelParser
         }
 
         return (int) $value;
+    }
+
+    protected function toNullableFloat(mixed $value): ?float
+    {
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+
+        if ($value === null || $value === '' || ! is_numeric($value)) {
+            return null;
+        }
+
+        return (float) $value;
     }
 }
