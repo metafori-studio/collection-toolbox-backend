@@ -17,7 +17,6 @@ class GalleryResource extends JsonResource
      * @return array{
      *     id: int,
      *     title: string,
-     *     description: string|null,
      *     images: array<int, array{
      *         name: string,
      *         url: string,

@@ -65,4 +65,4 @@ jobs:
         prek-version: '0.3.4'
 
     - name: Run Tests
-      run: php artisan test
+      run: composer run test
