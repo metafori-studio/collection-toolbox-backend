@@ -12,8 +12,6 @@ class ArcheoServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'archeo');
-
         Panel::configureUsing(function (Panel $panel): void {
             if ($panel->getId() !== 'archeo') {
                 return;
@@ -25,6 +23,8 @@ class ArcheoServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->loadTranslationsFrom(__DIR__.'/../../lang', 'archeo');
+
         User::resolveRelationUsing('activityAssignments', function (User $user) {
             return $user->hasMany(ActivityAssignment::class);
         });
