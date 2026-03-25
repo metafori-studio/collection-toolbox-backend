@@ -17,7 +17,7 @@ class ActivityImport extends Model
 
     public const STATUS_COMPLETE = 'complete';
 
-    public static array $STATUS_VALUES = [
+    public const STATUS_VALUES = [
         self::STATUS_PENDING,
         self::STATUS_PROCESSING,
         self::STATUS_FAILED,
@@ -33,15 +33,6 @@ class ActivityImport extends Model
         'user_id',
         'status',
     ];
-
-    protected static function booted(): void
-    {
-        static::saving(function (ActivityImport $import) {
-            if (! in_array($import->status, self::$STATUS_VALUES)) {
-                throw new \InvalidArgumentException("Invalid status: {$import->status}");
-            }
-        });
-    }
 
     public function activities(): HasMany
     {
