@@ -42,7 +42,7 @@ return new class extends Migration
             $table->text('site_type_original')->nullable();
 
             $table->text('size_category');
-            $table->foreignId('import_id')->nullable()->constrained('archeo_activity_imports');
+            $table->foreignId('import_id')->nullable()->constrained('archeo_activity_imports')->nullOnDelete();
 
             $table->timestamps();
         });
