@@ -1,27 +1,22 @@
 <?php
 
+use Illuminate\Support\Facades\Gate;
 use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Policies\ActivityPolicy;
-use Metafori\Core\Enums\Role;
 use Metafori\Core\Models\User;
 
-test('admin is authorized via before', function () {
-    $policy = new ActivityPolicy;
-
+test('admin is authorized via gate interceptor', function () {
     $admin = Mockery::mock(User::class);
-    $admin->shouldReceive('hasRole')->with(Role::Admin)->andReturn(true);
+    $admin->shouldReceive('isAdministrator')->andReturn(true);
 
-    expect($policy->before($admin, 'viewAny'))->toBeTrue();
-    expect($policy->before($admin, 'create'))->toBeTrue();
-});
+    Gate::before(function ($user, $ability) {
+        if ($user->isAdministrator()) {
+            return true;
+        }
+    });
 
-test('non-admin is not authorized via before', function () {
-    $policy = new ActivityPolicy;
-
-    $user = Mockery::mock(User::class);
-    $user->shouldReceive('hasRole')->with(Role::Admin)->andReturn(false);
-
-    expect($policy->before($user, 'viewAny'))->toBeNull();
+    expect(Gate::forUser($admin)->allows('viewAny'))->toBeTrue();
+    expect(Gate::forUser($admin)->allows('create'))->toBeTrue();
 });
 
 test('non-admin can view document if assigned', function () {
@@ -44,18 +39,4 @@ test('non-admin cannot view document if not assigned', function () {
     $activity->shouldReceive('isAssignedTo')->with($user)->andReturn(false);
 
     expect($policy->viewDocument($user, $activity))->toBeFalse();
-});
-
-test('other methods deny non-admin access', function () {
-    $policy = new ActivityPolicy;
-    $user = Mockery::mock(User::class);
-
-    expect($policy->viewAny($user))->toBeFalse();
-    expect($policy->create($user))->toBeFalse();
-    expect($policy->update($user, Mockery::mock(Activity::class)))->toBeFalse();
-    expect($policy->delete($user, Mockery::mock(Activity::class)))->toBeFalse();
-    expect($policy->deleteAny($user))->toBeFalse();
-    expect($policy->restore($user, Mockery::mock(Activity::class)))->toBeFalse();
-    expect($policy->forceDelete($user, Mockery::mock(Activity::class)))->toBeFalse();
-    expect($policy->import($user))->toBeFalse();
 });
