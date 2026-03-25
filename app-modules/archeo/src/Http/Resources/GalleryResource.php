@@ -34,13 +34,12 @@ class GalleryResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'images' => $this->getMedia('gallery_images')->map(function ($media) use ($expires) {
-                $isS3 = $media->disk === 's3';
+            'images' => $this->getMedia('gallery_images')->map(function ($media) {
 
                 return [
                     'name' => $media->file_name,
-                    'url' => $isS3 ? $media->getTemporaryUrl($expires) : $media->getUrl(),
-                    'thumb' => $isS3 ? $media->getTemporaryUrl($expires, 'thumb') : $media->getUrl('thumb'),
+                    'url' => $media->getUrl(),
+                    'thumb' => $media->getUrl('thumb'),
                     'size' => $media->human_readable_size,
                     'mime_type' => $media->mime_type,
                 ];
