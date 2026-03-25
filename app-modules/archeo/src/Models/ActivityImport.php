@@ -11,7 +11,8 @@ class ActivityImport extends Model
 {
     protected $table = 'archeo_activity_imports';
     protected $fillable = [
-        'job_id',
+        'path',
+        'disk',
         'file_name',
         'user_id',
         'status',

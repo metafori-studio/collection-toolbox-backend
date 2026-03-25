@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::dropIfExists('archeo_activity_imports');
         Schema::create('archeo_activity_imports', function (Blueprint $table) {
             $table->id();
-            $table->string('job_id')->nullable()->index();
             $table->string('file_name');
+            $table->string('path');
+            $table->string('disk');
             $table->foreignId('user_id')->constrained('users');
             $table->string('status')->default('pending');
             $table->timestamps();
