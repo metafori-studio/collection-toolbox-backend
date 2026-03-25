@@ -35,6 +35,7 @@ it('can show a complete item with all relations', function () {
         ->assertExactJsonStructure([
             'data' => [
                 'id',
+                'document_id',
                 'doi',
                 'title',
                 'subtitle',
@@ -143,6 +144,7 @@ it('can show a complete item with all relations', function () {
         ->assertJson([
             'data' => [
                 'id' => $item->id,
+                'document_id' => $document->id,
                 'doi' => $document->doi,
                 'title' => $document->title,
                 'subtitle' => $document->subtitle,

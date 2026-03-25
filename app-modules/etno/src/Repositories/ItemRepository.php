@@ -48,6 +48,7 @@ class ItemRepository
                 'authors',
                 'researchers',
                 'originators.person',
+                ...Item::localityRelations(),
             ]));
         });
 
