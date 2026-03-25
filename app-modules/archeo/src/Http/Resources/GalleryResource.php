@@ -35,7 +35,6 @@ class GalleryResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
             'images' => $this->getMedia('gallery_images')->map(function ($media) use ($expires) {
                 $isS3 = $media->disk === 's3';
 
