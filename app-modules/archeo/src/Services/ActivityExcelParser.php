@@ -11,9 +11,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ActivityExcelParser
 {
-    /**
-     * @deprecated Config-based mapping is deprecated. Use direct mapping in this class instead.
-     */
     protected const DEFAULT_IMPORT_MAPPING = [
         'activity_number' => 'A',
         'cvs_number' => 'B',
