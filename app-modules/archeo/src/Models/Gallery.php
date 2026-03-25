@@ -18,7 +18,6 @@ class Gallery extends Model implements HasMedia
     protected $fillable = [
         'activity_id',
         'title',
-        'description',
         'sort_order',
     ];
 
@@ -30,7 +29,7 @@ class Gallery extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery_images')
-            ->useDisk(config('public'))
+            ->useDisk('public')
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
     }
 
