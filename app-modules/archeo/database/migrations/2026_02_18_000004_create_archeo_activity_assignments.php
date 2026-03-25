@@ -8,7 +8,6 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('archeo_activity_assignments', function (Blueprint $table) {

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('file_name');
             $table->string('path');
             $table->string('disk');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('status')->default('pending');
             $table->timestamps();
         });
