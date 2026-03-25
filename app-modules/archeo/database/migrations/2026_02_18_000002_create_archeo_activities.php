@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('archeo_activities');
         Schema::create('archeo_activities', function (Blueprint $table) {
             $table->id();
             $table->text('activity_number')->unique();
@@ -26,13 +27,13 @@ return new class extends Migration
             $table->text('position')->nullable();
             $table->text('district')->nullable();
             $table->integer('localization_degree')->nullable();
-            $table->decimal('coordinate_x', 10, 6)->nullable();
-            $table->decimal('coordinate_y', 10, 6)->nullable();
+            $table->decimal('coordinate_x', 20, 6)->nullable();
+            $table->decimal('coordinate_y', 20, 6)->nullable();
             $table->boolean('has_gis_link')->default(false);
 
             $table->integer('cvs_number');
             $table->text('research_leader');
-            $table->text('author_ns');
+            $table->json('author_ns')->nullable();
             $table->text('institution')->nullable();
 
             $table->json('dating_ns')->nullable();
@@ -41,6 +42,7 @@ return new class extends Migration
             $table->text('site_type_original')->nullable();
 
             $table->text('size_category');
+            $table->foreignId('import_id')->nullable()->constrained('archeo_activity_imports');
 
             $table->timestamps();
         });
