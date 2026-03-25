@@ -18,7 +18,6 @@ class Gallery extends Model implements HasMedia
     protected $fillable = [
         'activity_id',
         'title',
-        'description',
         'sort_order',
     ];
 
