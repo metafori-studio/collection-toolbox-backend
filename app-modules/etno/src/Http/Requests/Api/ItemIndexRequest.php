@@ -110,12 +110,36 @@ class ItemIndexRequest extends FormRequest
              */
             'filter.project.id' => ['array'],
             'filter.project.id.*' => ['integer'],
-
+            'filter.country.id' => ['array'],
             /**
-             * Filter by the mapped locality (format is `{type}:{id}`). Matches any if multiple given.
+             * Filter by mapped locality. Specify multiple values to match any.
              */
-            'filter.locality' => ['array'],
-            'filter.locality.*' => ['string'],
+            'filter.country.id.*' => ['integer'],
+            'filter.region.id' => ['array'],
+            /**
+             * Filter by mapped locality. Specify multiple values to match any.
+             */
+            'filter.region.id.*' => ['integer'],
+            'filter.district.id' => ['array'],
+            /**
+             * Filter by mapped locality. Specify multiple values to match any.
+             */
+            'filter.district.id.*' => ['integer'],
+            'filter.municipality.id' => ['array'],
+            /**
+             * Filter by mapped locality. Specify multiple values to match any.
+             */
+            'filter.municipality.id.*' => ['integer'],
+            'filter.municipality_part.id' => ['array'],
+            /**
+             * Filter by mapped locality. Specify multiple values to match any.
+             */
+            'filter.municipality_part.id.*' => ['integer'],
+            'filter.location.id' => ['array'],
+            /**
+             * Filter by mapped locality. Specify multiple values to match any.
+             */
+            'filter.location.id.*' => ['integer'],
 
             /**
              * Page number for pagination.

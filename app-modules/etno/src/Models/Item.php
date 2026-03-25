@@ -239,10 +239,10 @@ class Item extends Model implements Inheritable
             return $this->getTranslations($attribute) ?? [];
         };
 
-        $resolveLocalityHierarchy = function (string $attribute) {
-            $locality = $this->isInheritableAndInherited($attribute)
-                ? $this->getParent()?->{$attribute}
-                : $this->{$attribute};
+        $resolveLocalityHierarchy = function () {
+            $locality = $this->isInheritableAndInherited('locality')
+                ? $this->getParent()?->locality
+                : $this->locality;
 
             if (! $locality) {
                 return [];
@@ -252,7 +252,8 @@ class Item extends Model implements Inheritable
 
             $current = $locality;
             while ($current) {
-                $localities[] = $current->getMorphClass().':'.$current->id;
+                $type = $current->getMorphClass();
+                $localities[$type] = ['id' => $current->id];
 
                 $current = match (true) {
                     $current instanceof MunicipalityPart => $current->municipality,
@@ -264,7 +265,7 @@ class Item extends Model implements Inheritable
                 };
             }
 
-            return array_values(array_unique($localities));
+            return $localities;
         };
 
         return [
@@ -292,7 +293,7 @@ class Item extends Model implements Inheritable
             'research_collection' => ['id' => $resolveRelationIds('researchCollections')],
             'institution' => ['id' => $resolveRelationIds('institution')],
             'project' => ['id' => $resolveRelationIds('project')],
-            'locality' => $resolveLocalityHierarchy('locality'),
+            ...$resolveLocalityHierarchy(),
         ];
     }
 }
