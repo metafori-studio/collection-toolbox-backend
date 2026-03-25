@@ -8,11 +8,13 @@ class InvalidFileFormatException extends ActivityImportException
     {
         $fileName = basename($path);
 
-        return new self("The file '{$fileName}' is unreadable or not a valid Excel file.");
+        return new self(__('archeo::activities.import.errors.file_unreadable', [
+            'filename' => $fileName,
+        ]));
     }
 
     public static function empty(): self
     {
-        return new self('The uploaded Excel file contains no data.');
+        return new self(__('archeo::activities.import.errors.file_empty'));
     }
 }

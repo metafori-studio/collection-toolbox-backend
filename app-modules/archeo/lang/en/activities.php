@@ -71,6 +71,8 @@ return [
             'invalid_activity_number' => 'The activity number does not contain any digits.',
             'invalid_year' => 'Invalid year format ":value". Expected "YYYY" or "YYYY-YYYY".',
             'year_required' => 'Activity year is required.',
+            'file_unreadable' => "The file ':filename' is unreadable or not a valid Excel file.",
+            'file_empty' => 'The uploaded Excel file contains no data.',
         ],
     ],
 ];
