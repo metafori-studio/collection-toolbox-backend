@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ItemIndexRequest extends FormRequest
 {
@@ -25,103 +26,139 @@ class ItemIndexRequest extends FormRequest
             /**
              * Map of filtering constraints.
              */
-            'filter' => ['array'],
-            'filter.type' => ['array'],
+            'filter' => [
+                Rule::array([
+                    'type',
+                    'language',
+                    'accrual_method',
+                    'collection_method',
+                    'access_rights',
+                    'license',
+                    'production_methods',
+                    'author',
+                    'researcher',
+                    'originator',
+                    'keyword',
+                    'research_collection',
+                    'institution',
+                    'project',
+                    'country',
+                    'region',
+                    'district',
+                    'municipality',
+                    'municipality_part',
+                    'location',
+                ]),
+            ],
+            'filter.type' => ['array', 'list'],
             /**
              * Filter by Item types (matches any if multiple given).
              */
             'filter.type.*' => ['string'],
-            'filter.language' => ['array'],
+            'filter.language' => ['array', 'list'],
             /**
              * Filter by languages (matches any if multiple given).
              */
             'filter.language.*' => ['string'],
-            'filter.accrual_method' => ['array'],
+            'filter.accrual_method' => ['array', 'list'],
             /**
              * Filter by accrual methods (matches any if multiple given).
              */
             'filter.accrual_method.*' => ['string'],
-            'filter.collection_method' => ['array'],
+            'filter.collection_method' => ['array', 'list'],
             /**
              * Filter by collection methods (matches any if multiple given).
              */
             'filter.collection_method.*' => ['string'],
-            'filter.access_rights' => ['array'],
+            'filter.access_rights' => ['array', 'list'],
             /**
              * Filter by access rights (matches any if multiple given).
              */
             'filter.access_rights.*' => ['string'],
-            'filter.license' => ['array'],
+            'filter.license' => ['array', 'list'],
             /**
              * Filter by licenses (matches any if multiple given).
              */
             'filter.license.*' => ['string'],
-            'filter.production_methods' => ['array'],
+            'filter.production_methods' => ['array', 'list'],
             /**
              * Filter by production methods (matches any if multiple given).
              */
             'filter.production_methods.*' => ['string'],
-            'filter.author.person_id' => ['array'],
+            'filter.author' => ['array:person_id'],
+            'filter.author.person_id' => ['array', 'list'],
             /**
              * Filter by the IDs of related authors (matches any if multiple given).
              */
             'filter.author.person_id.*' => ['integer'],
-            'filter.researcher.person_id' => ['array'],
+            'filter.researcher' => ['array:person_id'],
+            'filter.researcher.person_id' => ['array', 'list'],
             /**
              * Filter by the IDs of related researchers.
              */
             'filter.researcher.person_id.*' => ['integer'],
-            'filter.originator.person_id' => ['array'],
+            'filter.originator' => ['array:person_id'],
+            'filter.originator.person_id' => ['array', 'list'],
             /**
              * Filter by the IDs of related originators.
              */
             'filter.originator.person_id.*' => ['integer'],
-            'filter.keyword.id' => ['array'],
+            'filter.keyword' => ['array:id'],
+            'filter.keyword.id' => ['array', 'list'],
             /**
              * Filter by the IDs of mapped keywords.
              */
             'filter.keyword.id.*' => ['integer'],
-            'filter.research_collection.id' => ['array'],
+            'filter.research_collection' => ['array:id'],
+            'filter.research_collection.id' => ['array', 'list'],
             /**
              * Filter by the IDs of related research collections.
              */
             'filter.research_collection.id.*' => ['integer'],
-            'filter.institution.id' => ['array'],
+            'filter.institution' => ['array:id'],
+            'filter.institution.id' => ['array', 'list'],
             /**
              * Filter by the ID of the related institution.
              */
             'filter.institution.id.*' => ['integer'],
-            'filter.project.id' => ['array'],
+            'filter.project' => ['array:id'],
+            'filter.project.id' => ['array', 'list'],
             /**
              * Filter by the ID of the related project.
              */
             'filter.project.id.*' => ['integer'],
-            'filter.country.id' => ['array'],
+            'filter.country' => ['array:id'],
+            'filter.country.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
             'filter.country.id.*' => ['integer'],
-            'filter.region.id' => ['array'],
+            'filter.region' => ['array:id'],
+            'filter.region.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
             'filter.region.id.*' => ['integer'],
-            'filter.district.id' => ['array'],
+            'filter.district' => ['array:id'],
+            'filter.district.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
             'filter.district.id.*' => ['integer'],
-            'filter.municipality.id' => ['array'],
+            'filter.municipality' => ['array:id'],
+            'filter.municipality.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
             'filter.municipality.id.*' => ['integer'],
-            'filter.municipality_part.id' => ['array'],
+            'filter.municipality_part' => ['array:id'],
+            'filter.municipality_part.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
             'filter.municipality_part.id.*' => ['integer'],
-            'filter.location.id' => ['array'],
+            'filter.location' => ['array:id'],
+            'filter.location.id' => ['array', 'list'],
             /**
              * Filter by mapped locality. Specify multiple values to match any.
              */
