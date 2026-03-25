@@ -30,7 +30,7 @@ class Gallery extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery_images')
-            ->useDisk(config('archeo.media_disk', 'public'))
+            ->useDisk(config('public'))
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
     }
 

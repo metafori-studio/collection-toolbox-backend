@@ -8,10 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Metafori\Archeo\Services\CoordinateTransformer;
 use Metafori\Core\Models\User;
-use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Activity extends Model implements HasMedia
 {
@@ -102,12 +100,5 @@ class Activity extends Model implements HasMedia
                 (float) $this->coordinate_y
             );
         });
-    }
-
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->fit(Fit::Contain, 300, 300)
-            ->nonQueued();
     }
 }
