@@ -10,7 +10,6 @@ class ActivityAssignment extends Model
 {
     protected $table = 'archeo_activity_assignments';
 
-
     protected $fillable = [
         'activity_id',
         'user_id',
