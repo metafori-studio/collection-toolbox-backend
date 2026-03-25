@@ -9,6 +9,21 @@ use Metafori\Core\Models\User;
 
 class ActivityImport extends Model
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_PROCESSING = 'processing';
+
+    public const STATUS_FAILED = 'failed';
+
+    public const STATUS_COMPLETE = 'complete';
+
+    public static array $STATUS_VALUES = [
+        self::STATUS_PENDING,
+        self::STATUS_PROCESSING,
+        self::STATUS_FAILED,
+        self::STATUS_COMPLETE,
+    ];
+
     protected $table = 'archeo_activity_imports';
 
     protected $fillable = [
@@ -18,6 +33,15 @@ class ActivityImport extends Model
         'user_id',
         'status',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (ActivityImport $import) {
+            if (! in_array($import->status, self::$STATUS_VALUES)) {
+                throw new \InvalidArgumentException("Invalid status: {$import->status}");
+            }
+        });
+    }
 
     public function activities(): HasMany
     {
