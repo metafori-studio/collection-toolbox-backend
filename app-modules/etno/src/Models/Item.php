@@ -260,7 +260,7 @@ class Item extends Model implements Inheritable
             $current = $locality;
             while ($current) {
                 $type = $current->getMorphClass();
-                $localities[$type] = ['id' => $current->id];
+                $localities[$type][] = ['id' => $current->id];
 
                 $current = match (true) {
                     $current instanceof MunicipalityPart => $current->municipality,
