@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $activitiesTable = config('archeo.table_name', 'archeo_activities');
-        $galleriesTable = config('archeo.galleries_table_name', 'archeo_galleries');
-        $assignmentsTable = config('archeo.assignments_table_name', 'archeo_activity_assignments');
+        Schema::dropIfExists('archeo_activity_assignments');
+        Schema::dropIfExists('archeo_galleries');
+        Schema::dropIfExists('archeo_activities');
+        Schema::dropIfExists('archeo_activity_imports');
 
-        Schema::create('activity_imports', function (Blueprint $table) {
+        Schema::create('archeo_activity_imports', function (Blueprint $table) {
             $table->id();
             $table->string('job_id')->nullable()->index();
             $table->string('file_name');
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create($activitiesTable, function (Blueprint $table) {
+        Schema::create('archeo_activities', function (Blueprint $table) {
             $table->id();
             $table->text('activity_number')->unique();
             $table->smallInteger('activity_year_start');
@@ -54,23 +55,23 @@ return new class extends Migration
             $table->text('site_type_original')->nullable();
 
             $table->text('size_category');
-            $table->foreignId('import_id')->nullable()->constrained('activity_imports');
+            $table->foreignId('import_id')->nullable()->constrained('archeo_activity_imports');
 
             $table->timestamps();
         });
 
-        Schema::create($galleriesTable, function (Blueprint $table) use ($activitiesTable) {
+        Schema::create('archeo_galleries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('activity_id')->constrained($activitiesTable)->cascadeOnDelete();
+            $table->foreignId('activity_id')->constrained('archeo_activities')->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
 
-        Schema::create($assignmentsTable, function (Blueprint $table) use ($activitiesTable) {
+        Schema::create('archeo_activity_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('activity_id')->constrained($activitiesTable)->cascadeOnDelete();
+            $table->foreignId('activity_id')->constrained('archeo_activities')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('expires_at');
             $table->timestamps();
@@ -84,9 +85,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('archeo.assignments_table_name', 'archeo_activity_assignments'));
-        Schema::dropIfExists(config('archeo.galleries_table_name', 'archeo_galleries'));
-        Schema::dropIfExists(config('archeo.table_name', 'archeo_activities'));
-        Schema::dropIfExists('activity_imports');
+        Schema::dropIfExists('archeo_activity_assignments');
+        Schema::dropIfExists('archeo_galleries');
+        Schema::dropIfExists('archeo_activities');
+        Schema::dropIfExists('archeo_activity_imports');
     }
 };

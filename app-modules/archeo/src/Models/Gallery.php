@@ -13,14 +13,10 @@ class Gallery extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected const DEFAULT_TABLE_NAME = 'archeo_galleries';
+    protected $table = 'archeo_galleries';
 
     public const DEFAULT_MEDIA_DISK = 'local';
 
-    public function getTable(): string
-    {
-        return config('archeo.galleries_table_name', self::DEFAULT_TABLE_NAME);
-    }
 
     protected $fillable = [
         'activity_id',

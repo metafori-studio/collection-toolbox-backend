@@ -9,6 +9,7 @@ use Metafori\Core\Models\User;
 
 class ActivityImport extends Model
 {
+    protected $table = 'archeo_activity_imports';
     protected $fillable = [
         'job_id',
         'file_name',
