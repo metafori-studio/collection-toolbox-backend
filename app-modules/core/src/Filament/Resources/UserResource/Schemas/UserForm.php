@@ -5,6 +5,7 @@ namespace Metafori\Core\Filament\Resources\UserResource\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Metafori\Core\Models\Role;
 
 class UserForm
 {
@@ -21,12 +22,11 @@ class UserForm
                     ->required()
                     ->maxLength(255),
                 Select::make('roles')
-                    ->label(__('core::enums.Role.label'))
                     ->relationship('roles', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Role $role) => $role->label)
                     ->multiple()
                     ->preload()
-                    ->searchable()
-                    ->required(),
+                    ->searchable(),
             ]);
     }
 }

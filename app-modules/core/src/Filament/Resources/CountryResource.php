@@ -17,7 +17,7 @@ class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedGlobeEuropeAfrica;
+    protected static \BackedEnum|string|null $navigationIcon = HeroIcon::OutlinedGlobeEuropeAfrica;
 
     protected static \UnitEnum|string|null $navigationGroup = 'Localities';
 
