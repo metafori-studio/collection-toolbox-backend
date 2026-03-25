@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('activity_id')->constrained('archeo_activities')->cascadeOnDelete();
             $table->string('title');
-            $table->text('description')->nullable();
             $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
