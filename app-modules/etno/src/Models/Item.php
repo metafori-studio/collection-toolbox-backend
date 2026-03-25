@@ -22,6 +22,7 @@ use Metafori\Core\Models\Person;
 use Metafori\Core\Models\Region;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Metafori\Etno\Models\Contracts\Inheritable;
+use Metafori\Etno\Models\Pivots\ItemPivot;
 
 class Item extends Model implements Inheritable
 {
@@ -110,12 +111,16 @@ class Item extends Model implements Inheritable
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_item_authors')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_item_authors')
+            ->using(ItemPivot::class)
+            ->orderByPivot('sort_order');
     }
 
     public function researchers(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_item_researchers')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_item_researchers')
+            ->using(ItemPivot::class)
+            ->orderByPivot('sort_order');
     }
 
     public function originators(): HasMany
@@ -125,12 +130,16 @@ class Item extends Model implements Inheritable
 
     public function keywords(): BelongsToMany
     {
-        return $this->belongsToMany(Keyword::class, 'etno_item_keyword')->orderByPivot('sort_order');
+        return $this->belongsToMany(Keyword::class, 'etno_item_keyword')
+            ->using(ItemPivot::class)
+            ->orderByPivot('sort_order');
     }
 
     public function researchCollections(): BelongsToMany
     {
-        return $this->belongsToMany(ResearchCollection::class, 'etno_item_research_collection')->orderByPivot('sort_order');
+        return $this->belongsToMany(ResearchCollection::class, 'etno_item_research_collection')
+            ->using(ItemPivot::class)
+            ->orderByPivot('sort_order');
     }
 
     public function document(): BelongsTo
@@ -164,13 +173,6 @@ class Item extends Model implements Inheritable
 
     public static function relations(): array
     {
-        $morphWith = [
-            Region::class => ['country'],
-            District::class => ['region.country'],
-            Municipality::class => ['district.region.country'],
-            MunicipalityPart::class => ['municipality.district.region.country'],
-        ];
-
         return self::documentRelations([
             'institution',
             'project',
@@ -179,13 +181,27 @@ class Item extends Model implements Inheritable
             'originators.person',
             'keywords',
             'researchCollections',
+            ...self::localityRelations(),
+        ]);
+    }
+
+    public static function localityRelations(): array
+    {
+        $morphWith = [
+            Region::class => ['country'],
+            District::class => ['region.country'],
+            Municipality::class => ['district.region.country'],
+            MunicipalityPart::class => ['municipality.district.region.country'],
+        ];
+
+        return [
             'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
                 ...$morphWith,
                 Location::class => [
                     'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
                 ],
             ]),
-        ]);
+        ];
     }
 
     public static function documentRelations(array $with, ?\Closure $callback = null): array
@@ -230,10 +246,10 @@ class Item extends Model implements Inheritable
             return $this->getTranslations($attribute) ?? [];
         };
 
-        $resolveLocalityHierarchy = function (string $attribute) {
-            $locality = $this->isInheritableAndInherited($attribute)
-                ? $this->getParent()?->{$attribute}
-                : $this->{$attribute};
+        $resolveLocalityHierarchy = function () {
+            $locality = $this->isInheritableAndInherited('locality')
+                ? $this->getParent()?->locality
+                : $this->locality;
 
             if (! $locality) {
                 return [];
@@ -243,7 +259,8 @@ class Item extends Model implements Inheritable
 
             $current = $locality;
             while ($current) {
-                $localities[] = $current->getMorphClass().':'.$current->id;
+                $type = $current->getMorphClass();
+                $localities[$type] = ['id' => $current->id];
 
                 $current = match (true) {
                     $current instanceof MunicipalityPart => $current->municipality,
@@ -255,7 +272,7 @@ class Item extends Model implements Inheritable
                 };
             }
 
-            return array_values(array_unique($localities));
+            return $localities;
         };
 
         return [
@@ -283,7 +300,7 @@ class Item extends Model implements Inheritable
             'research_collection' => ['id' => $resolveRelationIds('researchCollections')],
             'institution' => ['id' => $resolveRelationIds('institution')],
             'project' => ['id' => $resolveRelationIds('project')],
-            'locality' => $resolveLocalityHierarchy('locality'),
+            ...$resolveLocalityHierarchy(),
         ];
     }
 }

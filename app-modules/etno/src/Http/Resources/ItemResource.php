@@ -76,6 +76,7 @@ class ItemResource extends JsonResource
             'originators' => OriginatorResource::collection($this->whenLoaded('originators')),
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
+            'document_id' => $this->document_id,
         ];
     }
 }
