@@ -15,9 +15,6 @@ class Gallery extends Model implements HasMedia
 
     protected $table = 'archeo_galleries';
 
-    public const DEFAULT_MEDIA_DISK = 'local';
-
-
     protected $fillable = [
         'activity_id',
         'title',
@@ -34,7 +31,7 @@ class Gallery extends Model implements HasMedia
     {
         $this->addMediaCollection('gallery_images')
             ->useDisk(config('archeo.media_disk', self::DEFAULT_MEDIA_DISK))
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf']);
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
     }
 
     public function registerMediaConversions(?Media $media = null): void
