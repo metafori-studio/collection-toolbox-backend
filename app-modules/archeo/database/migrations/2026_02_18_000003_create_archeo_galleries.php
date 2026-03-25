@@ -11,7 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('archeo_galleries');
         Schema::create('archeo_galleries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('activity_id')->constrained('archeo_activities')->cascadeOnDelete();
