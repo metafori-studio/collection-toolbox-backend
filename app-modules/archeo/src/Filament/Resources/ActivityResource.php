@@ -202,7 +202,7 @@ class ActivityResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('activity_type')
                     ->label(__('archeo::activities.fields.activity_type'))
-                    ->options(fn () => Activity::query()->distinct()->pluck('activity_type', 'activity_type')->toArray()),
+                    ->options(fn () => static::getEloquentQuery()->distinct()->pluck('activity_type', 'activity_type')->toArray()),
                 Tables\Filters\TernaryFilter::make('has_gis_link')
                     ->label(__('archeo::activities.fields.has_gis_link')),
             ])

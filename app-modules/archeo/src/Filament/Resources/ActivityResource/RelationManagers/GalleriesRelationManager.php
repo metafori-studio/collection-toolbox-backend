@@ -86,7 +86,7 @@ class GalleriesRelationManager extends RelationManager
                     ->circular()
                     ->stacked()
                     ->limit(3)
-                    ->url(fn (Gallery $record): ?string => $record->getFirstMediaUrl('gallery_images'))
+                    ->url(fn (Gallery $record): ?string => $record->getFirstMediaUrl('gallery_images')),
 
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('archeo::activities.fields.gallery_title'))

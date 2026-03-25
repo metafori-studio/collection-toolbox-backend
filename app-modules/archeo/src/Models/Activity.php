@@ -36,11 +36,17 @@ class Activity extends Model
     ];
 
     protected $casts = [
+        'author_ns' => 'array',
         'dating_ns' => 'array',
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
         'has_gis_link' => 'boolean',
     ];
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(Assignment::class);
+    }
 
     public function galleries(): HasMany
     {
