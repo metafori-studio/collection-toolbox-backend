@@ -3,6 +3,7 @@
 namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activity extends Model
 {
@@ -40,4 +41,9 @@ class Activity extends Model
         'dating_site_type' => 'array',
         'has_gis_link' => 'boolean',
     ];
+
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(Gallery::class);
+    }
 }
