@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Metafori\Archeo\Exceptions\ExcelRowValidationException;
 use Metafori\Archeo\Exceptions\InvalidFileFormatException;
 use Metafori\Archeo\Models\Activity;
-use Metafori\Archeo\Services\CoordinateTransformer;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class ActivityExcelParser
@@ -71,7 +70,7 @@ class ActivityExcelParser
 
         DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
             $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
-            $transformer = new CoordinateTransformer();
+            $transformer = new CoordinateTransformer;
 
             foreach ($dataRows as $rowIndex => $row) {
                 try {

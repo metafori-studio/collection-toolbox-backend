@@ -38,6 +38,9 @@ class ImportActivitiesJob implements ShouldQueue
             $import->update(['status' => 'completed']);
 
             $body = "Created: {$result['created']}";
+            if ($result['updated'] > 0) {
+                $body .= ", Updated: {$result['updated']}";
+            }
 
             $notification = Notification::make()
                 ->title(__('archeo::activities.notifications.import_success.title'))
