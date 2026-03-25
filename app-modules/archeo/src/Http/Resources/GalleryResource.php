@@ -8,7 +8,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property int $id
  * @property string $title
- * @property string|null $description
  */
 class GalleryResource extends JsonResource
 {
@@ -35,7 +34,6 @@ class GalleryResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
             'images' => $this->getMedia('gallery_images')->map(function ($media) use ($expires) {
                 $isS3 = $media->disk === 's3';
 
