@@ -48,10 +48,37 @@ it('can list items', function () {
             'data' => [
                 '*' => [
                     'id',
+                    'document_id',
                     'title',
-                    'authors',
-                    'researchers',
-                    'originators',
+                    'authors' => [
+                        '*' => [
+                            'id',
+                            'given_name',
+                            'family_name',
+                        ],
+                    ],
+                    'researchers' => [
+                        '*' => [
+                            'id',
+                            'given_name',
+                            'family_name',
+                        ],
+                    ],
+                    'originators' => [
+                        '*' => [
+                            'id',
+                            'person' => [
+                                'id',
+                                'given_name',
+                                'family_name',
+                            ],
+                            'label',
+                        ],
+                    ],
+                    'locality' => [
+                        'id',
+                        'name',
+                    ],
                 ],
             ],
             'meta',

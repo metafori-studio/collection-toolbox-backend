@@ -173,13 +173,6 @@ class Item extends Model implements Inheritable
 
     public static function relations(): array
     {
-        $morphWith = [
-            Region::class => ['country'],
-            District::class => ['region.country'],
-            Municipality::class => ['district.region.country'],
-            MunicipalityPart::class => ['municipality.district.region.country'],
-        ];
-
         return self::documentRelations([
             'institution',
             'project',
@@ -188,13 +181,27 @@ class Item extends Model implements Inheritable
             'originators.person',
             'keywords',
             'researchCollections',
+            ...self::localityRelations(),
+        ]);
+    }
+
+    public static function localityRelations(): array
+    {
+        $morphWith = [
+            Region::class => ['country'],
+            District::class => ['region.country'],
+            Municipality::class => ['district.region.country'],
+            MunicipalityPart::class => ['municipality.district.region.country'],
+        ];
+
+        return [
             'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
                 ...$morphWith,
                 Location::class => [
                     'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
                 ],
             ]),
-        ]);
+        ];
     }
 
     public static function documentRelations(array $with, ?\Closure $callback = null): array
