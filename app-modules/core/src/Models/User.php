@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Metafori\Archeo\Models\ActivityAssignment;
 use Metafori\Core\Notifications\SetPassword;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -89,10 +88,5 @@ class User extends Authenticatable
     public function getEmailForPasswordReset(): string
     {
         return $this->email;
-    }
-
-    public function activityAssignments(): HasMany
-    {
-        return $this->hasMany(ActivityAssignment::class);
     }
 }
