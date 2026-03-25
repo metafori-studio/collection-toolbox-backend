@@ -24,8 +24,9 @@ class ItemFactory extends Factory
     public function definition(): array
     {
         return [
-            ...$this->documentAttributes(),
+            'id' => fake()->unique()->regexify('[A-Z]{2}[0-9]{6}:[a-z]{3}'),
             'document_id' => Document::factory(),
+            ...$this->documentAttributes(),
         ];
     }
 
