@@ -19,8 +19,7 @@ class ItemController
     public function index(ItemIndexRequest $request): ResourceCollection
     {
         $filters = $request->validated('filter', []);
-        $sortQuery = $request->validated('sort');
-        $sorts = $sortQuery ? explode(',', $sortQuery) : [];
+        $sorts = $request->sorts();
 
         $items = $this->repository->paginate($filters, $sorts);
 

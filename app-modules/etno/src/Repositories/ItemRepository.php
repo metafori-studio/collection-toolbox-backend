@@ -46,20 +46,10 @@ class ItemRepository
         $query = Item::search();
 
         foreach ($filters as $field => $value) {
-            if (\is_array($value) && ! \array_is_list($value)) {
-                foreach ($value as $subKey => $subValue) {
-                    $query->whereIn("{$field}.{$subKey}", (array) $subValue);
-                }
-            } elseif (\is_array($value)) {
-                $query->whereIn($field, $value);
-            } else {
-                $query->where($field, $value);
-            }
+            $query->whereIn($field, $value);
         }
 
-        foreach ($sorts as $sort) {
-            $dir = str_starts_with($sort, '-') ? 'desc' : 'asc';
-            $field = ltrim($sort, '-');
+        foreach ($sorts as $field => $dir) {
             $query->orderBy($field, $dir);
         }
 
