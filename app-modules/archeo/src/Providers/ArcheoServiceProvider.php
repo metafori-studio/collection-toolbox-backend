@@ -3,6 +3,7 @@
 namespace Metafori\Archeo\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
 use Metafori\Archeo\Models\ActivityAssignment;
@@ -27,6 +28,12 @@ class ArcheoServiceProvider extends ServiceProvider
 
         User::resolveRelationUsing('activityAssignments', function (User $user) {
             return $user->hasMany(ActivityAssignment::class);
+        });
+
+        Gate::before(function (User $user, string $ability) {
+            if ($user->isAdministrator()) {
+                return true;
+            }
         });
     }
 }
