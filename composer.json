@@ -20,7 +20,6 @@
         "metafori/archeo": "*",
         "metafori/etno": "*",
         "metafori/opensearch": "*",
-        "proj4php/proj4php": "^2.0.19",
         "tpetry/laravel-postgresql-enhanced": "^3.5"
     },
     "require-dev": {

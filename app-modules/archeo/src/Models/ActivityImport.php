@@ -4,9 +4,8 @@ namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Metafori\Core\Models\User;
-
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Metafori\Core\Models\User;
 
 class ActivityImport extends Model
 {
