@@ -125,8 +125,8 @@ class ActivityExcelParser
                         ['activity_number' => $activityNumber],
                         [
                             'import_id' => $importId,
-                            'cvs_number' => (int) ($row[$mapping['cvs_number'] ?? 'B'] ?? 0),
-                            'registration_year' => (int) ($row[$mapping['registration_year'] ?? 'C'] ?? 0),
+                            'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number'] ?? 'B'] ?? null, true),
+                            'registration_year' => $this->toNullableInt($row[$mapping['registration_year'] ?? 'C'] ?? null),
                             'activity_year_start' => $years['start'],
                             'activity_year_end' => $years['end'],
                             'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
@@ -142,7 +142,7 @@ class ActivityExcelParser
                             'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
                             'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
                             'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
-                            'localization_degree' => (int) ($row[$mapping['localization_degree'] ?? 'R'] ?? 0),
+                            'localization_degree' => $this->toNullableInt($row[$mapping['localization_degree'] ?? 'R'] ?? null),
                             'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
                             'coordinate_x' => $coordinateX,
                             'coordinate_y' => $coordinateY,
@@ -236,5 +236,22 @@ class ActivityExcelParser
         }
 
         return array_map('trim', explode(',', $value));
+    }
+
+    protected function toNullableInt(mixed $value, bool $validateNumeric = false): ?int
+    {
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if ($validateNumeric && ! is_numeric($value)) {
+            return null;
+        }
+
+        return (int) $value;
     }
 }

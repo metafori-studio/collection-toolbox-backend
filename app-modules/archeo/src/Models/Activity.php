@@ -4,9 +4,16 @@ namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class Activity extends Model
 {
     protected $table = 'archeo_activities';
+
+    public function import(): BelongsTo
+    {
+        return $this->belongsTo(ActivityImport::class, 'import_id');
+    }
 
     protected $fillable = [
         'activity_number',
