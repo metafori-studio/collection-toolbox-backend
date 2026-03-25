@@ -2,7 +2,9 @@
 
 namespace Metafori\Etno\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Metafori\Etno\Http\Requests\Api\ItemAggregationsRequest;
 use Metafori\Etno\Http\Requests\Api\ItemIndexRequest;
 use Metafori\Etno\Http\Resources\ItemMapPointCollection;
 use Metafori\Etno\Http\Resources\ItemResource;
@@ -23,6 +25,18 @@ class ItemController
         $items = $this->repository->paginate($filters, $sorts);
 
         return ItemResource::collection($items);
+    }
+
+    public function aggregations(ItemAggregationsRequest $request): JsonResponse
+    {
+        $filters = $request->validated('filter', []);
+
+        $aggregations = $this->repository->aggregations($filters);
+
+        return response()->json([
+            /** @var array<string, array<array{value: string, label: string, count: int}>> */
+            'data' => $aggregations,
+        ]);
     }
 
     /**
