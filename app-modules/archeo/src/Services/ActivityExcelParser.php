@@ -57,6 +57,24 @@ class ActivityExcelParser
             throw InvalidFileFormatException::empty();
         }
 
+        // Load mapping configuration once for both validation and processing
+        $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
+
+        // Validate header columns
+        $headerRow = $rows[1]; // First row is the header
+        $missingColumns = [];
+
+        foreach ($mapping as $fieldName => $expectedColumn) {
+            $headerValue = $headerRow[$expectedColumn] ?? null;
+            if (empty(trim($headerValue ?? ''))) {
+                $missingColumns[] = "{$fieldName} (Column {$expectedColumn})";
+            }
+        }
+
+        if (! empty($missingColumns)) {
+            throw InvalidFileFormatException::invalidHeader($missingColumns);
+        }
+
         // Keep track of original row indices (starting from 1)
         // Header is row 1, data starts at row 2
         $dataRows = array_slice($rows, 1, null, true);
@@ -65,8 +83,7 @@ class ActivityExcelParser
         $errors = [];
         $processedActivityNumbers = [];
 
-        DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers) {
-            $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
+        DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers, $mapping) {
             $transformer = new CoordinateTransformer;
 
             foreach ($dataRows as $rowIndex => $row) {
