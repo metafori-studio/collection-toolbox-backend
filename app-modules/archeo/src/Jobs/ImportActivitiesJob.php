@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Models\ActivityImport;
 use Metafori\Archeo\Services\ActivityExcelParser;
 use Metafori\Core\Models\User;
@@ -32,7 +33,6 @@ class ImportActivitiesJob implements ShouldQueue
     public function handle(ActivityExcelParser $parser): void
     {
         $import = ActivityImport::create([
-            'job_id' => $this->getJobId(),
             'file_name' => $this->originalFileName,
             'user_id' => $this->user->id,
             'status' => 'processing',
@@ -73,9 +73,7 @@ class ImportActivitiesJob implements ShouldQueue
 
             throw $e;
         } finally {
-            if (file_exists($this->filePath)) {
-                unlink($this->filePath);
-            }
+            Storage::delete($this->filePath);
         }
     }
 }
