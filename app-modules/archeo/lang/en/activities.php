@@ -73,7 +73,7 @@ return [
             'duplicate_activity_number' => 'Duplicate activity number in this file.',
             'invalid_year' => 'Invalid year format ":value". Expected "YYYY" or "YYYY-YYYY".',
             'year_required' => 'Activity year is required.',
-            'file_unreadable' => "The file ':filename' is unreadable or not a valid Excel file.",
+            'file_unreadable' => 'The file \':filename\' is unreadable or not a valid Excel file.',
             'file_empty' => 'The uploaded Excel file contains no data.',
             'invalid_header' => 'Missing required columns: :columns. Please check the template and try again.',
         ],
