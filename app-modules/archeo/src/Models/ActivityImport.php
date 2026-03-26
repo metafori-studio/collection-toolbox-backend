@@ -32,6 +32,7 @@ class ActivityImport extends Model
         'file_name',
         'user_id',
         'status',
+        'job_id',
     ];
 
     public function activities(): HasMany

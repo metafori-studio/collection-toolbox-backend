@@ -35,7 +35,7 @@ class ImportActivitiesJob implements ShouldQueue
         try {
             $result = $parser->importFromPath($this->filePath, $import->id);
 
-            $import->update(['status' => 'completed']);
+            $import->update(['status' => ActivityImport::STATUS_COMPLETE]);
 
             $body = "Created: {$result['created']}";
             if ($result['updated'] > 0) {
