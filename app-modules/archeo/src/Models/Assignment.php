@@ -4,6 +4,7 @@ namespace Metafori\Archeo\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Metafori\Core\Models\User;
 
 class Assignment extends Model
 {
