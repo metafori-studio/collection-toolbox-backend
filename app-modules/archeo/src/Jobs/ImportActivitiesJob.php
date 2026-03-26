@@ -32,7 +32,7 @@ class ImportActivitiesJob implements ShouldQueue
     public function handle(ActivityExcelParser $parser): void
     {
         $import = ActivityImport::create([
-            'job_id' => $this->job?->getJobId(),
+            'job_id' => $this->getJobId(),
             'file_name' => $this->originalFileName,
             'user_id' => $this->user->id,
             'status' => 'processing',
