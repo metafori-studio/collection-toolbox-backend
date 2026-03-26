@@ -34,8 +34,10 @@ class ImportActivitiesJob implements ShouldQueue
     {
         $import = ActivityImport::create([
             'file_name' => $this->originalFileName,
+            'path' => $this->filePath,
+            'disk' => config('filesystems.default', 'local'),
             'user_id' => $this->user->id,
-            'status' => 'processing',
+            'status' => ActivityImport::STATUS_PROCESSING,
         ]);
 
         try {
@@ -62,8 +64,11 @@ class ImportActivitiesJob implements ShouldQueue
             }
 
             $notification->sendToDatabase($this->user);
+
+            // Delete the file after successful completion
+            Storage::delete($this->filePath);
         } catch (Throwable $e) {
-            $import->update(['status' => 'failed']);
+            $import->update(['status' => ActivityImport::STATUS_FAILED]);
 
             Notification::make()
                 ->title(__('archeo::activities.notifications.import_failed.title'))
@@ -73,7 +78,16 @@ class ImportActivitiesJob implements ShouldQueue
 
             throw $e;
         } finally {
-            Storage::delete($this->filePath);
+            // File cleanup is handled in failed() method and after successful completion
         }
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(Throwable $exception): void
+    {
+        // Delete the file when the job has exhausted all retries
+        Storage::delete($this->filePath);
     }
 }
