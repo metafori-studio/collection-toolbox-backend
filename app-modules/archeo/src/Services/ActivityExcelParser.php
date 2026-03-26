@@ -47,7 +47,7 @@ class ActivityExcelParser
         try {
             $spreadsheet = IOFactory::load($localPath);
         } catch (Exception $e) {
-            throw InvalidFileFormatException::unreadable($localPath);
+            throw InvalidFileFormatException::unreadable(basename($localPath));
         }
 
         $sheet = $spreadsheet->getSheet(0);

@@ -4,10 +4,8 @@ namespace Metafori\Archeo\Exceptions;
 
 class InvalidFileFormatException extends ActivityImportException
 {
-    public static function unreadable(string $path): self
+    public static function unreadable(string $fileName): self
     {
-        $fileName = basename($path);
-
         return new self(__('archeo::activities.import.errors.file_unreadable', [
             'filename' => $fileName,
         ]));
