@@ -17,6 +17,12 @@ class ImportActivitiesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $timeout = 300; // 5 minutes timeout for Excel files
+
+    public int $tries = 3; // Number of times the job may be attempted
+
+    public int $backoff = 60; // Seconds to wait before retrying
+
     public function __construct(
         public string $filePath,
         public string $originalFileName,
