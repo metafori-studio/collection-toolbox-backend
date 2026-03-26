@@ -61,7 +61,7 @@ class ImportActivitiesJob implements ShouldQueue
 
             Notification::make()
                 ->title(__('archeo::activities.notifications.import_failed.title'))
-                ->body('A system error occurred during import. Please check the file format or contact support.')
+                ->body(__('archeo::activities.notifications.import_failed.body'))
                 ->danger()
                 ->sendToDatabase($this->user);
 

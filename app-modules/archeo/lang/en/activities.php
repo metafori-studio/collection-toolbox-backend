@@ -62,6 +62,7 @@ return [
         ],
         'import_failed' => [
             'title' => 'Import Failed',
+            'body' => 'A system error occurred during import. Please check the file format or contact support.',
         ],
     ],
     'import' => [
@@ -69,6 +70,7 @@ return [
         'errors' => [
             'missing_activity_number' => 'Missing activity number.',
             'invalid_activity_number' => 'The activity number does not contain any digits.',
+            'duplicate_activity_number' => 'Duplicate activity number in this file.',
             'invalid_year' => 'Invalid year format ":value". Expected "YYYY" or "YYYY-YYYY".',
             'year_required' => 'Activity year is required.',
             'file_unreadable' => "The file ':filename' is unreadable or not a valid Excel file.",

@@ -17,6 +17,16 @@ class ExcelRowValidationException extends ActivityImportException
         return new self($rowNumber, __('archeo::activities.import.errors.missing_activity_number'));
     }
 
+    public static function invalidActivityNumber(int $rowNumber): self
+    {
+        return new self($rowNumber, __('archeo::activities.import.errors.invalid_activity_number'));
+    }
+
+    public static function duplicateActivityNumber(int $rowNumber): self
+    {
+        return new self($rowNumber, __('archeo::activities.import.errors.duplicate_activity_number'));
+    }
+
     public static function invalidYear(int $rowNumber, string $yearValue): self
     {
         return new self($rowNumber, __('archeo::activities.import.errors.invalid_year', ['value' => $yearValue]));

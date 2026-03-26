@@ -79,25 +79,19 @@ class ActivityExcelParser
                     $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
 
                     if (empty($activityNumber)) {
-                        $errors[] = "Row {$rowIndex}: Missing activity number.";
-
-                        continue;
+                        throw ExcelRowValidationException::missingActivityNumber($rowIndex);
                     }
 
                     // Sanitize activity number to only include digits
                     $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
 
                     if (empty($activityNumber)) {
-                        $errors[] = "Row {$rowIndex}: Invalid activity number format.";
-
-                        continue;
+                        throw ExcelRowValidationException::invalidActivityNumber($rowIndex);
                     }
 
                     // Check if we already processed this activity number in current import
                     if (in_array($activityNumber, $processedActivityNumbers)) {
-                        $errors[] = "Row {$rowIndex} (Activity: {$activityNumber}): Duplicate activity number in this file. Skipping.";
-
-                        continue;
+                        throw ExcelRowValidationException::duplicateActivityNumber($rowIndex);
                     }
 
                     $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
