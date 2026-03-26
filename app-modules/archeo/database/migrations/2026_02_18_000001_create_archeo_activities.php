@@ -27,11 +27,13 @@ return new class extends Migration
             $table->text('position')->nullable();
             $table->text('district')->nullable();
             $table->integer('localization_degree')->nullable();
-            $table->decimal('coordinate_x', 20, 6)->nullable();
-            $table->decimal('coordinate_y', 20, 6)->nullable();
+            $table->decimal('coordinate_x', 15, 6)->nullable();
+            $table->decimal('coordinate_y', 15, 6)->nullable();
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
             $table->boolean('has_gis_link')->default(false);
 
-            $table->integer('cvs_number');
+            $table->integer('cvs_number')->nullable();
             $table->text('research_leader');
             $table->json('author_ns')->nullable();
             $table->text('institution')->nullable();
@@ -45,6 +47,8 @@ return new class extends Migration
             $table->unsignedBigInteger('import_id')->nullable();
 
             $table->timestamps();
+
+            $table->foreign('import_id')->references('id')->on('archeo_activity_imports')->nullOnDelete();
         });
     }
 
