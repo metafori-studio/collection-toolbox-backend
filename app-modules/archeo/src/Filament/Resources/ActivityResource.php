@@ -245,14 +245,7 @@ class ActivityResource extends Resource
             return $query;
         }
 
-        if (! $user) {
-            return $query->whereRaw('1=0'); // No results for unauthenticated users
-        }
-
-        return $query->whereHas('assignments', function (Builder $query) use ($user) {
-            $query->where('user_id', $user->id)
-                ->where('expires_at', '>', now());
-        });
+        return $query->whereRaw('1=0'); // No results for non-admin users
     }
 
     public static function getRelations(): array

@@ -6,7 +6,6 @@ use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
 use Metafori\Archeo\Jobs\ImportActivitiesJob;
 use Metafori\Archeo\Models\Activity;
@@ -38,11 +37,11 @@ class ListActivities extends ListRecords
                         ->directory('temp-imports'),
                 ])
                 ->action(function (array $data): void {
-                    $filePath = Storage::disk('local')->path($data['file']);
                     $originalFileName = basename($data['file']);
 
                     ImportActivitiesJob::dispatch(
-                        $filePath,
+                        'local', // disk name
+                        $data['file'], // relative path
                         $originalFileName,
                         auth()->user()
                     );
