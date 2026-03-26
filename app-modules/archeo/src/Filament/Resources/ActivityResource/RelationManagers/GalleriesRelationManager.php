@@ -31,11 +31,6 @@ class GalleriesRelationManager extends RelationManager
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                Forms\Components\Textarea::make('description')
-                    ->label(__('archeo::activities.fields.gallery_description'))
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-
                 SpatieMediaLibraryFileUpload::make('gallery_images')
                     ->label(__('archeo::activities.fields.gallery_images'))
                     ->collection('gallery_images')
@@ -56,11 +51,8 @@ class GalleriesRelationManager extends RelationManager
                             ->label(__('archeo::activities.fields.gallery_title'))
                             ->weight('bold')
                             ->size('lg'),
-
-                        TextEntry::make('description')
-                            ->label(__('archeo::activities.fields.gallery_description')),
                     ])
-                    ->columns(2),
+                    ->columns(1),
 
                 Section::make(__('archeo::activities.fields.gallery'))
                     ->schema([
@@ -92,10 +84,6 @@ class GalleriesRelationManager extends RelationManager
                     ->label(__('archeo::activities.fields.gallery_title'))
                     ->searchable()
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('description')
-                    ->label(__('archeo::activities.fields.gallery_description'))
-                    ->limit(50),
             ])
             ->filters([
                 //
