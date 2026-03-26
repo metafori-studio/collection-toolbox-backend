@@ -17,13 +17,7 @@ class GalleryResource extends JsonResource
      * @return array{
      *     id: int,
      *     title: string,
-     *     images: array<int, array{
-     *         name: string,
-     *         url: string,
-     *         thumb: string,
-     *         size: string,
-     *         mime_type: string
-     *     }>
+     *     images: \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      * }
      */
     public function toArray(Request $request): array
@@ -31,16 +25,7 @@ class GalleryResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'images' => $this->getMedia('gallery_images')->map(function ($media) {
-
-                return [
-                    'name' => $media->file_name,
-                    'url' => $media->getUrl(),
-                    'thumb' => $media->getUrl('thumb'),
-                    'size' => $media->human_readable_size,
-                    'mime_type' => $media->mime_type,
-                ];
-            }),
+            'images' => MediaResource::collection($this->getMedia('gallery_images')),
         ];
     }
 }
