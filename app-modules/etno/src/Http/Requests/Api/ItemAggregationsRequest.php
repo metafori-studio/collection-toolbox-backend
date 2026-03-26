@@ -15,6 +15,6 @@ class ItemAggregationsRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->filterRules;
+        return $this->filterRules();
     }
 }

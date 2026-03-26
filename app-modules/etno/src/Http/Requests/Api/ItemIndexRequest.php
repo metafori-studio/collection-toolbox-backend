@@ -32,7 +32,7 @@ class ItemIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ...$this->filterRules,
+            ...$this->filterRules(),
 
             /**
              * Specific model property mapped dynamically to a scalar. Supports comma separation for multiple sort properties. To sort descending, prepend a hyphen (`-`) to the target property name.

@@ -8,25 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Metafori\Core\Enums\Language;
-use Metafori\Core\Enums\License;
-use Metafori\Core\Models\Country;
-use Metafori\Core\Models\District;
-use Metafori\Core\Models\Keyword;
-use Metafori\Core\Models\Location;
-use Metafori\Core\Models\Municipality;
-use Metafori\Core\Models\MunicipalityPart;
-use Metafori\Core\Models\Organization;
-use Metafori\Core\Models\Person;
-use Metafori\Core\Models\Region;
-use Metafori\Etno\Enums\AccessRights;
-use Metafori\Etno\Enums\AccrualMethod;
-use Metafori\Etno\Enums\CollectionMethod;
-use Metafori\Etno\Enums\ItemType;
-use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Item;
-use Metafori\Etno\Models\Project;
-use Metafori\Etno\Models\ResearchCollection;
+use Metafori\Etno\Support\FacetMetadata;
 use OpenSearch\Client;
 use Stringable;
 
@@ -69,30 +52,7 @@ class ItemRepository
 
     public function aggregations(array $filters = [], int $size = 1000): Collection
     {
-        $fields = [
-            'access_rights',
-            'accrual_method',
-            'author.person_id',
-            'collection_method',
-            'country.id',
-            'district.id',
-            'institution.id',
-            'keyword.id',
-            'language',
-            'license',
-            'location.id',
-            'municipality_part.id',
-            'municipality.id',
-            'originator.person_id',
-            'production_methods',
-            'project.id',
-            'region.id',
-            'research_collection.id',
-            'researcher.person_id',
-            'type',
-        ];
-
-        $aggs = collect($fields)
+        $aggs = collect(FacetMetadata::all())
             ->mapWithKeys(fn (string $field) => [
                 $field => collect($filters)
                     ->except($field)
@@ -125,31 +85,9 @@ class ItemRepository
 
     protected function formatAggregations(array $aggregations): Collection
     {
-        $modelMapping = [
-            'author.person_id' => Person::class,
-            'country.id' => Country::class,
-            'district.id' => District::class,
-            'institution.id' => Organization::class,
-            'keyword.id' => Keyword::class,
-            'location.id' => Location::class,
-            'municipality_part.id' => MunicipalityPart::class,
-            'municipality.id' => Municipality::class,
-            'originator.person_id' => Person::class,
-            'project.id' => Project::class,
-            'region.id' => Region::class,
-            'research_collection.id' => ResearchCollection::class,
-            'researcher.person_id' => Person::class,
-        ];
+        $modelMapping = FacetMetadata::MODEL_MAPPING;
 
-        $enumMapping = [
-            'access_rights' => AccessRights::class,
-            'accrual_method' => AccrualMethod::class,
-            'collection_method' => CollectionMethod::class,
-            'language' => Language::class,
-            'license' => License::class,
-            'production_methods' => ProductionMethod::class,
-            'type' => ItemType::class,
-        ];
+        $enumMapping = FacetMetadata::ENUM_MAPPING;
 
         $parsedAggregations = collect($aggregations)
             ->mapWithKeys(fn (array $agg, string $key) => [$key => $agg['filtered'] ?? $agg]);
