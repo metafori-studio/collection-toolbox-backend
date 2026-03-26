@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Stringable;
 
-class Person extends Model
+class Person extends Model implements Stringable
 {
     use HasFactory, SoftDeletes;
 
@@ -21,7 +22,12 @@ class Person extends Model
     public function displayName(): Attribute
     {
         return Attribute::get(
-            fn () => Str::trim("{$this->given_name} {$this->family_name}")
+            fn () => Str::trim("{$this->family_name}, {$this->given_name}")
         );
+    }
+
+    public function __toString(): string
+    {
+        return $this->display_name;
     }
 }

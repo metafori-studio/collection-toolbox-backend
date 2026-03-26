@@ -3,16 +3,19 @@
 namespace Metafori\Etno\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Etno\Models\Item;
+use Metafori\Etno\Support\FacetMetadata;
 use OpenSearch\Client;
+use Stringable;
 
 class ItemRepository
 {
-    protected const MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
+    protected const string MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
 
     public function findOrFail(string $id): Item
     {
@@ -26,16 +29,10 @@ class ItemRepository
         $query = Item::search();
 
         foreach ($filters as $field => $value) {
-            if (is_array($value)) {
-                $query->whereIn($field, $value);
-            } else {
-                $query->where($field, $value);
-            }
+            $query->whereIn($field, $value);
         }
 
-        foreach ($sorts as $sort) {
-            $dir = str_starts_with($sort, '-') ? 'desc' : 'asc';
-            $field = ltrim($sort, '-');
+        foreach ($sorts as $field => $dir) {
             $query->orderBy($field, $dir);
         }
 
@@ -44,6 +41,7 @@ class ItemRepository
                 'authors',
                 'researchers',
                 'originators.person',
+                ...Item::localityRelations(),
             ]));
         });
 
@@ -52,7 +50,75 @@ class ItemRepository
         return $query->paginate($perPage);
     }
 
-    public function mapPoints(): Collection
+    public function aggregations(array $filters = [], int $size = 1000): Collection
+    {
+        $aggs = collect(FacetMetadata::all())
+            ->mapWithKeys(fn (string $field) => [
+                $field => collect($filters)
+                    ->except($field)
+                    ->map(fn (array $values, string $key) => [
+                        'terms' => [$key => $values],
+                    ])
+                    ->values(),
+            ])
+            ->map(fn (Collection $activeFilters, string $field) => [
+                'filter' => $activeFilters->isEmpty()
+                    ? ['match_all' => new \stdClass]
+                    : ['bool' => ['filter' => $activeFilters]],
+                'aggs' => [
+                    'filtered' => ['terms' => ['field' => $field, 'size' => $size]],
+                ],
+            ])
+            ->toArray();
+
+        $query = Item::search('*', function (Client $client, string $query, array $params) use ($aggs) {
+            $params['body']['aggs'] = $aggs;
+            $params['body']['size'] = 0;
+
+            return $client->search($params);
+        });
+
+        $aggregations = $query->raw()['aggregations'] ?? [];
+
+        return $this->formatAggregations($aggregations);
+    }
+
+    protected function formatAggregations(array $aggregations): Collection
+    {
+        $modelMapping = FacetMetadata::MODEL_MAPPING;
+
+        $enumMapping = FacetMetadata::ENUM_MAPPING;
+
+        $parsedAggregations = collect($aggregations)
+            ->mapWithKeys(fn (array $agg, string $key) => [$key => $agg['filtered'] ?? $agg]);
+
+        $modelLabels = $parsedAggregations
+            ->filter(fn (array $agg) => isset($agg['buckets']))
+            ->only(array_keys($modelMapping))
+            ->map(fn (array $agg, string $key) => $modelMapping[$key]::query()
+                ->whereIn('id', array_column($agg['buckets'], 'key'))
+                ->get()
+                ->keyBy('id')
+                ->map(fn (Stringable $model) => (string) $model)
+            );
+
+        return $parsedAggregations
+            ->map(fn (array $agg, string $key) => collect($agg['buckets'])
+                ->map(fn (array $bucket) => [
+                    'value' => $bucket['key'],
+                    'label' => match (true) {
+                        isset($modelMapping[$key]) => ($modelLabels[$key] ?? collect())->get($bucket['key']),
+                        isset($enumMapping[$key]) => $enumMapping[$key]::tryFrom($bucket['key'])?->getLabel(),
+                        default => null,
+                    },
+                    'count' => $bucket['doc_count'],
+                ])
+                ->filter(fn (array $bucket) => $bucket['label'] !== null)
+                ->values()
+            );
+    }
+
+    public function mapPoints(): EloquentCollection
     {
         $with = [
             'locality' => fn (MorphTo $query) => $query->select([

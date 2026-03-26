@@ -12,6 +12,8 @@ class ItemOriginator extends Model
 
     protected $table = 'etno_item_originators';
 
+    protected $touches = ['item'];
+
     protected $guarded = [];
 
     public function item(): BelongsTo
