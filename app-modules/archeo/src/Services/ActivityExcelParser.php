@@ -121,7 +121,7 @@ class ActivityExcelParser
                 return ['created' => 0, 'updated' => 0, 'errors' => [], 'activityNumber' => null];
             }
 
-            $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
+            $activityNumber = $row[$mapping['activity_number']] ?? null;
 
             if (empty($activityNumber)) {
                 throw ExcelRowValidationException::missingActivityNumber($rowIndex);
@@ -139,11 +139,11 @@ class ActivityExcelParser
                 throw ExcelRowValidationException::duplicateActivityNumber($rowIndex);
             }
 
-            $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
+            $yearStr = $row[$mapping['years']] ?? '';
             $years = $this->parseYears($yearStr, $rowIndex);
 
-            $coordinateX = $this->toNullableFloat($row[$mapping['coordinate_x'] ?? 'T'] ?? null);
-            $coordinateY = $this->toNullableFloat($row[$mapping['coordinate_y'] ?? 'U'] ?? null);
+            $coordinateX = $this->toNullableFloat($row[$mapping['coordinate_x']] ?? null);
+            $coordinateY = $this->toNullableFloat($row[$mapping['coordinate_y']] ?? null);
             $latitude = null;
             $longitude = null;
 
@@ -161,30 +161,30 @@ class ActivityExcelParser
                 ['activity_number' => $activityNumber],
                 [
                     'import_id' => $importId,
-                    'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number'] ?? 'B'] ?? null, true),
-                    'registration_year' => $this->toNullableInt($row[$mapping['registration_year'] ?? 'C'] ?? null),
+                    'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number']] ?? null, true),
+                    'registration_year' => $this->toNullableInt($row[$mapping['registration_year']] ?? null),
                     'activity_year_start' => $years['start'],
                     'activity_year_end' => $years['end'],
-                    'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
-                    'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
-                    'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
-                    'position' => $row[$mapping['position'] ?? 'H'] ?? null,
-                    'district' => $row[$mapping['district'] ?? 'I'] ?? null,
-                    'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
-                    'author_ns' => $this->parseArray($row[$mapping['author_ns'] ?? 'K'] ?? null),
-                    'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
-                    'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
-                    'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
-                    'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
-                    'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
-                    'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
-                    'localization_degree' => $this->toNullableInt($row[$mapping['localization_degree'] ?? 'R'] ?? null),
-                    'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'activity_type' => $row[$mapping['activity_type']] ?? '',
+                    'cadastral_area' => $row[$mapping['cadastral_area']] ?? null,
+                    'municipality' => $row[$mapping['municipality']] ?? null,
+                    'position' => $row[$mapping['position']] ?? null,
+                    'district' => $row[$mapping['district']] ?? null,
+                    'research_leader' => $row[$mapping['research_leader']] ?? '',
+                    'author_ns' => $this->parseArray($row[$mapping['author_ns']] ?? null),
+                    'institution' => $row[$mapping['institution']] ?? null,
+                    'action_number' => $row[$mapping['action_number']] ?? null,
+                    'dating_ns' => $this->parseArray($row[$mapping['dating_ns']] ?? null),
+                    'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans']] ?? null),
+                    'site_type_original' => $row[$mapping['site_type_original']] ?? null,
+                    'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type']] ?? null),
+                    'localization_degree' => $this->toNullableInt($row[$mapping['localization_degree']] ?? null),
+                    'has_gis_link' => filter_var($row[$mapping['has_gis_link']] ?? false, FILTER_VALIDATE_BOOLEAN),
                     'coordinate_x' => $coordinateX,
                     'coordinate_y' => $coordinateY,
                     'latitude' => $latitude,
                     'longitude' => $longitude,
-                    'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
+                    'size_category' => $row[$mapping['size_category']] ?? '',
                 ]
             );
 
