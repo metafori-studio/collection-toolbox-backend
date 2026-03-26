@@ -8,10 +8,6 @@ trait HasFilterRules
 {
     public function filterRules(): array
     {
-        $rules = [
-            'filter' => ['array'],
-        ];
-
         foreach (FacetMetadata::enums() as $field) {
             $escapedField = str_replace('.', '\.', $field);
             $rules["filter.{$escapedField}"] = ['array', 'list'];
