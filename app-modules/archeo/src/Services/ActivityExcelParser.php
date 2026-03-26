@@ -161,7 +161,7 @@ class ActivityExcelParser
                 ['activity_number' => $activityNumber],
                 [
                     'import_id' => $importId,
-                    'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number']] ?? null, true),
+                    'cvs_number' => $this->toNullableIntIfNumeric($row[$mapping['cvs_number']] ?? null),
                     'registration_year' => $this->toNullableInt($row[$mapping['registration_year']] ?? null),
                     'activity_year_start' => $years['start'],
                     'activity_year_end' => $years['end'],
@@ -272,7 +272,7 @@ class ActivityExcelParser
         return array_map('trim', explode(',', $value));
     }
 
-    protected function toNullableInt(mixed $value, bool $validateNumeric = false): ?int
+    protected function toNullableInt(mixed $value): ?int
     {
         if (is_string($value)) {
             $value = trim($value);
@@ -282,7 +282,20 @@ class ActivityExcelParser
             return null;
         }
 
-        if ($validateNumeric && ! is_numeric($value)) {
+        return (int) $value;
+    }
+
+    protected function toNullableIntIfNumeric(mixed $value): ?int
+    {
+        if (is_string($value)) {
+            $value = trim($value);
+        }
+
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if (! is_numeric($value)) {
             return null;
         }
 
