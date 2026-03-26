@@ -48,7 +48,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreign('import_id')->references('id')->on('archeo_activity_imports')->nullOnDelete();
         });
     }
 
