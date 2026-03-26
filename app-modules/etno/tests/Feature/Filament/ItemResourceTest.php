@@ -198,6 +198,56 @@ it('saves and overrides correctly for relational many fields', function (string 
         ->and($item->isInherited($column))->toBeFalse();
 })->with('inheritable_inputs_relational_many');
 
+it('validates and saves document_overrides correctly', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->create();
+    $item = Item::factory()->create([
+        'document_id' => $document->id,
+    ]);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => ['invalid_override_field'],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => [Item::INHERITABLES[0]],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => null,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => [],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+});
+
 dataset('inheritable_inputs_translatable', [
     'title' => ['title', ['en' => 'Parent Title EN', 'sk' => 'Parent Title SK'], ['en' => 'Overridden Title EN', 'sk' => 'Overridden Title SK']],
     'subtitle' => ['subtitle', ['en' => 'Parent Subtitle EN', 'sk' => 'Parent Subtitle SK'], ['en' => 'Overridden Subtitle EN', 'sk' => 'Overridden Subtitle SK']],
