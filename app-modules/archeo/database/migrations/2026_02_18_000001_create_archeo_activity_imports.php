@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('path');
             $table->string('disk');
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('job_id')->nullable()->after('user_id');
             $table->enum('status', ['pending', 'processing', 'failed', 'complete'])->default('pending');
             $table->timestamps();
         });

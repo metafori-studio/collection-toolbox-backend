@@ -57,8 +57,8 @@ class ActivityExcelParser
             throw InvalidFileFormatException::empty();
         }
 
-        // Load mapping configuration once for both validation and processing
-        $mapping = config('archeo.import_mapping', self::DEFAULT_IMPORT_MAPPING);
+        // Use the default mapping configuration
+        $mapping = self::DEFAULT_IMPORT_MAPPING;
 
         // Validate header columns
         $headerRow = $rows[1]; // First row is the header
