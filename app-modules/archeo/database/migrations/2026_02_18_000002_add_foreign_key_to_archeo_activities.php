@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Metafori\Archeo\Models\ActivityImport;
 
 return new class extends Migration
 {
@@ -13,11 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('archeo_activities', function (Blueprint $table) {
-            $table->foreignIdFor(ActivityImport::class, 'import_id')
-                ->nullable()
-                ->after('activity_number')
-                ->constrained('activity_imports')
-                ->nullOnDelete();
+            $table->foreign('import_id')->references('id')->on('archeo_activity_imports')->nullOnDelete();
         });
     }
 
@@ -28,7 +23,6 @@ return new class extends Migration
     {
         Schema::table('archeo_activities', function (Blueprint $table) {
             $table->dropForeign(['import_id']);
-            $table->dropColumn('import_id');
         });
     }
 };
