@@ -17,4 +17,9 @@ trait Locality
         return $this->latitude !== null
             && $this->longitude !== null;
     }
+
+    public function __toString(): string
+    {
+        return $this->name ?? '';
+    }
 }

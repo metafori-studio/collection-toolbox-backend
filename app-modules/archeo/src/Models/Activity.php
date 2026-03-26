@@ -2,21 +2,28 @@
 
 namespace Metafori\Archeo\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Metafori\Archeo\Services\CoordinateTransformer;
+use Metafori\Core\Models\User;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Activity extends Model
+class Activity extends Model implements HasMedia
 {
+    use InteractsWithMedia;
+
     protected $table = 'archeo_activities';
 
-    public function import(): BelongsTo
+    public function getRouteKeyName(): string
     {
-        return $this->belongsTo(ActivityImport::class, 'import_id');
+        return 'activity_number';
     }
 
     protected $fillable = [
         'activity_number',
-        'import_id',
         'activity_year_start',
         'activity_year_end',
         'activity_type',
@@ -29,8 +36,6 @@ class Activity extends Model
         'localization_degree',
         'coordinate_x',
         'coordinate_y',
-        'latitude',
-        'longitude',
         'has_gis_link',
         'cvs_number',
         'research_leader',
@@ -41,13 +46,59 @@ class Activity extends Model
         'dating_site_type',
         'site_type_original',
         'size_category',
+        'import_id',
     ];
 
     protected $casts = [
-        'import_id' => 'integer',
         'dating_ns' => 'array',
         'dating_ceans' => 'array',
         'dating_site_type' => 'array',
+        'author_ns' => 'array',
         'has_gis_link' => 'boolean',
+        'coordinate_x' => 'float',
+        'coordinate_y' => 'float',
     ];
+
+    public function galleries(): HasMany
+    {
+        return $this->hasMany(Gallery::class);
+    }
+
+    public function import(): BelongsTo
+    {
+        return $this->belongsTo(ActivityImport::class, 'import_id');
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(ActivityAssignment::class);
+    }
+
+    /**
+     * Check if the activity is assigned to a specific user and access is not expired.
+     */
+    public function isAssignedTo(User $user): bool
+    {
+        return $this->assignments()
+            ->where('user_id', $user->id)
+            ->where('expires_at', '>', now())
+            ->exists();
+    }
+
+    /**
+     * Get GCS (WGS84) Latitude and Longitude translated from S-JTSK.
+     */
+    protected function gcsCoordinates(): Attribute
+    {
+        return Attribute::get(function () {
+            if (! $this->coordinate_x || ! $this->coordinate_y) {
+                return null;
+            }
+
+            return app(CoordinateTransformer::class)->sjtskToWgs84(
+                (float) $this->coordinate_x,
+                (float) $this->coordinate_y
+            );
+        });
+    }
 }

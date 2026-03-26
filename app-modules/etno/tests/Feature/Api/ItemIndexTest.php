@@ -217,7 +217,7 @@ it('can filter items by belongsTo property', function (string $propertyKey, stri
     app(ItemRepository::class)->refreshIndex();
 
     $response = getJson(route('api.etno.items.index', [
-        'filter' => [$propertyKey => ['id' => [$matchingEntity->id]]],
+        'filter' => ["{$propertyKey}.id" => [$matchingEntity->id]],
     ]));
 
     $response->assertStatus(200)
@@ -247,7 +247,7 @@ it('can filter items by belongsToMany property', function (string $propertyKey, 
     app(ItemRepository::class)->refreshIndex();
 
     $response = getJson(route('api.etno.items.index', [
-        'filter' => [$propertyKey => [$filterCol => [$matchingEntity->id]]],
+        'filter' => ["{$propertyKey}.{$filterCol}" => [$matchingEntity->id]],
     ]));
 
     $response->assertStatus(200)
@@ -279,7 +279,7 @@ it('can filter items by originator', function () {
     app(ItemRepository::class)->refreshIndex();
 
     $response = getJson(route('api.etno.items.index', [
-        'filter' => ['originator' => ['person_id' => [$matchingPerson->id]]],
+        'filter' => ['originator.person_id' => [$matchingPerson->id]],
     ]));
 
     $response->assertStatus(200)
@@ -302,7 +302,7 @@ it('can filter items by locality', function (string $propertyKey, string $factor
     app(ItemRepository::class)->refreshIndex();
 
     $response = getJson(route('api.etno.items.index', [
-        'filter' => [$propertyKey => ['id' => [$matchingLocality->id]]],
+        'filter' => ["{$propertyKey}.id" => [$matchingLocality->id]],
     ]));
 
     $response->assertStatus(200)
