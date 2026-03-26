@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Assignment extends Model
 {
-    protected $table = 'archeo_assignments';
+    protected $table = 'archeo_activity_assignments';
 
     protected $fillable = [
         'activity_id',
