@@ -87,90 +87,11 @@ class ActivityExcelParser
             $transformer = new CoordinateTransformer;
 
             foreach ($dataRows as $rowIndex => $row) {
-                try {
-                    // Silently skip completely empty rows
-                    if (empty(array_filter($row, fn ($cell) => ! is_null($cell) && $cell !== ''))) {
-                        continue;
-                    }
+                $result = $this->processRow($row, $rowIndex, $importId, $processedActivityNumbers, $transformer, $mapping);
 
-                    $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
-
-                    if (empty($activityNumber)) {
-                        throw ExcelRowValidationException::missingActivityNumber($rowIndex);
-                    }
-
-                    // Sanitize activity number to only include digits
-                    $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
-
-                    if (empty($activityNumber)) {
-                        throw ExcelRowValidationException::invalidActivityNumber($rowIndex);
-                    }
-
-                    // Check if we already processed this activity number in current import
-                    if (in_array($activityNumber, $processedActivityNumbers)) {
-                        throw ExcelRowValidationException::duplicateActivityNumber($rowIndex);
-                    }
-
-                    $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
-                    $years = $this->parseYears($yearStr, $rowIndex);
-
-                    $coordinateX = $this->toNullableFloat($row[$mapping['coordinate_x'] ?? 'T'] ?? null);
-                    $coordinateY = $this->toNullableFloat($row[$mapping['coordinate_y'] ?? 'U'] ?? null);
-                    $latitude = null;
-                    $longitude = null;
-
-                    if ($coordinateX !== null && $coordinateY !== null) {
-                        $transformed = $transformer->sjtskToWgs84($coordinateX, $coordinateY);
-                        if ($transformed) {
-                            $latitude = $transformed['latitude'];
-                            $longitude = $transformed['longitude'];
-                        } else {
-                            $errors[] = "Row {$rowIndex} (Activity: {$activityNumber}): Failed to transform JTSK coordinates ($coordinateX, $coordinateY) to WGS84.";
-                        }
-                    }
-
-                    $activity = Activity::query()->updateOrCreate(
-                        ['activity_number' => $activityNumber],
-                        [
-                            'import_id' => $importId,
-                            'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number'] ?? 'B'] ?? null, true),
-                            'registration_year' => $this->toNullableInt($row[$mapping['registration_year'] ?? 'C'] ?? null),
-                            'activity_year_start' => $years['start'],
-                            'activity_year_end' => $years['end'],
-                            'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
-                            'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
-                            'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
-                            'position' => $row[$mapping['position'] ?? 'H'] ?? null,
-                            'district' => $row[$mapping['district'] ?? 'I'] ?? null,
-                            'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
-                            'author_ns' => $this->parseArray($row[$mapping['author_ns'] ?? 'K'] ?? null),
-                            'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
-                            'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
-                            'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
-                            'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
-                            'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
-                            'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
-                            'localization_degree' => $this->toNullableInt($row[$mapping['localization_degree'] ?? 'R'] ?? null),
-                            'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
-                            'coordinate_x' => $coordinateX,
-                            'coordinate_y' => $coordinateY,
-                            'latitude' => $latitude,
-                            'longitude' => $longitude,
-                            'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
-                        ]
-                    );
-
-                    if ($activity->wasRecentlyCreated) {
-                        $createdCount++;
-                    } else {
-                        $updatedCount++;
-                    }
-
-                    $processedActivityNumbers[] = $activityNumber;
-                } catch (Exception $e) {
-                    $id = $activityNumber ?? 'Unknown';
-                    $errors[] = "Row {$rowIndex} (Activity: {$id}): ".$e->getMessage();
-                }
+                $createdCount += $result['created'];
+                $updatedCount += $result['updated'];
+                $errors = array_merge($errors, $result['errors']);
             }
         });
 
@@ -179,6 +100,111 @@ class ActivityExcelParser
             'updated' => $updatedCount,
             'count' => $createdCount + $updatedCount,
             'errors' => $errors,
+        ];
+    }
+
+    /**
+     * Process a single row of activity data
+     *
+     * @return array{created: int, updated: int, errors: array, activityNumber: ?string}
+     */
+    private function processRow(array $row, int $rowIndex, int $importId, array &$processedActivityNumbers, CoordinateTransformer $transformer, array $mapping): array
+    {
+        $created = 0;
+        $updated = 0;
+        $rowErrors = [];
+        $activityNumber = null;
+
+        try {
+            // Silently skip completely empty rows
+            if (empty(array_filter($row, fn ($cell) => ! is_null($cell) && $cell !== ''))) {
+                return ['created' => 0, 'updated' => 0, 'errors' => [], 'activityNumber' => null];
+            }
+
+            $activityNumber = $row[$mapping['activity_number'] ?? 'A'] ?? null;
+
+            if (empty($activityNumber)) {
+                throw ExcelRowValidationException::missingActivityNumber($rowIndex);
+            }
+
+            // Sanitize activity number to only include digits
+            $activityNumber = preg_replace('/[^0-9]/', '', (string) $activityNumber);
+
+            if (empty($activityNumber)) {
+                throw ExcelRowValidationException::invalidActivityNumber($rowIndex);
+            }
+
+            // Check if we already processed this activity number in current import
+            if (in_array($activityNumber, $processedActivityNumbers)) {
+                throw ExcelRowValidationException::duplicateActivityNumber($rowIndex);
+            }
+
+            $yearStr = $row[$mapping['years'] ?? 'D'] ?? '';
+            $years = $this->parseYears($yearStr, $rowIndex);
+
+            $coordinateX = $this->toNullableFloat($row[$mapping['coordinate_x'] ?? 'T'] ?? null);
+            $coordinateY = $this->toNullableFloat($row[$mapping['coordinate_y'] ?? 'U'] ?? null);
+            $latitude = null;
+            $longitude = null;
+
+            if ($coordinateX !== null && $coordinateY !== null) {
+                $transformed = $transformer->sjtskToWgs84($coordinateX, $coordinateY);
+                if ($transformed) {
+                    $latitude = $transformed['latitude'];
+                    $longitude = $transformed['longitude'];
+                } else {
+                    $rowErrors[] = "Row {$rowIndex} (Activity: {$activityNumber}): Failed to transform JTSK coordinates ($coordinateX, $coordinateY) to WGS84.";
+                }
+            }
+
+            $activity = Activity::query()->updateOrCreate(
+                ['activity_number' => $activityNumber],
+                [
+                    'import_id' => $importId,
+                    'cvs_number' => $this->toNullableInt($row[$mapping['cvs_number'] ?? 'B'] ?? null, true),
+                    'registration_year' => $this->toNullableInt($row[$mapping['registration_year'] ?? 'C'] ?? null),
+                    'activity_year_start' => $years['start'],
+                    'activity_year_end' => $years['end'],
+                    'activity_type' => $row[$mapping['activity_type'] ?? 'E'] ?? '',
+                    'cadastral_area' => $row[$mapping['cadastral_area'] ?? 'F'] ?? null,
+                    'municipality' => $row[$mapping['municipality'] ?? 'G'] ?? null,
+                    'position' => $row[$mapping['position'] ?? 'H'] ?? null,
+                    'district' => $row[$mapping['district'] ?? 'I'] ?? null,
+                    'research_leader' => $row[$mapping['research_leader'] ?? 'J'] ?? '',
+                    'author_ns' => $this->parseArray($row[$mapping['author_ns'] ?? 'K'] ?? null),
+                    'institution' => $row[$mapping['institution'] ?? 'L'] ?? null,
+                    'action_number' => $row[$mapping['action_number'] ?? 'M'] ?? null,
+                    'dating_ns' => $this->parseArray($row[$mapping['dating_ns'] ?? 'N'] ?? null),
+                    'dating_ceans' => $this->parseArray($row[$mapping['dating_ceans'] ?? 'O'] ?? null),
+                    'site_type_original' => $row[$mapping['site_type_original'] ?? 'P'] ?? null,
+                    'dating_site_type' => $this->parseArray($row[$mapping['dating_site_type'] ?? 'Q'] ?? null),
+                    'localization_degree' => $this->toNullableInt($row[$mapping['localization_degree'] ?? 'R'] ?? null),
+                    'has_gis_link' => filter_var($row[$mapping['has_gis_link'] ?? 'S'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'coordinate_x' => $coordinateX,
+                    'coordinate_y' => $coordinateY,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'size_category' => $row[$mapping['size_category'] ?? 'V'] ?? '',
+                ]
+            );
+
+            if ($activity->wasRecentlyCreated) {
+                $created = 1;
+            } else {
+                $updated = 1;
+            }
+
+            $processedActivityNumbers[] = $activityNumber;
+        } catch (Exception $e) {
+            $id = $activityNumber ?? 'Unknown';
+            $rowErrors[] = "Row {$rowIndex} (Activity: {$id}): ".$e->getMessage();
+        }
+
+        return [
+            'created' => $created,
+            'updated' => $updated,
+            'errors' => $rowErrors,
+            'activityNumber' => $activityNumber,
         ];
     }
 
