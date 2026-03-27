@@ -20,6 +20,7 @@ class AdditionalNotesSection extends Section
                     ->inheritable($this->inheritable)
                     ->translatableTabs()
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->collapsible();
     }
 }

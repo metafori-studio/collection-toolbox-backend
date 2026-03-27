@@ -27,6 +27,7 @@ class AuthorsAndCreatorsSection extends Section
                 OriginatorsRepeater::make('originators')
                     ->inheritable($this->inheritable)
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->collapsible();
     }
 }
