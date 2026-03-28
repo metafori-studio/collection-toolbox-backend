@@ -153,6 +153,13 @@ class ActivityResource extends Resource
                 Forms\Components\TextInput::make('size_category')
                     ->label(__('archeo::activities.fields.size_category'))
                     ->required(),
+                Forms\Components\SpatieMediaLibraryFileUpload::make('pdfs')
+                    ->label(__('archeo::activities.fields.pdfs'))
+                    ->collection('pdfs')
+                    ->disk(config('archeo.pdfs_disk', 'public'))
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->maxSize(51200)
+                    ->columnSpanFull(),
             ]);
     }
 
