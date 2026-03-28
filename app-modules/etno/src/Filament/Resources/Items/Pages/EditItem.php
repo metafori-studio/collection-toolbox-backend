@@ -13,6 +13,8 @@ class EditItem extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            $this->getSaveFormAction()
+                ->formId('form'),
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),

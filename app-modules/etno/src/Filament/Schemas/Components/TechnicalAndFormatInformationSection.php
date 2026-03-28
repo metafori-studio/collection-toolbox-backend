@@ -27,6 +27,7 @@ class TechnicalAndFormatInformationSection extends Section
                     ->inheritable($this->inheritable)
                     ->translatableTabs(),
             ])
+            ->collapsible()
             ->columns(2);
     }
 }

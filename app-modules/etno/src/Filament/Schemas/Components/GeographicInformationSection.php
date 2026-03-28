@@ -22,6 +22,7 @@ class GeographicInformationSection extends Section
                 LocationNoteInput::make('location_note')
                     ->inheritable($this->inheritable)
                     ->translatableTabs(),
-            ]);
+            ])
+            ->collapsible();
     }
 }

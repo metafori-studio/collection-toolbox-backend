@@ -38,6 +38,7 @@ class DescriptiveInformationSection extends Section
                 LanguageSelect::make('language')
                     ->inheritable($this->inheritable),
             ])
+            ->collapsible()
             ->columns(1);
     }
 }

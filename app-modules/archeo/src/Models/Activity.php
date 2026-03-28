@@ -36,6 +36,8 @@ class Activity extends Model implements HasMedia
         'localization_degree',
         'coordinate_x',
         'coordinate_y',
+        'latitude',
+        'longitude',
         'has_gis_link',
         'cvs_number',
         'research_leader',
