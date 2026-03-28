@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Models\ActivityImport;
+use Metafori\Archeo\Services\ActivityExcelParser;
 use Metafori\Core\Models\User;
 use Throwable;
 
@@ -31,7 +32,7 @@ class ImportActivitiesJob implements ShouldQueue
         public ?int $importId = null,
     ) {}
 
-    public function handle(): void
+    public function handle(ActivityExcelParser $parser): void
     {
         // Get the absolute path when needed for processing
         $filePath = Storage::disk($this->disk)->path($this->relativePath);
@@ -52,16 +53,7 @@ class ImportActivitiesJob implements ShouldQueue
         }
 
         try {
-            // Process the file using the disk and relative path
-            // This would typically involve reading the file via Storage::disk($this->disk)->get($this->relativePath)
-            // or using the absolute path for libraries that require it
-
-            // For now, we'll simulate successful processing
-            $result = [
-                'created' => 0,
-                'updated' => 0,
-                'errors' => [],
-            ];
+            $result = $parser->importFromPath($filePath, $import->id);
 
             $import->update(['status' => ActivityImport::STATUS_COMPLETE]);
 
