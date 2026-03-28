@@ -76,6 +76,14 @@ class Activity extends Model implements HasMedia
         return $this->hasMany(ActivityAssignment::class);
     }
 
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('pdfs')
+            ->useDisk(config('archeo.pdfs_disk', 'public'))
+            ->acceptsMimeTypes(['application/pdf'])
+            ->singleFile();
+    }
+
     /**
      * Check if the activity is assigned to a specific user and access is not expired.
      */

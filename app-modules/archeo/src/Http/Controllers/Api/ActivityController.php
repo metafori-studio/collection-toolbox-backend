@@ -15,7 +15,7 @@ class ActivityController extends Controller
     {
         $activity = Activity::query()
             ->where('activity_number', $activityNumber)
-            ->with(['galleries.media'])
+            ->with(['galleries.media', 'media'])
             ->firstOrFail();
 
         return new ActivityResource($activity);

@@ -15,6 +15,11 @@ class Gallery extends Model implements HasMedia
 
     public const DEFAULT_MEDIA_DISK = 'public';
 
+    public static function mediaDisk(): string
+    {
+        return config('archeo.media_disk', self::DEFAULT_MEDIA_DISK);
+    }
+
     protected $table = 'archeo_galleries';
 
     protected $fillable = [
@@ -32,7 +37,7 @@ class Gallery extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery_images')
-            ->useDisk(self::DEFAULT_MEDIA_DISK)
+            ->useDisk(self::mediaDisk())
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
     }
 

@@ -39,6 +39,7 @@ return [
         'gallery_title' => 'Title',
         'gallery_description' => 'Description',
         'gallery_images' => 'Images',
+        'pdfs' => 'PDF Documents',
         'assigned_user' => 'Assigned User',
         'expires_at' => 'Expires At',
         'remaining_time' => 'Remaining Access',
