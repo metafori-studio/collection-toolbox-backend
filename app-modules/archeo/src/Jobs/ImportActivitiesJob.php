@@ -27,7 +27,8 @@ class ImportActivitiesJob implements ShouldQueue
         public string $disk,
         public string $relativePath,
         public string $originalFileName,
-        public User $user
+        public User $user,
+        public ?int $importId = null,
     ) {}
 
     public function handle(): void
@@ -35,13 +36,20 @@ class ImportActivitiesJob implements ShouldQueue
         // Get the absolute path when needed for processing
         $filePath = Storage::disk($this->disk)->path($this->relativePath);
 
-        $import = ActivityImport::create([
-            'file_name' => $this->originalFileName,
-            'path' => $this->relativePath,
-            'disk' => $this->disk,
-            'user_id' => $this->user->id,
-            'status' => ActivityImport::STATUS_PROCESSING,
-        ]);
+        $import = $this->importId
+            ? ActivityImport::find($this->importId)
+            : null;
+
+        if (! $import) {
+            $import = ActivityImport::create([
+                'file_name' => $this->originalFileName,
+                'path' => $this->relativePath,
+                'disk' => $this->disk,
+                'user_id' => $this->user->id,
+                'status' => ActivityImport::STATUS_PROCESSING,
+            ]);
+            $this->importId = $import->id;
+        }
 
         try {
             // Process the file using the disk and relative path
@@ -80,26 +88,29 @@ class ImportActivitiesJob implements ShouldQueue
             // Delete the file after successful completion
             Storage::disk($this->disk)->delete($this->relativePath);
         } catch (Throwable $e) {
-            $import->update(['status' => ActivityImport::STATUS_FAILED]);
-
-            Notification::make()
-                ->title(__('archeo::activities.notifications.import_failed.title'))
-                ->body(__('archeo::activities.notifications.import_failed.body'))
-                ->danger()
-                ->sendToDatabase($this->user);
-
             throw $e;
-        } finally {
-            // File cleanup is handled in failed() method and after successful completion
         }
     }
 
     /**
-     * Handle a job failure.
+     * Handle a job failure after all retries are exhausted.
      */
     public function failed(Throwable $exception): void
     {
-        // Delete the file when the job has exhausted all retries
+        $import = $this->importId
+            ? ActivityImport::find($this->importId)
+            : null;
+
+        if ($import && $import->status === ActivityImport::STATUS_PROCESSING) {
+            $import->update(['status' => ActivityImport::STATUS_FAILED]);
+        }
+
+        Notification::make()
+            ->title(__('archeo::activities.notifications.import_failed.title'))
+            ->body(__('archeo::activities.notifications.import_failed.body'))
+            ->danger()
+            ->sendToDatabase($this->user);
+
         Storage::disk($this->disk)->delete($this->relativePath);
     }
 }
