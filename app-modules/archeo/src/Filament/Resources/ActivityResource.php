@@ -37,110 +37,122 @@ class ActivityResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
+        return $schema->schema([
+            self::generalSection(),
+            self::locationSection(),
+            self::researchSection(),
+        ]);
+    }
+
+    private static function generalSection(): Schemas\Components\Section
+    {
+        return Schemas\Components\Section::make(__('archeo::activities.sections.general'))
             ->schema([
-                Schemas\Components\Section::make(__('archeo::activities.sections.general'))
+                Schemas\Components\Grid::make(3)
                     ->schema([
-                        Schemas\Components\Grid::make(3)
-                            ->schema([
-                                Forms\Components\TextInput::make('activity_number')
-                                    ->label(__('archeo::activities.fields.activity_number'))
-                                    ->required()
-                                    ->regex('/^\d+$/')
-                                    ->validationMessages([
-                                        'regex' => 'The :attribute must only contain digits.',
-                                    ])
-                                    ->unique(ignoreRecord: true),
-                                Forms\Components\TextInput::make('activity_type')
-                                    ->label(__('archeo::activities.fields.activity_type'))
-                                    ->required(),
-                                Forms\Components\TextInput::make('cvs_number')
-                                    ->label(__('archeo::activities.fields.cvs_number'))
-                                    ->numeric()
-                                    ->required(),
-                            ]),
-                        Schemas\Components\Grid::make(3)
-                            ->schema([
-                                Forms\Components\TextInput::make('activity_year_start')
-                                    ->label(__('archeo::activities.fields.activity_year_start'))
-                                    ->numeric()
-                                    ->required(),
-                                Forms\Components\TextInput::make('activity_year_end')
-                                    ->label(__('archeo::activities.fields.activity_year_end'))
-                                    ->numeric()
-                                    ->required(),
-                                Forms\Components\TextInput::make('registration_year')
-                                    ->label(__('archeo::activities.fields.registration_year'))
-                                    ->numeric(),
-                            ]),
-                        Schemas\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('action_number')
-                                    ->label(__('archeo::activities.fields.action_number')),
-                                Forms\Components\TextInput::make('import_id')
-                                    ->label(__('archeo::activities.fields.import_id'))
-                                    ->disabled()
-                                    ->dehydrated(false),
-                            ]),
-                    ]),
-
-                Schemas\Components\Section::make(__('archeo::activities.sections.location'))
-                    ->schema([
-                        Schemas\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('municipality')
-                                    ->label(__('archeo::activities.fields.municipality')),
-                                Forms\Components\TextInput::make('cadastral_area')
-                                    ->label(__('archeo::activities.fields.cadastral_area')),
-                                Forms\Components\TextInput::make('district')
-                                    ->label(__('archeo::activities.fields.district')),
-                                Forms\Components\TextInput::make('position')
-                                    ->label(__('archeo::activities.fields.position')),
-                            ]),
-                        Schemas\Components\Grid::make(3)
-                            ->schema([
-                                Forms\Components\TextInput::make('localization_degree')
-                                    ->label(__('archeo::activities.fields.localization_degree'))
-                                    ->numeric(),
-                                Forms\Components\TextInput::make('coordinate_x')
-                                    ->label(__('archeo::activities.fields.coordinate_x'))
-                                    ->numeric()
-                                    ->step('0.000001'),
-                                Forms\Components\TextInput::make('coordinate_y')
-                                    ->label(__('archeo::activities.fields.coordinate_y'))
-                                    ->numeric()
-                                    ->step('0.000001'),
-                            ]),
-                        Forms\Components\Toggle::make('has_gis_link')
-                            ->label(__('archeo::activities.fields.has_gis_link')),
-                    ]),
-
-                Schemas\Components\Section::make(__('archeo::activities.sections.research'))
-                    ->schema([
-                        Schemas\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('research_leader')
-                                    ->label(__('archeo::activities.fields.research_leader'))
-                                    ->required(),
-                                Forms\Components\TextInput::make('institution')
-                                    ->label(__('archeo::activities.fields.institution')),
-                            ]),
-                        Forms\Components\TagsInput::make('author_ns')
-                            ->label(__('archeo::activities.fields.author_ns'))
+                        Forms\Components\TextInput::make('activity_number')
+                            ->label(__('archeo::activities.fields.activity_number'))
                             ->required()
-                            ->columnSpanFull(),
-                        Forms\Components\TagsInput::make('dating_ns')
-                            ->label(__('archeo::activities.fields.dating_ns')),
-                        Forms\Components\TagsInput::make('dating_ceans')
-                            ->label(__('archeo::activities.fields.dating_ceans')),
-                        Forms\Components\TagsInput::make('dating_site_type')
-                            ->label(__('archeo::activities.fields.dating_site_type')),
-                        Forms\Components\TextInput::make('site_type_original')
-                            ->label(__('archeo::activities.fields.site_type_original')),
-                        Forms\Components\TextInput::make('size_category')
-                            ->label(__('archeo::activities.fields.size_category'))
+                            ->regex('/^\d+$/')
+                            ->validationMessages([
+                                'regex' => 'The :attribute must only contain digits.',
+                            ])
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('activity_type')
+                            ->label(__('archeo::activities.fields.activity_type'))
+                            ->required(),
+                        Forms\Components\TextInput::make('cvs_number')
+                            ->label(__('archeo::activities.fields.cvs_number'))
+                            ->numeric()
                             ->required(),
                     ]),
+                Schemas\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('activity_year_start')
+                            ->label(__('archeo::activities.fields.activity_year_start'))
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('activity_year_end')
+                            ->label(__('archeo::activities.fields.activity_year_end'))
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('registration_year')
+                            ->label(__('archeo::activities.fields.registration_year'))
+                            ->numeric(),
+                    ]),
+                Schemas\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('action_number')
+                            ->label(__('archeo::activities.fields.action_number')),
+                        Forms\Components\TextInput::make('import_id')
+                            ->label(__('archeo::activities.fields.import_id'))
+                            ->disabled()
+                            ->dehydrated(false),
+                    ]),
+            ]);
+    }
+
+    private static function locationSection(): Schemas\Components\Section
+    {
+        return Schemas\Components\Section::make(__('archeo::activities.sections.location'))
+            ->schema([
+                Schemas\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('municipality')
+                            ->label(__('archeo::activities.fields.municipality')),
+                        Forms\Components\TextInput::make('cadastral_area')
+                            ->label(__('archeo::activities.fields.cadastral_area')),
+                        Forms\Components\TextInput::make('district')
+                            ->label(__('archeo::activities.fields.district')),
+                        Forms\Components\TextInput::make('position')
+                            ->label(__('archeo::activities.fields.position')),
+                    ]),
+                Schemas\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('localization_degree')
+                            ->label(__('archeo::activities.fields.localization_degree'))
+                            ->numeric(),
+                        Forms\Components\TextInput::make('coordinate_x')
+                            ->label(__('archeo::activities.fields.coordinate_x'))
+                            ->numeric()
+                            ->step('0.000001'),
+                        Forms\Components\TextInput::make('coordinate_y')
+                            ->label(__('archeo::activities.fields.coordinate_y'))
+                            ->numeric()
+                            ->step('0.000001'),
+                    ]),
+                Forms\Components\Toggle::make('has_gis_link')
+                    ->label(__('archeo::activities.fields.has_gis_link')),
+            ]);
+    }
+
+    private static function researchSection(): Schemas\Components\Section
+    {
+        return Schemas\Components\Section::make(__('archeo::activities.sections.research'))
+            ->schema([
+                Schemas\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('research_leader')
+                            ->label(__('archeo::activities.fields.research_leader'))
+                            ->required(),
+                        Forms\Components\TextInput::make('institution')
+                            ->label(__('archeo::activities.fields.institution')),
+                    ]),
+                Forms\Components\TagsInput::make('author_ns')
+                    ->label(__('archeo::activities.fields.author_ns'))
+                    ->required()
+                    ->columnSpanFull(),
+                Forms\Components\TagsInput::make('dating_ns')
+                    ->label(__('archeo::activities.fields.dating_ns')),
+                Forms\Components\TagsInput::make('dating_ceans')
+                    ->label(__('archeo::activities.fields.dating_ceans')),
+                Forms\Components\TagsInput::make('dating_site_type')
+                    ->label(__('archeo::activities.fields.dating_site_type')),
+                Forms\Components\TextInput::make('site_type_original')
+                    ->label(__('archeo::activities.fields.site_type_original')),
+                Forms\Components\TextInput::make('size_category')
+                    ->label(__('archeo::activities.fields.size_category'))
+                    ->required(),
             ]);
     }
 
