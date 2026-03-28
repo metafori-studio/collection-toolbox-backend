@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
 use Metafori\Archeo\Jobs\ImportActivitiesJob;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Archeo\Models\ActivityImport;
 
 class ListActivities extends ListRecords
 {
@@ -38,12 +39,20 @@ class ListActivities extends ListRecords
                 ])
                 ->action(function (array $data): void {
                     $originalFileName = basename($data['file']);
+                    $import = ActivityImport::create([
+                        'file_name' => $originalFileName,
+                        'path' => $data['file'],
+                        'disk' => 'local',
+                        'user_id' => auth()->id(),
+                        'status' => ActivityImport::STATUS_PROCESSING,
+                    ]);
 
                     ImportActivitiesJob::dispatch(
                         'local', // disk name
                         $data['file'], // relative path
                         $originalFileName,
-                        auth()->user()
+                        auth()->user(),
+                        $import->id,
                     );
 
                     Notification::make()

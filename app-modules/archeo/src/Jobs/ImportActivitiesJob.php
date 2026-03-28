@@ -29,28 +29,13 @@ class ImportActivitiesJob implements ShouldQueue
         public string $relativePath,
         public string $originalFileName,
         public User $user,
-        public ?int $importId = null,
+        public int $importId,
     ) {}
 
     public function handle(ActivityExcelParser $parser): void
     {
-        // Get the absolute path when needed for processing
         $filePath = Storage::disk($this->disk)->path($this->relativePath);
-
-        $import = $this->importId
-            ? ActivityImport::find($this->importId)
-            : null;
-
-        if (! $import) {
-            $import = ActivityImport::create([
-                'file_name' => $this->originalFileName,
-                'path' => $this->relativePath,
-                'disk' => $this->disk,
-                'user_id' => $this->user->id,
-                'status' => ActivityImport::STATUS_PROCESSING,
-            ]);
-            $this->importId = $import->id;
-        }
+        $import = ActivityImport::findOrFail($this->importId);
 
         try {
             $result = $parser->importFromPath($filePath, $import->id);
@@ -100,9 +85,7 @@ class ImportActivitiesJob implements ShouldQueue
      */
     public function failed(Throwable $exception): void
     {
-        $import = $this->importId
-            ? ActivityImport::find($this->importId)
-            : null;
+        $import = ActivityImport::find($this->importId);
 
         if ($import && $import->status === ActivityImport::STATUS_PROCESSING) {
             $import->update(['status' => ActivityImport::STATUS_FAILED]);
