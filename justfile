@@ -2,9 +2,6 @@ set shell := ["bash", "-c"]
 
 export PROJ_ROOT := env_var_or_default("PROJ_ROOT", `pwd`)
 
-start:
-    @nix develop
-
 setup:
     @composer run setup
 
@@ -28,6 +25,13 @@ start-monitoring:
 
 stop-monitoring:
     @$INFRA_SCRIPTS/stop/monitoring
+
+flake-update:
+    nix flake update --extra-experimental-features "nix-command flakes"
+
+nix-gc:
+    nix-store --gc
+    nix-collect-garbage -d
 
 all: start-storage start-databases start-monitoring
 die: stop-monitoring stop-databases stop-storage
