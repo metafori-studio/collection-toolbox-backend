@@ -26,7 +26,7 @@ class MediaResource extends JsonResource
         return [
             'name' => $this->file_name,
             'url' => $this->getUrl(),
-            'thumb' => $this->getUrl('thumb'),
+            'thumb' => $this->hasGeneratedConversion('thumb') ? $this->getUrl('thumb') : null,
             'size' => $this->human_readable_size,
             'mime_type' => $this->mime_type,
         ];
