@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -18,7 +18,10 @@ return new class extends Migration
                 ->on('etno_documents')
                 ->cascadeOnDelete();
             $table->string('suffix');
-            $table->unique(['document_id', 'suffix', 'deleted_at']);
+            $table->string('identifier')
+                ->storedAs("document_id || ':' || suffix");
+            $table->unique(['identifier', 'deleted_at'])
+                ->nullsNotDistinct();
         });
     }
 

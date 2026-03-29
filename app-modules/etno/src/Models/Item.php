@@ -94,9 +94,11 @@ class Item extends Model implements Inheritable
     public function identifier(): Attribute
     {
         return Attribute::get(
-            fn () => isset($this->document_id, $this->suffix)
-                ? "{$this->document_id}:{$this->suffix}"
-                : null
+            fn ($value) => $value ?? (
+                $this->document_id && $this->suffix
+                    ? "{$this->document_id}:{$this->suffix}"
+                    : null
+            )
         );
     }
 
