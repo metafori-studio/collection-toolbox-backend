@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Filament\Resources\Documents\Tables;
 
 use Filament\Actions;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -15,6 +16,7 @@ class DocumentsTable
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')
+                    ->fontFamily(FontFamily::Mono)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('title')
