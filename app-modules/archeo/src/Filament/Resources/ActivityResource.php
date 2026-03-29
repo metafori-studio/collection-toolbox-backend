@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 use Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 use Metafori\Archeo\Models\Activity;
-use Metafori\Core\Enums\Role;
 
 class ActivityResource extends Resource
 {
@@ -246,18 +245,6 @@ class ActivityResource extends Resource
                     ])
                     ->columns(4),
             ]);
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        $user = auth()->user();
-        $query = parent::getEloquentQuery();
-
-        if ($user && $user->hasRole(Role::Admin)) {
-            return $query;
-        }
-
-        return $query->whereRaw('1=0'); // No results for non-admin users
     }
 
     public static function getRelations(): array
