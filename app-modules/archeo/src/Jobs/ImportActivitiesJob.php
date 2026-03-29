@@ -25,69 +25,78 @@ class ImportActivitiesJob implements ShouldQueue
     public int $backoff = 60; // Seconds to wait before retrying
 
     public function __construct(
-        public string $filePath,
+        public string $disk,
+        public string $relativePath,
         public string $originalFileName,
-        public User $user
+        public User $user,
+        public int $importId,
     ) {}
 
     public function handle(ActivityExcelParser $parser): void
     {
-        $import = ActivityImport::create([
-            'file_name' => $this->originalFileName,
-            'path' => $this->filePath,
-            'disk' => config('filesystems.default', 'local'),
-            'user_id' => $this->user->id,
-            'status' => ActivityImport::STATUS_PROCESSING,
-        ]);
+        $filePath = Storage::disk($this->disk)->path($this->relativePath);
+        $import = ActivityImport::findOrFail($this->importId);
 
         try {
-            $result = $parser->importFromPath($this->filePath, $import->id);
+            $result = $parser->importFromPath($filePath, $import->id);
 
             $import->update(['status' => ActivityImport::STATUS_COMPLETE]);
 
-            $body = "Created: {$result['created']}";
-            if ($result['updated'] > 0) {
-                $body .= ", Updated: {$result['updated']}";
+            $hasUpdated = $result['updated'] > 0;
+            $hasErrors = ! empty($result['errors']);
+
+            $bodyKey = 'archeo::activities.notifications.import_success.';
+            $bodyKey .= match (true) {
+                $hasUpdated && $hasErrors => 'body_with_updated_and_errors',
+                $hasUpdated => 'body_with_updated',
+                $hasErrors => 'body_with_errors',
+                default => 'body',
+            };
+
+            $bodyParams = ['created' => $result['created']];
+            if ($hasUpdated) {
+                $bodyParams['updated'] = $result['updated'];
+            }
+            if ($hasErrors) {
+                $bodyParams['errors'] = implode("\n", $result['errors']);
             }
 
             $notification = Notification::make()
                 ->title(__('archeo::activities.notifications.import_success.title'))
-                ->body($body)
+                ->body(__($bodyKey, $bodyParams))
                 ->success();
 
-            if (! empty($result['errors'])) {
-                $errorList = implode("\n", $result['errors']);
-
+            if ($hasErrors) {
                 $notification->warning()
-                    ->body($body."\n\nFailed:\n".$errorList)
                     ->persistent();
             }
 
             $notification->sendToDatabase($this->user);
 
             // Delete the file after successful completion
-            Storage::delete($this->filePath);
+            Storage::disk($this->disk)->delete($this->relativePath);
         } catch (Throwable $e) {
-            $import->update(['status' => ActivityImport::STATUS_FAILED]);
-
-            Notification::make()
-                ->title(__('archeo::activities.notifications.import_failed.title'))
-                ->body(__('archeo::activities.notifications.import_failed.body'))
-                ->danger()
-                ->sendToDatabase($this->user);
-
             throw $e;
-        } finally {
-            // File cleanup is handled in failed() method and after successful completion
         }
     }
 
     /**
-     * Handle a job failure.
+     * Handle a job failure after all retries are exhausted.
      */
     public function failed(Throwable $exception): void
     {
-        // Delete the file when the job has exhausted all retries
-        Storage::delete($this->filePath);
+        $import = ActivityImport::find($this->importId);
+
+        if ($import && $import->status === ActivityImport::STATUS_PROCESSING) {
+            $import->update(['status' => ActivityImport::STATUS_FAILED]);
+        }
+
+        Notification::make()
+            ->title(__('archeo::activities.notifications.import_failed.title'))
+            ->body(__('archeo::activities.notifications.import_failed.body'))
+            ->danger()
+            ->sendToDatabase($this->user);
+
+        Storage::disk($this->disk)->delete($this->relativePath);
     }
 }

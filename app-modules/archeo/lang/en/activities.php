@@ -59,6 +59,9 @@ return [
         'import_success' => [
             'title' => 'Import Successful',
             'body' => 'Successfully imported :count activities.',
+            'body_with_updated' => 'Created: :created, Updated: :updated',
+            'body_with_errors' => "Created: :created\n\nFailed:\n:errors",
+            'body_with_updated_and_errors' => "Created: :created, Updated: :updated\n\nFailed:\n:errors",
         ],
         'import_failed' => [
             'title' => 'Import Failed',

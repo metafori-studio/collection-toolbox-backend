@@ -31,6 +31,7 @@ class ArcheoPanelProvider extends PanelProvider
                 'primary' => Color::Cyan,
             ])
             ->login()
+            ->databaseNotifications()
             ->default()
             ->pages([
                 Dashboard::class,
