@@ -1,0 +1,19 @@
+<?php
+
+namespace Metafori\Etno\Filament\Forms\Components;
+
+use Filament\Forms\Components\TextInput;
+use Livewire\Component;
+
+class SuffixInput extends TextInput
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Composite ID')
+            ->prefix(fn (Component $livewire) => $livewire->parentRecord?->id)
+            ->required()
+            ->maxLength(255);
+    }
+}
