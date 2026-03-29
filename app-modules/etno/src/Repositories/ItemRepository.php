@@ -4,7 +4,6 @@ namespace Metafori\Etno\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
@@ -20,17 +19,9 @@ class ItemRepository
 
     public function findOrFail(string $id): Item
     {
-        $query = Item::query()->with(Item::relations());
-
-        if (! str_contains($id, ':')) {
-            throw new ModelNotFoundException;
-        }
-
-        [$documentId, $suffix] = explode(':', $id, 2);
-
-        return $query
-            ->where('document_id', $documentId)
-            ->where('suffix', $suffix)
+        return Item::query()
+            ->with(Item::relations())
+            ->where('identifier', $id)
             ->firstOrFail();
     }
 
