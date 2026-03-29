@@ -4,6 +4,7 @@ namespace Metafori\Etno\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
@@ -19,9 +20,18 @@ class ItemRepository
 
     public function findOrFail(string $id): Item
     {
-        return Item::query()
-            ->with(Item::relations())
-            ->findOrFail($id);
+        $query = Item::query()->with(Item::relations());
+
+        if (! str_contains($id, ':')) {
+            throw new ModelNotFoundException;
+        }
+
+        [$documentId, $suffix] = explode(':', $id, 2);
+
+        return $query
+            ->where('document_id', $documentId)
+            ->where('suffix', $suffix)
+            ->firstOrFail();
     }
 
     public function paginate(array $filters = [], array $sorts = []): LengthAwarePaginator
@@ -132,10 +142,10 @@ class ItemRepository
             self::MAP_POINTS_CACHE_KEY,
             Item::query()
                 ->select([
-                    'id',
+                    'document_id',
+                    'suffix',
                     'locality_id',
                     'locality_type',
-                    'document_id',
                     'document_overrides',
                 ])
                 ->with(Item::documentRelations($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
@@ -143,6 +153,7 @@ class ItemRepository
                     'locality_id',
                     'locality_type',
                 ])))
+                ->orderBy('id')
                 ->get(...)
         );
     }

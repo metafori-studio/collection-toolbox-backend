@@ -27,7 +27,7 @@ class ItemResource extends JsonResource
     {
         return [
             /** @var string */
-            'id' => $this->id,
+            'id' => $this->identifier,
             /** @var string|null */
             'doi' => $this->doi,
             /** @var string|null */
