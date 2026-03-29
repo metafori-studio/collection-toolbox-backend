@@ -20,8 +20,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::create('etno_item_locality', function (Blueprint $table) {
-            $table->string('item_id');
-            $table->foreign('item_id')->references('id')->on('etno_items')->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained('etno_items')->cascadeOnDelete();
             $table->foreignId('locality_id')->constrained('localities')->cascadeOnDelete();
             $table->timestamps();
 

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etno_documents', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
             $table->string('doi')->nullable();
             $table->string('type')->nullable();
             $table->string('size')->nullable();

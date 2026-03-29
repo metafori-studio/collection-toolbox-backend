@@ -29,8 +29,7 @@ return new class extends Migration
 
         Schema::create('etno_item_localities', function (Blueprint $table) {
             $table->id();
-            $table->string('item_id');
-            $table->foreign('item_id')->references('id')->on('etno_items')->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained('etno_items')->cascadeOnDelete();
             $table->morphs('locality');
             $table->integer('sort_order')->default(0);
             $table->timestamps();

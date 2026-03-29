@@ -17,6 +17,8 @@ return new class extends Migration
                 ->references('id')
                 ->on('etno_documents')
                 ->cascadeOnDelete();
+            $table->string('suffix');
+            $table->unique(['document_id', 'suffix', 'deleted_at']);
         });
     }
 

@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etno_document_locality', function (Blueprint $table) {
-            $table->string('document_id');
-            $table->foreign('document_id')->references('id')->on('etno_documents')->cascadeOnDelete();
+            $table->foreignId('document_id')->constrained('etno_documents')->cascadeOnDelete();
             $table->foreignId('locality_id')->constrained('localities')->cascadeOnDelete();
             $table->timestamps();
 
