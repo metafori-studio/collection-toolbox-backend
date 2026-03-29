@@ -22,6 +22,9 @@ class DocumentFactory extends Factory
      */
     public function definition(): array
     {
-        return $this->documentAttributes();
+        return [
+            'id' => fake()->unique()->regexify('[A-Z]{2}[0-9]{5,6}'),
+            ...$this->documentAttributes(),
+        ];
     }
 }

@@ -22,7 +22,7 @@ it('can show a complete item with all relations', function () {
         ->for($document, 'document')
         ->create();
 
-    $response = getJson(route('api.etno.items.show', $item->id));
+    $response = getJson(route('api.etno.items.show', $item->identifier));
 
     $document = $item->document;
 
@@ -143,7 +143,7 @@ it('can show a complete item with all relations', function () {
         ])
         ->assertJson([
             'data' => [
-                'id' => $item->id,
+                'id' => $item->identifier,
                 'document_id' => $document->id,
                 'doi' => $document->doi,
                 'title' => $document->title,

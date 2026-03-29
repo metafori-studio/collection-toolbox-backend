@@ -18,7 +18,7 @@ it('includes newly created item with locality in map points', function () {
 
     getJson(route('api.etno.items.map-points'))
         ->assertStatus(200)
-        ->assertJsonFragment(['id' => $item->id]);
+        ->assertJsonFragment(['id' => $item->identifier]);
 });
 
 it('does not include item without locality in map points', function () {
@@ -27,7 +27,7 @@ it('does not include item without locality in map points', function () {
 
     $response = getJson(route('api.etno.items.map-points'));
 
-    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->identifier);
 });
 
 it('updates map points when item locality is updated', function () {
@@ -51,7 +51,7 @@ it('updates map points when item locality is updated', function () {
 
     $response = getJson(route('api.etno.items.map-points'));
 
-    $point = collect($response->json('data'))->firstWhere('id', $item->id);
+    $point = collect($response->json('data'))->firstWhere('id', $item->identifier);
     expect($point['latitude'] ?? null)->toEqual($newLocalityWithCoordinates->latitude)
         ->and($point['longitude'] ?? null)->toEqual($newLocalityWithCoordinates->longitude);
 });
@@ -66,7 +66,7 @@ it('removes item from map points when item with locality is deleted', function (
     $item->delete();
 
     $response = getJson(route('api.etno.items.map-points'));
-    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->identifier);
 });
 
 it('updates map points when locality coordinates are updated', function () {
@@ -88,7 +88,7 @@ it('updates map points when locality coordinates are updated', function () {
     ]);
 
     $response = getJson(route('api.etno.items.map-points'));
-    $point = collect($response->json('data'))->firstWhere('id', $item->id);
+    $point = collect($response->json('data'))->firstWhere('id', $item->identifier);
 
     expect($point['latitude'] ?? null)->toEqual($newLat)
         ->and($point['longitude'] ?? null)->toEqual($newLng);
@@ -104,7 +104,7 @@ it('removes item from map points when locality is deleted', function () {
     $locality->delete();
 
     $response = getJson(route('api.etno.items.map-points'));
-    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->identifier);
 });
 
 it('includes item in map points when item with locality is restored', function () {
@@ -118,7 +118,7 @@ it('includes item in map points when item with locality is restored', function (
     $item->restore();
 
     $response = getJson(route('api.etno.items.map-points'));
-    expect(collect($response->json('data'))->pluck('id'))->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->toContain($item->identifier);
 });
 
 it('does not include item in map points when document is deleted', function () {
@@ -131,7 +131,7 @@ it('does not include item in map points when document is deleted', function () {
     $item->document->delete();
 
     $response = getJson(route('api.etno.items.map-points'));
-    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->identifier);
 });
 
 it('returns map points as a sequential array when items are filtered out', function () {
@@ -152,11 +152,11 @@ it('returns map points as a sequential array when items are filtered out', funct
     $data = collect($response->json('data'));
 
     expect($data)->toHaveCount(2)
-        ->and($data->pluck('id'))->toContain($item1->id, $item3->id)
-        ->and($data->pluck('id'))->not->toContain($item2->id);
+        ->and($data->pluck('id'))->toContain($item1->identifier, $item3->identifier)
+        ->and($data->pluck('id'))->not->toContain($item2->identifier);
 
-    $response->assertJsonPath('data.0.id', $item1->id);
-    $response->assertJsonPath('data.1.id', $item3->id);
+    $response->assertJsonPath('data.0.id', $item1->identifier);
+    $response->assertJsonPath('data.1.id', $item3->identifier);
 });
 
 it('includes item in map points when document is restored', function () {
@@ -170,5 +170,5 @@ it('includes item in map points when document is restored', function () {
     $item->document->restore();
 
     $response = getJson(route('api.etno.items.map-points'));
-    expect(collect($response->json('data'))->pluck('id'))->toContain($item->id);
+    expect(collect($response->json('data'))->pluck('id'))->toContain($item->identifier);
 });
