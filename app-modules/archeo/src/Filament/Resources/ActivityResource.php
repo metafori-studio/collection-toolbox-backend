@@ -114,18 +114,15 @@ class ActivityResource extends Resource
                                 TextEntry::make('activity_type')
                                     ->label(__('archeo::activities.fields.activity_type')),
                                 TextEntry::make('cvs_number')
-                                    ->label(__('archeo::activities.fields.cvs_number'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.cvs_number')),
                                 TextEntry::make('action_number')
-                                    ->label(__('archeo::activities.fields.action_number'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.action_number')),
                                 TextEntry::make('activity_year_start')
                                     ->label(__('archeo::activities.fields.activity_year_start')),
                                 TextEntry::make('activity_year_end')
                                     ->label(__('archeo::activities.fields.activity_year_end')),
                                 TextEntry::make('registration_year')
-                                    ->label(__('archeo::activities.fields.registration_year'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.registration_year')),
                             ]),
                     ])
                     ->columnSpanFull(),
@@ -135,26 +132,19 @@ class ActivityResource extends Resource
                         Schemas\Components\Grid::make(2)
                             ->schema([
                                 TextEntry::make('municipality')
-                                    ->label(__('archeo::activities.fields.municipality'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.municipality')),
                                 TextEntry::make('cadastral_area')
-                                    ->label(__('archeo::activities.fields.cadastral_area'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.cadastral_area')),
                                 TextEntry::make('district')
-                                    ->label(__('archeo::activities.fields.district'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.district')),
                                 TextEntry::make('position')
-                                    ->label(__('archeo::activities.fields.position'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.position')),
                                 TextEntry::make('coordinate_x')
-                                    ->label(__('archeo::activities.fields.coordinate_x'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.coordinate_x')),
                                 TextEntry::make('coordinate_y')
-                                    ->label(__('archeo::activities.fields.coordinate_y'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.coordinate_y')),
                                 TextEntry::make('localization_degree')
-                                    ->label(__('archeo::activities.fields.localization_degree'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.localization_degree')),
                                 IconEntry::make('has_gis_link')
                                     ->label(__('archeo::activities.fields.has_gis_link'))
                                     ->boolean(),
@@ -169,31 +159,25 @@ class ActivityResource extends Resource
                                 TextEntry::make('research_leader')
                                     ->label(__('archeo::activities.fields.research_leader')),
                                 TextEntry::make('institution')
-                                    ->label(__('archeo::activities.fields.institution'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.institution')),
                                 TextEntry::make('author_ns')
                                     ->label(__('archeo::activities.fields.author_ns'))
                                     ->badge()
-                                    ->separator(',')
-                                    ->placeholder('–'),
+                                    ->separator(','),
                                 TextEntry::make('dating_ns')
                                     ->label(__('archeo::activities.fields.dating_ns'))
                                     ->badge()
-                                    ->separator(',')
-                                    ->placeholder('–'),
+                                    ->separator(','),
                                 TextEntry::make('dating_ceans')
                                     ->label(__('archeo::activities.fields.dating_ceans'))
                                     ->badge()
-                                    ->separator(',')
-                                    ->placeholder('–'),
+                                    ->separator(','),
                                 TextEntry::make('dating_site_type')
                                     ->label(__('archeo::activities.fields.dating_site_type'))
                                     ->badge()
-                                    ->separator(',')
-                                    ->placeholder('–'),
+                                    ->separator(','),
                                 TextEntry::make('site_type_original')
-                                    ->label(__('archeo::activities.fields.site_type_original'))
-                                    ->placeholder('–'),
+                                    ->label(__('archeo::activities.fields.site_type_original')),
                                 TextEntry::make('size_category')
                                     ->label(__('archeo::activities.fields.size_category')),
                             ]),
