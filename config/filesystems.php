@@ -55,7 +55,8 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'visibility' => 'public',
             'throw' => false,
             'report' => false,
         ],
@@ -67,10 +68,14 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_ARCHEO_GALLERIES_BUCKET', env('AWS_BUCKET')),
             'url' => env('AWS_ARCHEO_GALLERIES_URL', env('AWS_URL')),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'visibility' => 'public',
+            'throw' => true,
             'report' => false,
+            'options' => [
+                'MultipartUploadThreshold' => 536870912, // 512MB
+            ],
         ],
 
         's3-archeo-pdfs' => [
@@ -80,10 +85,14 @@ return [
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_ARCHEO_PDFS_BUCKET', env('AWS_BUCKET')),
             'url' => env('AWS_ARCHEO_PDFS_URL', env('AWS_URL')),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'visibility' => 'public',
+            'throw' => true,
             'report' => false,
+            'options' => [
+                'MultipartUploadThreshold' => 536870912, // 512MB
+            ],
         ],
 
     ],

@@ -38,7 +38,7 @@ class GalleriesRelationManager extends RelationManager
                     ->multiple()
                     ->reorderable()
                     ->columnSpanFull()
-                    ->maxSize(10240),
+                    ->maxSize(524288),
             ]);
     }
 

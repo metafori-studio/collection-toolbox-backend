@@ -206,6 +206,7 @@ class ActivityResource extends Resource
     {
         return [
             RelationManagers\GalleriesRelationManager::class,
+            RelationManagers\PdfDocumentsRelationManager::class,
             RelationManagers\AssignmentsRelationManager::class,
         ];
     }
