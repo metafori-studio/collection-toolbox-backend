@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 use Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 use Metafori\Archeo\Models\Activity;
-use Metafori\Core\Enums\Role;
 
 class ActivityResource extends Resource
 {
@@ -153,13 +152,6 @@ class ActivityResource extends Resource
                 Forms\Components\TextInput::make('size_category')
                     ->label(__('archeo::activities.fields.size_category'))
                     ->required(),
-                Forms\Components\SpatieMediaLibraryFileUpload::make('pdfs')
-                    ->label(__('archeo::activities.fields.pdfs'))
-                    ->collection('pdfs')
-                    ->disk(config('archeo.pdfs_disk', 'public'))
-                    ->acceptedFileTypes(['application/pdf'])
-                    ->maxSize(51200)
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -253,18 +245,6 @@ class ActivityResource extends Resource
                     ])
                     ->columns(4),
             ]);
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        $user = auth()->user();
-        $query = parent::getEloquentQuery();
-
-        if ($user && $user->hasRole(Role::Admin)) {
-            return $query;
-        }
-
-        return $query->whereRaw('1=0'); // No results for non-admin users
     }
 
     public static function getRelations(): array

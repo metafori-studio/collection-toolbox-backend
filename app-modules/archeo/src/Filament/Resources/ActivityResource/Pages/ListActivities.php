@@ -44,7 +44,7 @@ class ListActivities extends ListRecords
                         'path' => $data['file'],
                         'disk' => 'local',
                         'user_id' => auth()->id(),
-                        'status' => ActivityImport::STATUS_PROCESSING,
+                        'status' => ActivityImport::STATUS_PENDING,
                     ]);
 
                     ImportActivitiesJob::dispatch(

@@ -35,7 +35,7 @@ class DocumentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ItemsRelationManager::class,
+            'items' => RelationManagers\ItemsRelationManager::class,
         ];
     }
 
