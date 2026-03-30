@@ -2,7 +2,6 @@
 
 namespace Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
 

@@ -59,7 +59,7 @@ class ActivityController extends Controller
             $buckets = $query->select($field)
                 ->whereNotNull($field)
                 ->groupBy($field)
-                ->selectRaw("count(*) as doc_count")
+                ->selectRaw('count(*) as doc_count')
                 ->orderByDesc('doc_count')
                 ->limit(100)
                 ->get()
