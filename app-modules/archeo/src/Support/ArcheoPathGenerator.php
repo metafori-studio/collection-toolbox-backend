@@ -40,7 +40,7 @@ class ArcheoPathGenerator implements PathGenerator
     {
         $model = $media->model;
 
-        if ($model instanceof Activity) {
+        if ($model instanceof Activity && $model->activity_number) {
             return "{$model->activity_number}/{$media->id}";
         }
 
@@ -50,6 +50,6 @@ class ArcheoPathGenerator implements PathGenerator
             return "{$activityNumber}/galleries/{$model->id}/{$media->id}";
         }
 
-        return $media->id;
+        return "media/{$media->id}";
     }
 }

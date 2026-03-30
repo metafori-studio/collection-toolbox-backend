@@ -93,27 +93,42 @@ class PdfDocumentsRelationManager extends RelationManager
                         FileUpload::make('files')
                             ->label(__('archeo::activities.fields.pdfs'))
                             ->acceptedFileTypes(['application/pdf'])
+                            ->disk('s3')
                             ->multiple()
+                            ->storeFileNamesIn('original_names')
                             ->maxSize(512000)
                             ->columnSpanFull(),
                     ])
                     ->action(function (array $data): void {
                         $record = $this->getOwnerRecord();
                         $files = $data['files'] ?? [];
-                        $disk = config('archeo.pdfs_disk', 'public');
+                        $originalNames = $data['original_names'] ?? [];
+                        $targetDisk = config('archeo.pdfs_disk', 'public');
 
-                        foreach ($files as $file) {
+                        foreach ($files as $key => $file) {
+                            // Map original name correctly (Filament uses path as key in original_names array)
+                            $originalName = $originalNames[$file] ?? basename($file);
+
                             if ($file instanceof UploadedFile) {
                                 $record->addMedia($file)
-                                    ->usingName($file->getClientOriginalName())
-                                    ->nonQueued()
-                                    ->toMediaCollection('pdfs', $disk);
+                                    ->usingName(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                                    ->usingFileName($file->getClientOriginalName())
+                                    ->preservingOriginal()
+                                    ->toMediaCollection('pdfs', $targetDisk);
                             } elseif (is_string($file)) {
-                                // Livewire temp files are usually on the local disk
-                                $record->addMedia(Storage::disk('local')->path($file))
-                                    ->usingName(basename($file))
-                                    ->nonQueued()
-                                    ->toMediaCollection('pdfs', $disk);
+                                // SeaweedFS Optimization: use stream to avoid circular HTTP requests or CopyObject issues
+                                $stream = Storage::disk('s3')->readStream($file);
+                                if ($stream) {
+                                    $record->addMediaFromStream($stream)
+                                        ->usingName(pathinfo($originalName, PATHINFO_FILENAME))
+                                        ->usingFileName($originalName)
+                                        ->preservingOriginal()
+                                        ->toMediaCollection('pdfs', $targetDisk);
+
+                                    if (is_resource($stream)) {
+                                        fclose($stream);
+                                    }
+                                }
                             }
                         }
                     })
@@ -124,7 +139,7 @@ class PdfDocumentsRelationManager extends RelationManager
                     ->label(__('archeo::activities.actions.download'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
-                    ->url(fn (Media $record): string => $record->getUrl())
+                    ->url(fn (Media $record): string => $record->getTemporaryUrl(now()->addMinutes(5)))
                     ->openUrlInNewTab(),
                 Actions\DeleteAction::make()
                     ->using(function (Media $record): void {

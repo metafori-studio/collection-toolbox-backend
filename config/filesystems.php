@@ -51,30 +51,48 @@ return [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => true,
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+            'options' => [
+                'MultipartUploadThreshold' => 536870912,
+                'checksum' => false,
+            ],
+            'http' => [
+                'headers' => [
+                    'Expect' => '',
+                ],
+            ],
         ],
 
         's3-archeo-galleries' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_ARCHEO_GALLERIES_BUCKET', env('AWS_BUCKET')),
-            'url' => env('AWS_ARCHEO_GALLERIES_URL', env('AWS_URL')),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
+            'use_path_style_endpoint' => true,
             'visibility' => 'public',
             'throw' => true,
             'report' => false,
             'options' => [
-                'MultipartUploadThreshold' => 536870912, // 512MB
+                'MultipartUploadThreshold' => 536870912,
+                'checksum' => false,
+                'ACL' => 'public-read',
+            ],
+            'http' => [
+                'connect_timeout' => 10,
+                'timeout' => 30,
+                'headers' => [
+                    'Expect' => '',
+                ],
             ],
         ],
 
@@ -82,16 +100,25 @@ return [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_ARCHEO_PDFS_BUCKET', env('AWS_BUCKET')),
-            'url' => env('AWS_ARCHEO_PDFS_URL', env('AWS_URL')),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
-            'visibility' => 'public',
+            'use_path_style_endpoint' => true,
+            'visibility' => 'private',
             'throw' => true,
             'report' => false,
             'options' => [
-                'MultipartUploadThreshold' => 536870912, // 512MB
+                'MultipartUploadThreshold' => 536870912,
+                'checksum' => false,
+                'ACL' => 'private',
+            ],
+            'http' => [
+                'connect_timeout' => 10,
+                'timeout' => 30,
+                'headers' => [
+                    'Expect' => '',
+                ],
             ],
         ],
 
