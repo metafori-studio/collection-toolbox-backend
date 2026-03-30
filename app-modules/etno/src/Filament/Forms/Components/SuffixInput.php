@@ -19,7 +19,10 @@ class SuffixInput extends TextInput
             ->unique(
                 ignoreRecord: true,
                 modifyRuleUsing: fn (Unique $rule, Component $livewire) => $rule
-                    ->where(fn (Builder $query) => $query->where('document_id', $livewire->parentRecord?->id))
+                    ->where(fn (Builder $query) => $query
+                        ->where('document_id', $livewire->parentRecord?->id)
+                        ->whereNull('deleted_at')
+                    )
             )
             ->maxLength(255);
     }
