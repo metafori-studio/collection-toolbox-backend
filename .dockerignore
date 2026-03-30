@@ -12,7 +12,7 @@ public/storage
 storage/*.key
 storage/pail
 storage/logs/*
-.env.backup
+.env
 *.log
 tests
 phpunit.xml
