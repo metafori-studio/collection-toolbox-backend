@@ -13,6 +13,21 @@ use Metafori\Archeo\Models\Activity;
 
 class ActivityController extends Controller
 {
+    protected const SORTABLE = [
+        'created_at',
+        'activity_year_start',
+        'activity_year_end',
+        'activity_type',
+        'activity_number',
+        'municipality',
+        'district',
+        'cadastral_area',
+        'institution',
+        'research_leader',
+        'registration_year',
+        'size_category',
+    ];
+
     /**
      * Display a listing of activities.
      */
@@ -118,7 +133,11 @@ class ActivityController extends Controller
         }
 
         foreach ($sorts as $field => $dir) {
-            $query->orderBy($field, $dir);
+            if (! in_array($field, self::SORTABLE, true)) {
+                continue;
+            }
+
+            $query->orderBy($field, strtolower($dir) === 'desc' ? 'desc' : 'asc');
         }
     }
 }
