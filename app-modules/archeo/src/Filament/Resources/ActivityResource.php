@@ -5,6 +5,8 @@ namespace Metafori\Archeo\Filament\Resources;
 use BackedEnum;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas;
@@ -40,6 +42,7 @@ class ActivityResource extends Resource
             self::generalSection(),
             self::locationSection(),
             self::researchSection(),
+            self::documentSection(),
         ]);
     }
 
@@ -155,6 +158,21 @@ class ActivityResource extends Resource
             ]);
     }
 
+    private static function documentSection(): Schemas\Components\Section
+    {
+        return Schemas\Components\Section::make(__('archeo::activities.sections.documents'))
+            ->schema([
+                SpatieMediaLibraryFileUpload::make('pdfs')
+                    ->label(__('archeo::activities.fields.pdfs'))
+                    ->collection('pdfs')
+                    ->acceptedFileTypes(['application/pdf'])
+                    ->disk(config('archeo.pdfs_disk', 'public'))
+                    ->multiple()
+                    ->reorderable()
+                    ->maxSize(512000),
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -244,7 +262,20 @@ class ActivityResource extends Resource
                             ->label(__('archeo::activities.fields.municipality')),
                     ])
                     ->columns(4),
+                self::documentInfolistSection(),
             ]);
+    }
+
+    private static function documentInfolistSection(): Schemas\Components\Section
+    {
+        return Schemas\Components\Section::make(__('archeo::activities.sections.documents'))
+            ->schema([
+                SpatieMediaLibraryImageEntry::make('pdfs')
+                    ->label(__('archeo::activities.fields.pdfs'))
+                    ->collection('pdfs')
+                    ->disk(config('archeo.pdfs_disk', 'public')),
+            ])
+            ->visible(fn ($record) => $record->hasMedia('pdfs'));
     }
 
     public static function getRelations(): array

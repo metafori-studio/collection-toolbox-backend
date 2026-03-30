@@ -80,8 +80,7 @@ class Activity extends Model implements HasMedia
     {
         $this->addMediaCollection('pdfs')
             ->useDisk(config('archeo.pdfs_disk', 'public'))
-            ->acceptsMimeTypes(['application/pdf'])
-            ->singleFile();
+            ->acceptsMimeTypes(['application/pdf']);
     }
 
     /**

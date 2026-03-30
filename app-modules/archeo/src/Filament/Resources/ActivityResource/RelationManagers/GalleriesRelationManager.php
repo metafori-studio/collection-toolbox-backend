@@ -37,7 +37,8 @@ class GalleriesRelationManager extends RelationManager
                     ->disk(config('archeo.media_disk', Gallery::DEFAULT_MEDIA_DISK))
                     ->multiple()
                     ->reorderable()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->maxSize(10240),
             ]);
     }
 

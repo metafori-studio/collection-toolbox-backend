@@ -5,6 +5,7 @@ return [
         'general' => 'General Information',
         'location' => 'Location Details',
         'research' => 'Research & Dating',
+        'documents' => 'Documents',
     ],
     'fields' => [
         'activity_number' => 'Activity Number',
