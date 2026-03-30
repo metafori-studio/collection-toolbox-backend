@@ -126,6 +126,7 @@ class ActivityController extends Controller
         }
 
         return response()->json([
+            /** @var array<string, array<array{value: string, label: string, count: int}>> */
             'data' => $data,
         ]);
     }
@@ -147,6 +148,12 @@ class ActivityController extends Controller
     {
         foreach ($filters as $field => $values) {
             if (empty($values) || ! in_array($field, self::FILTERABLE, true)) {
+                continue;
+            }
+
+            $values = array_filter($values, 'is_scalar');
+
+            if (empty($values)) {
                 continue;
             }
 
