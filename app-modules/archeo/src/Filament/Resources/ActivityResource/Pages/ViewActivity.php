@@ -9,10 +9,8 @@ class ViewActivity extends ViewRecord
 {
     protected static string $resource = ActivityResource::class;
 
-    protected function getHeaderActions(): array
+    public function hasCombinedRelationManagerTabsWithContent(): bool
     {
-        return [
-            //
-        ];
+        return true;
     }
 }
