@@ -18,8 +18,6 @@ class ListActivities extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-
             Actions\Action::make('importExcel')
                 ->label(__('archeo::activities.actions.import_excel.label'))
                 ->icon('heroicon-o-document-arrow-up')
