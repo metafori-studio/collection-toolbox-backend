@@ -28,6 +28,24 @@ class ActivityController extends Controller
         'size_category',
     ];
 
+    protected const FILTERABLE = [
+        'activity_type',
+        'activity_number',
+        'activity_year_start',
+        'activity_year_end',
+        'municipality',
+        'district',
+        'cadastral_area',
+        'institution',
+        'research_leader',
+        'registration_year',
+        'size_category',
+        'author_ns',
+        'dating_ns',
+        'dating_ceans',
+        'dating_site_type',
+    ];
+
     /**
      * Display a listing of activities.
      */
@@ -108,11 +126,11 @@ class ActivityController extends Controller
     protected function applyFilters(Builder $query, array $filters): void
     {
         foreach ($filters as $field => $values) {
-            if (empty($values)) {
+            if (empty($values) || ! in_array($field, self::FILTERABLE, true)) {
                 continue;
             }
 
-            if (in_array($field, ['author_ns', 'dating_ns', 'dating_ceans', 'dating_site_type'])) {
+            if (in_array($field, ['author_ns', 'dating_ns', 'dating_ceans', 'dating_site_type'], true)) {
                 $query->where(function (Builder $q) use ($field, $values) {
                     foreach ($values as $value) {
                         $q->orWhereJsonContains($field, $value);
