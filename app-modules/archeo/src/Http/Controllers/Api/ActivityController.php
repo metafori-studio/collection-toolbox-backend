@@ -77,6 +77,10 @@ class ActivityController extends Controller
             'activity_year_start',
             'activity_year_end',
             'registration_year',
+            'author_ns',
+            'dating_ns',
+            'dating_ceans',
+            'dating_site_type',
         ];
 
         $filters = $request->validated('filter', []);
@@ -89,18 +93,34 @@ class ActivityController extends Controller
             $otherFilters = collect($filters)->except($field)->toArray();
             $this->applyFilters($query, $otherFilters);
 
-            $buckets = $query->select($field)
-                ->whereNotNull($field)
-                ->groupBy($field)
-                ->selectRaw('count(*) as doc_count')
-                ->orderByDesc('doc_count')
-                ->limit(100)
-                ->get()
-                ->map(fn ($row) => [
-                    'value' => $row->$field,
-                    'label' => (string) $row->$field,
-                    'count' => $row->doc_count,
-                ]);
+            if (in_array($field, ['author_ns', 'dating_ns', 'dating_ceans', 'dating_site_type'], true)) {
+                $buckets = $query
+                    ->selectRaw("jsonb_array_elements_text({$field}) as value")
+                    ->whereNotNull($field)
+                    ->groupByRaw("jsonb_array_elements_text({$field})")
+                    ->selectRaw('count(*) as doc_count')
+                    ->orderByDesc('doc_count')
+                    ->limit(100)
+                    ->get()
+                    ->map(fn ($row) => [
+                        'value' => $row->value,
+                        'label' => (string) $row->value,
+                        'count' => $row->doc_count,
+                    ]);
+            } else {
+                $buckets = $query->select($field)
+                    ->whereNotNull($field)
+                    ->groupBy($field)
+                    ->selectRaw('count(*) as doc_count')
+                    ->orderByDesc('doc_count')
+                    ->limit(100)
+                    ->get()
+                    ->map(fn ($row) => [
+                        'value' => $row->$field,
+                        'label' => (string) $row->$field,
+                        'count' => $row->doc_count,
+                    ]);
+            }
 
             $data[$field] = $buckets;
         }
