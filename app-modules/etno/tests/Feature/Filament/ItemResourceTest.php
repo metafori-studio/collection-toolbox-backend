@@ -25,7 +25,7 @@ it('saves and overrides correctly for primitive fields', function (string $colum
     $parentValue = value($parentValue);
     $overrideValue = value($overrideValue);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [];
@@ -62,7 +62,7 @@ it('saves and overrides correctly for primitive fields', function (string $colum
 })->with('inheritable_inputs_primitive');
 
 it('saves and overrides correctly for translatable fields', function (string $column, array $parentValue, array $overrideValue) {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [];
@@ -97,7 +97,7 @@ it('saves and overrides correctly for relational fields', function (string $colu
     $parentValue = value($parentValue);
     $overrideValue = value($overrideValue);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [
@@ -150,7 +150,7 @@ it('saves and overrides correctly for relational many fields', function (string 
     $parentValue = $parentValue();
     $overrideValue = $overrideValue();
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = [
@@ -198,6 +198,56 @@ it('saves and overrides correctly for relational many fields', function (string 
         ->and($item->isInherited($column))->toBeFalse();
 })->with('inheritable_inputs_relational_many');
 
+it('validates and saves document_overrides correctly', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->create();
+    $item = Item::factory()->create([
+        'document_id' => $document->id,
+    ]);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => ['invalid_override_field'],
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => [Item::INHERITABLES[0]],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => null,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'document_overrides' => [],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors(['document_overrides']);
+});
+
 dataset('inheritable_inputs_translatable', [
     'title' => ['title', ['en' => 'Parent Title EN', 'sk' => 'Parent Title SK'], ['en' => 'Overridden Title EN', 'sk' => 'Overridden Title SK']],
     'subtitle' => ['subtitle', ['en' => 'Parent Subtitle EN', 'sk' => 'Parent Subtitle SK'], ['en' => 'Overridden Subtitle EN', 'sk' => 'Overridden Subtitle SK']],
@@ -232,7 +282,7 @@ dataset('inheritable_inputs_relational_many', [
 ]);
 
 it('saves and overrides correctly for precision date sections', function (string $sectionName, array $parentValues, array $overrideValues) {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $this->actingAs($user);
 
     $documentData = $parentValues;

@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Translatable\HasTranslations;
+use Stringable;
 
-class ResearchCollection extends Model
+class ResearchCollection extends Model implements Stringable
 {
     use HasFactory, HasTranslations, SoftDeletes;
 
@@ -23,5 +24,10 @@ class ResearchCollection extends Model
     public function items(): BelongsToMany
     {
         return $this->belongsToMany(Item::class, 'etno_item_research_collection')->orderByPivot('sort_order');
+    }
+
+    public function __toString(): string
+    {
+        return $this->title ?? '';
     }
 }

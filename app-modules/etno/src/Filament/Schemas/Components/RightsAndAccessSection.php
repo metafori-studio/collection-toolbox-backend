@@ -27,6 +27,7 @@ class RightsAndAccessSection extends Section
                     ->translatableTabs()
                     ->columnSpanFull(),
             ])
+            ->collapsible()
             ->columns(2);
     }
 }

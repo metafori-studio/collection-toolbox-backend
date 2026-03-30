@@ -29,6 +29,7 @@ class BasicInformationSection extends Section
                     ->inheritable($this->inheritable)
                     ->columnSpanFull(),
             ])
+            ->collapsible()
             ->columns(2);
     }
 }

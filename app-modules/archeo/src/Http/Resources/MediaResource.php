@@ -1,0 +1,34 @@
+<?php
+
+namespace Metafori\Archeo\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @property \Spatie\MediaLibrary\MediaCollections\Models\Media $resource
+ */
+class MediaResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array{
+     *     name: string,
+     *     url: string,
+     *     thumb: string,
+     *     size: string,
+     *     mime_type: string
+     * }
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'name' => $this->file_name,
+            'url' => $this->getUrl(),
+            'thumb' => $this->getUrl('thumb'),
+            'size' => $this->human_readable_size,
+            'mime_type' => $this->mime_type,
+        ];
+    }
+}

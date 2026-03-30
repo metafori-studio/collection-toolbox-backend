@@ -20,6 +20,8 @@ class LocationResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            /** @var string */
+            'name' => $this->name,
             /** @var CountryResource|RegionResource|DistrictResource|MunicipalityResource|MunicipalityPartResource */
             'parent' => $this->whenLoaded('parent', function () {
                 return $this->parent->toResource();
