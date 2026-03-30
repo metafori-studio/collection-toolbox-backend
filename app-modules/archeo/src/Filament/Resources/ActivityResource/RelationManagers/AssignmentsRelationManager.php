@@ -70,4 +70,9 @@ class AssignmentsRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 }

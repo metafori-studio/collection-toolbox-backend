@@ -2,7 +2,6 @@
 
 namespace Metafori\Archeo\Filament\Resources\ActivityResource\Pages;
 
-use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Metafori\Archeo\Filament\Resources\ActivityResource;
 
@@ -10,10 +9,8 @@ class ViewActivity extends ViewRecord
 {
     protected static string $resource = ActivityResource::class;
 
-    protected function getHeaderActions(): array
+    public function hasCombinedRelationManagerTabsWithContent(): bool
     {
-        return [
-            Actions\EditAction::make(),
-        ];
+        return true;
     }
 }
