@@ -1,0 +1,54 @@
+FROM docker.io/node:current-alpine AS frontend-builder
+
+WORKDIR /frontend
+
+RUN apk add --no-cache git=~2 && \
+    git clone --depth 1 https://github.com/metafori-studio/collection-toolbox-frontend.git . && \
+    npm install && \
+    npm run build --workspace=apps/archeo
+
+FROM docker.io/composer:2.9.5 AS vendor-builder
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+COPY app-modules/ ./app-modules/
+
+RUN composer install \
+    --no-interaction \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts \
+    --ignore-platform-reqs
+
+FROM docker.io/dunglas/frankenphp:1.12.1-php8.5
+
+RUN install-php-extensions \
+    pdo_pgsql \
+    pgsql \
+    redis \
+    imagick \
+    opentelemetry \
+    pcntl \
+    intl \
+    zip \
+    opcache \
+    curl
+
+COPY --from=vendor-builder /usr/bin/composer /usr/bin/composer
+
+COPY . /app
+
+RUN rm -rf bootstrap/cache/*.php
+
+COPY --from=vendor-builder /app/vendor/ /app/vendor/
+
+RUN php artisan package:discover --ansi \
+    && php artisan modules:sync
+
+COPY --from=frontend-builder /frontend/apps/archeo/dist/ /app/public/
+
+RUN php artisan octane:install --server=frankenphp --no-interaction
+
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
