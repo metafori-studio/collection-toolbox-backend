@@ -1,4 +1,4 @@
-FROM docker.io/node:22-alpine AS frontend-builder
+FROM docker.io/node:24-alpine AS frontend-builder
 
 ARG MODULE
 RUN test -n "${MODULE}" || (echo "missing --build-arg=MODULE=<archeo|etno>" && exit 1)
@@ -53,5 +53,7 @@ RUN php artisan package:discover --ansi \
     && php artisan modules:sync
 
 COPY --from=frontend-builder /frontend/apps/${MODULE}/dist/ /app/public/
+
+ENV OCTANE_SERVER=frankenphp
 
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
