@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('suffix');
             $table->string('identifier')
                 ->storedAs("document_id || ':' || suffix");
-            $table->unique(['identifier', 'deleted_at'])
-                ->nullsNotDistinct();
+            $table->uniqueIndex('identifier')
+                ->where('deleted_at IS NULL');
         });
     }
 
