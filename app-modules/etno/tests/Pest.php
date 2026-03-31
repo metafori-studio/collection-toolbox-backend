@@ -12,3 +12,7 @@ pest()->beforeEach(function () {
     Filament::setCurrentPanel('etno');
     $this->seed(RoleSeeder::class);
 })->in('Feature/Filament');
+
+pest()->afterEach(function () {
+    fake()->unique(reset: true);
+});

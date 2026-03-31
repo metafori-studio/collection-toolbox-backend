@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,10 +30,6 @@ class Item extends Model implements Inheritable
     use HasDocumentMetadata, HasFactory, Searchable, SoftDeletes;
 
     protected $table = 'etno_items';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
 
     protected $guarded = [];
 
@@ -92,6 +89,17 @@ class Item extends Model implements Inheritable
         return [
             'document_overrides' => 'array',
         ];
+    }
+
+    public function identifier(): Attribute
+    {
+        return Attribute::get(
+            fn ($value) => $value ?? (
+                $this->document_id && $this->suffix
+                    ? "{$this->document_id}:{$this->suffix}"
+                    : null
+            )
+        );
     }
 
     public function institution(): BelongsTo

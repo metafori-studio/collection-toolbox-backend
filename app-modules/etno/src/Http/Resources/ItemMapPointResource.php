@@ -23,7 +23,7 @@ class ItemMapPointResource extends JsonResource
     {
         return [
             /** @var string */
-            'id' => $this->id,
+            'id' => $this->identifier,
             'latitude' => $this->locality?->latitude,
             'longitude' => $this->locality?->longitude,
         ];

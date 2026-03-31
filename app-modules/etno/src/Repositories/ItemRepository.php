@@ -21,7 +21,8 @@ class ItemRepository
     {
         return Item::query()
             ->with(Item::relations())
-            ->findOrFail($id);
+            ->where('identifier', $id)
+            ->firstOrFail();
     }
 
     public function paginate(array $filters = [], array $sorts = []): LengthAwarePaginator
@@ -132,10 +133,11 @@ class ItemRepository
             self::MAP_POINTS_CACHE_KEY,
             Item::query()
                 ->select([
-                    'id',
+                    'document_id',
+                    'suffix',
+                    'identifier',
                     'locality_id',
                     'locality_type',
-                    'document_id',
                     'document_overrides',
                 ])
                 ->with(Item::documentRelations($with, fn (BelongsTo $belongsTo) => $belongsTo->select([
@@ -143,6 +145,7 @@ class ItemRepository
                     'locality_id',
                     'locality_type',
                 ])))
+                ->orderBy('id')
                 ->get(...)
         );
     }
