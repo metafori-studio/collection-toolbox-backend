@@ -1,5 +1,26 @@
 <?php
 
+$s3Common = [
+    'driver' => 's3',
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    'bucket' => env('AWS_BUCKET'),
+    'url' => env('AWS_URL'),
+    'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
+    'use_path_style_endpoint' => true,
+    'report' => false,
+    'options' => [
+        'MultipartUploadThreshold' => 536870912,
+        'checksum' => false,
+    ],
+    'http' => [
+        'headers' => [
+            'Expect' => '',
+        ],
+    ],
+];
+
 return [
 
     /*
@@ -48,77 +69,38 @@ return [
         ],
 
         's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
-            'use_path_style_endpoint' => true,
+            ...$s3Common,
             'visibility' => 'public',
             'throw' => false,
-            'report' => false,
-            'options' => [
-                'MultipartUploadThreshold' => 536870912,
-                'checksum' => false,
-            ],
-            'http' => [
-                'headers' => [
-                    'Expect' => '',
-                ],
-            ],
         ],
 
         's3-archeo-galleries' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
-            'use_path_style_endpoint' => true,
+            ...$s3Common,
             'visibility' => 'public',
             'throw' => true,
-            'report' => false,
             'options' => [
-                'MultipartUploadThreshold' => 536870912,
-                'checksum' => false,
+                ...$s3Common['options'],
                 'ACL' => 'public-read',
             ],
             'http' => [
+                ...$s3Common['http'],
                 'connect_timeout' => 10,
                 'timeout' => 30,
-                'headers' => [
-                    'Expect' => '',
-                ],
             ],
         ],
 
         's3-archeo-pdfs' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
-            'use_path_style_endpoint' => true,
+            ...$s3Common,
             'visibility' => 'private',
             'throw' => true,
-            'report' => false,
             'options' => [
-                'MultipartUploadThreshold' => 536870912,
-                'checksum' => false,
+                ...$s3Common['options'],
                 'ACL' => 'private',
             ],
             'http' => [
+                ...$s3Common['http'],
                 'connect_timeout' => 10,
                 'timeout' => 30,
-                'headers' => [
-                    'Expect' => '',
-                ],
             ],
         ],
 
