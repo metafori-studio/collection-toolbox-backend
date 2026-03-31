@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Metafori\Core\Http\Controllers\Api\AuthController;
 use Metafori\Core\Http\Controllers\Api\PasswordController;
+use Metafori\Core\Http\Controllers\Api\UserController;
 
 Route::prefix('api')->middleware(['api'])->name('api.')->group(function () {
     Route::post('login', [AuthController::class, 'login'])
@@ -20,4 +21,7 @@ Route::prefix('api')->middleware(['api'])->name('api.')->group(function () {
     Route::post('password/set', [PasswordController::class, 'set'])
         ->middleware('throttle:password.set')
         ->name('password.set');
+    Route::get('me', [UserController::class, 'me'])
+        ->middleware('auth:sanctum')
+        ->name('me');
 });
