@@ -17,6 +17,17 @@ class Activity extends Model implements HasMedia
 
     protected $table = 'archeo_activities';
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::updating(function (Activity $activity) {
+            if ($activity->isDirty('activity_number')) {
+                $activity->activity_number = $activity->getOriginal('activity_number');
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'activity_number';
