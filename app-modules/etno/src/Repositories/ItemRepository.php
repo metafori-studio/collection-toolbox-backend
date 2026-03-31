@@ -134,6 +134,7 @@ class ItemRepository
             Item::query()
                 ->select([
                     'document_id',
+                    'suffix',
                     'identifier',
                     'locality_id',
                     'locality_type',
