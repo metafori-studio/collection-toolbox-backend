@@ -105,7 +105,7 @@ class PdfDocumentsRelationManager extends RelationManager
                         $originalNames = $data['original_names'] ?? [];
                         $targetDisk = config('archeo.pdfs_disk', 'public');
 
-                        foreach ($files as $key => $file) {
+                        foreach ($files as $file) {
                             // Map original name correctly (Filament uses path as key in original_names array)
                             $originalName = $originalNames[$file] ?? basename($file);
 
@@ -141,7 +141,7 @@ class PdfDocumentsRelationManager extends RelationManager
                     ->label(__('archeo::activities.actions.download'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
-                    ->url(fn (Media $record): string => $record->getTemporaryUrl(now()->addMinutes(5)))
+                    ->url(fn (Media $record): string => $this->getDownloadUrl($record))
                     ->openUrlInNewTab(),
                 Actions\DeleteAction::make()
                     ->using(function (Media $record): void {
@@ -163,6 +163,17 @@ class PdfDocumentsRelationManager extends RelationManager
     public function isReadOnly(): bool
     {
         return false;
+    }
+
+    private function getDownloadUrl(Media $record): string
+    {
+        $driver = config("filesystems.disks.{$record->disk}.driver");
+
+        if ($driver === 's3') {
+            return $record->getTemporaryUrl(now()->addMinutes(5));
+        }
+
+        return $record->getUrl();
     }
 
     private function formatFileSize(int $bytes): string
