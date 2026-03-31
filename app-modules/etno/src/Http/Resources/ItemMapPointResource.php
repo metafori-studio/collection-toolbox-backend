@@ -5,11 +5,7 @@ namespace Metafori\Etno\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
-use Metafori\Etno\Models\Item;
 
-/**
- * @mixin Item
- */
 class ItemMapPointResource extends JsonResource
 {
     use InheritsDocument;
@@ -24,8 +20,10 @@ class ItemMapPointResource extends JsonResource
         return [
             /** @var string */
             'id' => $this->id,
-            'latitude' => $this->locality?->latitude,
-            'longitude' => $this->locality?->longitude,
+            /** @var float */
+            'latitude' => $this->locality->latitude,
+            /** @var float */
+            'longitude' => $this->locality->longitude,
         ];
     }
 }
