@@ -45,11 +45,19 @@ class ItemResource extends Resource
         return ItemsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            'media' => RelationManagers\MediaRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'create' => Pages\CreateItem::route('/create'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
+            'create-from-files' => Pages\CreateFromFiles::route('/create-from-files'),
         ];
     }
 }

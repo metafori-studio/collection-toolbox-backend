@@ -2,7 +2,10 @@
 
 namespace Metafori\Etno\Filament\Resources\Documents\RelationManagers;
 
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,7 +25,14 @@ class ItemsRelationManager extends RelationManager
                 SoftDeletingScope::class,
             ]))
             ->headerActions([
-                \Filament\Actions\CreateAction::make(),
+                CreateAction::make(),
+                Action::make('create_from_files')
+                    ->label('Create from files')
+                    ->icon(Heroicon::OutlinedDocumentArrowUp)
+                    ->url(fn (RelationManager $livewire): string => ItemResource::getUrl(
+                        'create-from-files',
+                        ['document' => $livewire->getOwnerRecord()]
+                    )),
             ]);
     }
 }

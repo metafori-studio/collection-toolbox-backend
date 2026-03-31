@@ -22,6 +22,8 @@ class DocumentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    protected static ?string $recordTitleAttribute = 'id';
+
     public static function form(Schema $schema): Schema
     {
         return DocumentForm::configure($schema);
@@ -35,7 +37,7 @@ class DocumentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\ItemsRelationManager::class,
+            'items' => RelationManagers\ItemsRelationManager::class,
         ];
     }
 

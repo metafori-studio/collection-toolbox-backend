@@ -63,7 +63,7 @@ class ToggleInheritanceAction extends Action
     public function markAsOverridden(): void
     {
         $this->evaluate(function (Get $get, Set $set) {
-            $overrides = (array) ($get('document_overrides') ?? []);
+            $overrides = $get->array('document_overrides');
             $overrides = array_unique([...$overrides, ...$this->names]);
             $set('document_overrides', array_values($overrides));
         });
@@ -72,7 +72,7 @@ class ToggleInheritanceAction extends Action
     public function markAsInherited(): void
     {
         $this->evaluate(function (Get $get, Set $set) {
-            $overrides = (array) ($get('document_overrides') ?? []);
+            $overrides = $get->array('document_overrides');
             $overrides = array_diff($overrides, $this->names);
             $set('document_overrides', array_values($overrides));
         });
@@ -80,7 +80,7 @@ class ToggleInheritanceAction extends Action
 
     public static function isInheritedState(Get $get, array $names): bool
     {
-        $overrides = (array) ($get('document_overrides') ?? []);
+        $overrides = $get->array('document_overrides');
 
         return (bool) \array_diff($names, $overrides);
     }

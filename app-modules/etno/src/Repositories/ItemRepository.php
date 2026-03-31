@@ -17,6 +17,8 @@ class ItemRepository
 {
     protected const string MAP_POINTS_CACHE_KEY = 'etno.item.map-points';
 
+    protected const string PENDING_JOBS_CACHE_KEY = 'etno.items.%s.pending_media_uploads';
+
     public function findOrFail(string $id): Item
     {
         return Item::query()
@@ -158,5 +160,33 @@ class ItemRepository
     public function refreshIndex(): void
     {
         app(Client::class)->indices()->refresh(['index' => (new Item)->searchableAs()]);
+    }
+
+    public function getPendingMediaUploadsCount(Item $item): int
+    {
+        $cacheKey = $this->getPendingJobsCacheKey($item->id);
+
+        return Cache::get($cacheKey, 0);
+    }
+
+    public function incrementPendingMediaUploads(Item $item): void
+    {
+        $cacheKey = $this->getPendingJobsCacheKey($item->id);
+        Cache::increment($cacheKey);
+    }
+
+    public function decrementPendingMediaUploads(Item $item): void
+    {
+        $cacheKey = $this->getPendingJobsCacheKey($item->id);
+        $count = Cache::decrement($cacheKey);
+
+        if ($count <= 0) {
+            Cache::forget($cacheKey);
+        }
+    }
+
+    protected function getPendingJobsCacheKey(string $itemId): string
+    {
+        return \sprintf(self::PENDING_JOBS_CACHE_KEY, $itemId);
     }
 }

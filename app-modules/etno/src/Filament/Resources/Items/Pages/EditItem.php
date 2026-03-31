@@ -20,4 +20,9 @@ class EditItem extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
 }

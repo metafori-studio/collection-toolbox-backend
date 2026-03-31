@@ -21,6 +21,8 @@ class EtnoServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../../config/frontend.php', 'etno.frontend');
+
         Panel::configureUsing(function (Panel $panel): void {
             if ($panel->getId() !== 'etno') {
                 return;

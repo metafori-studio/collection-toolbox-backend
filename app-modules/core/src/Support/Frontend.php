@@ -17,7 +17,7 @@ class Frontend
      */
     public function resetPasswordUrl(User $user, string $token): string
     {
-        return (string) Uri::of($this->url())
+        return (string) $this->uri()
             ->withPath(config('frontend.routes.reset_password'))
             ->withQuery([
                 'token' => $token,
@@ -30,11 +30,16 @@ class Frontend
      */
     public function setPasswordUrl(User $user, string $token): string
     {
-        return (string) Uri::of($this->url())
+        return (string) $this->uri()
             ->withPath(config('frontend.routes.set_password'))
             ->withQuery([
                 'token' => $token,
                 'email' => $user->getEmailForPasswordSet(),
             ]);
+    }
+
+    protected function uri(): Uri
+    {
+        return Uri::of($this->url());
     }
 }
