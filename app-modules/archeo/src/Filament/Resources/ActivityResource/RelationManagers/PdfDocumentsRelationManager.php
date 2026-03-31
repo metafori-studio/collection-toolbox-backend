@@ -119,18 +119,24 @@ class PdfDocumentsRelationManager extends RelationManager
                             } elseif (is_string($file)) {
                                 // SeaweedFS Optimization: use stream to avoid circular HTTP requests or CopyObject issues
                                 $stream = Storage::disk($targetDisk)->readStream($file);
-                                if ($stream) {
-                                    try {
-                                        $record->addMediaFromStream($stream)
-                                            ->usingName(pathinfo($originalName, PATHINFO_FILENAME))
-                                            ->usingFileName($originalName)
-                                            ->preservingOriginal()
-                                            ->toMediaCollection('pdfs', $targetDisk);
-                                    } finally {
-                                        if (is_resource($stream)) {
-                                            fclose($stream);
-                                        }
+                                if (! $stream) {
+                                    // Clean up staged blob if read fails
+                                    Storage::disk($targetDisk)->delete($file);
+
+                                    continue;
+                                }
+                                try {
+                                    $record->addMediaFromStream($stream)
+                                        ->usingName(pathinfo($originalName, PATHINFO_FILENAME))
+                                        ->usingFileName($originalName)
+                                        ->preservingOriginal()
+                                        ->toMediaCollection('pdfs', $targetDisk);
+                                } finally {
+                                    if (is_resource($stream)) {
+                                        fclose($stream);
                                     }
+                                    // Clean up staged blob after processing (success or failure)
+                                    Storage::disk($targetDisk)->delete($file);
                                 }
                             }
                         }
