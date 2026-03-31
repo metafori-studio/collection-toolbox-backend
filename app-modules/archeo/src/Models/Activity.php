@@ -23,7 +23,7 @@ class Activity extends Model implements HasMedia
 
         static::updating(function (Activity $activity) {
             if ($activity->isDirty('activity_number')) {
-                $activity->activity_number = $activity->getOriginal('activity_number');
+                throw new \RuntimeException('The activity number is immutable and cannot be changed.');
             }
         });
     }
