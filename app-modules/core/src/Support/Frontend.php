@@ -34,7 +34,7 @@ class Frontend
             ->withPath(config('frontend.routes.set_password'))
             ->withQuery([
                 'token' => $token,
-                'email' => $user->getEmailForPasswordSet(),
+                'email' => $user->email,
             ]);
     }
 }
