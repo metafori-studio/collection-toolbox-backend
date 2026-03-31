@@ -63,7 +63,8 @@ class ActivityResource extends JsonResource
      *     dating_site_type: string[]|null,
      *     site_type_original: string|null,
      *     size_category: string,
-     *     galleries: array<int, GalleryResource>
+     *     galleries: array<int, GalleryResource>,
+     *     pdfs: array<int, MediaResource>
      * }
      */
     public function toArray(Request $request): array
@@ -95,6 +96,9 @@ class ActivityResource extends JsonResource
             'site_type_original' => $this->site_type_original,
             'size_category' => $this->size_category,
             'galleries' => GalleryResource::collection($this->whenLoaded('galleries')),
+            'pdfs' => MediaResource::collection(
+                $this->whenLoaded('media', fn () => $this->getMedia('pdfs'))
+            ),
         ];
     }
 }

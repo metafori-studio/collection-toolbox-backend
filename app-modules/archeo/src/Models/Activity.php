@@ -17,6 +17,17 @@ class Activity extends Model implements HasMedia
 
     protected $table = 'archeo_activities';
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::updating(function (Activity $activity) {
+            if ($activity->isDirty('activity_number')) {
+                throw new \RuntimeException('The activity number is immutable and cannot be changed.');
+            }
+        });
+    }
+
     public function getRouteKeyName(): string
     {
         return 'activity_number';
@@ -74,6 +85,13 @@ class Activity extends Model implements HasMedia
     public function assignments(): HasMany
     {
         return $this->hasMany(ActivityAssignment::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('pdfs')
+            ->useDisk(config('archeo.pdfs_disk', 'public'))
+            ->acceptsMimeTypes(['application/pdf']);
     }
 
     /**

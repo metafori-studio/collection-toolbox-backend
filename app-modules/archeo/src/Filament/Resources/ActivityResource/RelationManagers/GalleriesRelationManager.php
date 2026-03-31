@@ -34,10 +34,12 @@ class GalleriesRelationManager extends RelationManager
                 SpatieMediaLibraryFileUpload::make('gallery_images')
                     ->label(__('archeo::activities.fields.gallery_images'))
                     ->collection('gallery_images')
-                    ->disk(config('archeo.media_disk', Gallery::DEFAULT_MEDIA_DISK))
                     ->multiple()
                     ->reorderable()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->maxSize(524288)
+                    ->visibility('public')
+                    ->preserveFilenames(),
             ]);
     }
 
@@ -77,8 +79,7 @@ class GalleriesRelationManager extends RelationManager
                     ->conversion('thumb')
                     ->circular()
                     ->stacked()
-                    ->limit(3)
-                    ->url(fn (Gallery $record): ?string => $record->getFirstMediaUrl('gallery_images')),
+                    ->limit(3),
 
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('archeo::activities.fields.gallery_title'))

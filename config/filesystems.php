@@ -1,5 +1,26 @@
 <?php
 
+$s3Common = [
+    'driver' => 's3',
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    'bucket' => env('AWS_BUCKET'),
+    'url' => env('AWS_URL'),
+    'endpoint' => env('AWS_ENDPOINT_URL', env('AWS_ENDPOINT')),
+    'use_path_style_endpoint' => true,
+    'report' => false,
+    'options' => [
+        'MultipartUploadThreshold' => 536870912,
+        'checksum' => false,
+    ],
+    'http' => [
+        'headers' => [
+            'Expect' => '',
+        ],
+    ],
+];
+
 return [
 
     /*
@@ -48,16 +69,39 @@ return [
         ],
 
         's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            ...$s3Common,
+            'visibility' => 'public',
             'throw' => false,
-            'report' => false,
+        ],
+
+        's3-archeo-galleries' => [
+            ...$s3Common,
+            'visibility' => 'public',
+            'throw' => true,
+            'options' => [
+                ...$s3Common['options'],
+                'ACL' => 'public-read',
+            ],
+            'http' => [
+                ...$s3Common['http'],
+                'connect_timeout' => 10,
+                'timeout' => 30,
+            ],
+        ],
+
+        's3-archeo-pdfs' => [
+            ...$s3Common,
+            'visibility' => 'private',
+            'throw' => true,
+            'options' => [
+                ...$s3Common['options'],
+                'ACL' => 'private',
+            ],
+            'http' => [
+                ...$s3Common['http'],
+                'connect_timeout' => 10,
+                'timeout' => 30,
+            ],
         ],
 
     ],

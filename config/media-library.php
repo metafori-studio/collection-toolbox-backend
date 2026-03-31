@@ -107,7 +107,7 @@ return [
     /*
      * The class that contains the strategy for determining a media file's path.
      */
-    'path_generator' => DefaultPathGenerator::class,
+    'path_generator' => env('MEDIA_PATH_GENERATOR', DefaultPathGenerator::class),
 
     /*
      * The class that contains the strategy for determining how to remove files.
@@ -133,7 +133,7 @@ return [
      * Moves media on updating to keep path consistent. Enable it only with a custom
      * PathGenerator that uses, for example, the media UUID.
      */
-    'moves_media_on_update' => false,
+    'moves_media_on_update' => env('MEDIA_MOVES_ON_UPDATE', false),
 
     /*
      * Whether to activate versioning when urls to files get generated.
@@ -208,7 +208,7 @@ return [
      * The engine that should perform the image conversions.
      * Should be either `gd`, `imagick` or `vips`.
      */
-    'image_driver' => env('IMAGE_DRIVER', 'gd'),
+    'image_driver' => env('IMAGE_DRIVER', 'imagick'),
 
     /*
      * FFMPEG & FFProbe binaries paths, only used if you try to generate video
