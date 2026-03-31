@@ -119,14 +119,16 @@ class PdfDocumentsRelationManager extends RelationManager
                                 // SeaweedFS Optimization: use stream to avoid circular HTTP requests or CopyObject issues
                                 $stream = Storage::disk('s3')->readStream($file);
                                 if ($stream) {
-                                    $record->addMediaFromStream($stream)
-                                        ->usingName(pathinfo($originalName, PATHINFO_FILENAME))
-                                        ->usingFileName($originalName)
-                                        ->preservingOriginal()
-                                        ->toMediaCollection('pdfs', $targetDisk);
-
-                                    if (is_resource($stream)) {
-                                        fclose($stream);
+                                    try {
+                                        $record->addMediaFromStream($stream)
+                                            ->usingName(pathinfo($originalName, PATHINFO_FILENAME))
+                                            ->usingFileName($originalName)
+                                            ->preservingOriginal()
+                                            ->toMediaCollection('pdfs', $targetDisk);
+                                    } finally {
+                                        if (is_resource($stream)) {
+                                            fclose($stream);
+                                        }
                                     }
                                 }
                             }
