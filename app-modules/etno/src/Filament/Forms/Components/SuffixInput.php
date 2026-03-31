@@ -17,7 +17,8 @@ class SuffixInput extends TextInput
             ->required()
             ->unique(
                 ignoreRecord: true,
-                modifyRuleUsing: fn (Unique $rule) => $rule
+                modifyRuleUsing: fn (Unique $rule, Component $livewire) => $rule
+                    ->where('document_id', $livewire->parentRecord?->id)
                     ->withoutTrashed()
             )
             ->maxLength(255);

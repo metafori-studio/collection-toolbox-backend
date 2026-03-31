@@ -17,29 +17,39 @@ beforeEach(function () {
 
 it('cannot create item with duplicate identifier', function () {
     $document = Document::factory()->create();
-    $item = Item::factory()->for($document)->create();
+    Item::factory()->for($document)->create(['suffix' => 'AAA']);
 
     livewire(CreateItem::class, [
         'parentRecord' => $document,
     ])
-        ->fillForm([
-            'suffix' => $item->suffix,
-        ])
+        ->fillForm(['suffix' => 'AAA'])
         ->call('create')
         ->assertHasFormErrors(['suffix']);
 });
 
 it('can create item with duplicate soft-deleted identifier', function () {
     $document = Document::factory()->create();
-    $item = Item::factory()->for($document)->create();
-    $item->delete();
+    Item::factory()->for($document)->create(['suffix' => 'AAA'])
+        ->delete();
 
     livewire(CreateItem::class, [
         'parentRecord' => $document,
     ])
-        ->fillForm([
-            'suffix' => $item->suffix,
-        ])
+        ->fillForm(['suffix' => 'AAA'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
+
+it('can create item with same suffix on different document', function () {
+    $document1 = Document::factory()->create();
+    $document2 = Document::factory()->create();
+
+    Item::factory()->for($document1)->create(['suffix' => 'AAA']);
+
+    livewire(CreateItem::class, [
+        'parentRecord' => $document2,
+    ])
+        ->fillForm(['suffix' => 'AAA'])
         ->call('create')
         ->assertHasNoFormErrors();
 });
