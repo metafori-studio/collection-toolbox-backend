@@ -94,7 +94,7 @@ it('can filter items by simple property', function (string $property, string $en
     $matchingValue = $cases->first();
     $otherValue = $cases->last();
 
-    $matching = Item::factory()->create([
+    $matchingItem = Item::factory()->create([
         $property => $matchingValue,
         'document_overrides' => [$property],
     ]);
@@ -112,7 +112,7 @@ it('can filter items by simple property', function (string $property, string $en
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'type' => ['type', ItemType::class],
     'language' => ['language', Language::class],
@@ -132,7 +132,7 @@ it('can filter items by simple property inherited', function (string $property, 
         ->for(Document::factory()->create([$property => $otherValue]), 'document')
         ->create();
 
-    $matching = Item::factory()
+    $matchingItem = Item::factory()
         ->for(Document::factory()->create([$property => $matchingValue]), 'document')
         ->create();
 
@@ -144,7 +144,7 @@ it('can filter items by simple property inherited', function (string $property, 
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'type' => ['type', ItemType::class],
     'language' => ['language', Language::class],
@@ -155,7 +155,7 @@ it('can filter items by simple property inherited', function (string $property, 
 ]);
 
 it('can filter items by array property', function () {
-    $matching = Item::factory()->create([
+    $matchingItem = Item::factory()->create([
         'production_methods' => [ProductionMethod::Drawing],
         'document_overrides' => ['production_methods'],
     ]);
@@ -173,22 +173,24 @@ it('can filter items by array property', function () {
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 });
 
 it('can sort items', function () {
-    $itemA = Item::factory()->create([
-        'type' => ItemType::AudioRecording,
-        'document_overrides' => ['type'],
-    ]);
-    $itemC = Item::factory()->create([
-        'type' => ItemType::Map,
-        'document_overrides' => ['type'],
-    ]);
-    $itemB = Item::factory()->create([
-        'type' => ItemType::Drawing,
-        'document_overrides' => ['type'],
-    ]);
+    $items = [
+        Item::factory()->create([
+            'type' => ItemType::AudioRecording,
+            'document_overrides' => ['type'],
+        ]),
+        Item::factory()->create([
+            'type' => ItemType::Drawing,
+            'document_overrides' => ['type'],
+        ]),
+        Item::factory()->create([
+            'type' => ItemType::Map,
+            'document_overrides' => ['type'],
+        ]),
+    ];
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -197,14 +199,14 @@ it('can sort items', function () {
     $response->assertStatus(200);
     $data = collect($response->json('data'));
 
-    expect($data->pluck('id')->toArray())->toBe([$itemC->id, $itemB->id, $itemA->id]);
+    expect($data->pluck('id')->toArray())->toBe([$items[2]->identifier, $items[1]->identifier, $items[0]->identifier]);
 });
 
 it('can filter items by belongsTo property', function (string $propertyKey, string $factoryClass) {
     $matchingEntity = $factoryClass::factory()->create();
     $otherEntity = $factoryClass::factory()->create();
 
-    $matching = Item::factory()->create([
+    $matchingItem = Item::factory()->create([
         "{$propertyKey}_id" => $matchingEntity->id,
         'document_overrides' => [$propertyKey],
     ]);
@@ -222,7 +224,7 @@ it('can filter items by belongsTo property', function (string $propertyKey, stri
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'institution' => ['institution', Organization::class],
     'project' => ['project', Project::class],
@@ -232,7 +234,7 @@ it('can filter items by belongsToMany property', function (string $propertyKey, 
     $matchingEntity = $factoryClass::factory()->create();
     $otherEntity = $factoryClass::factory()->create();
 
-    $matching = Item::factory()
+    $matchingItem = Item::factory()
         ->hasAttached($matchingEntity, [], $relation)
         ->create([
             'document_overrides' => [$relation],
@@ -252,7 +254,7 @@ it('can filter items by belongsToMany property', function (string $propertyKey, 
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'author' => ['author', 'authors', Person::class, 'person_id'],
     'researcher' => ['researcher', 'researchers', Person::class, 'person_id'],
@@ -264,17 +266,17 @@ it('can filter items by originator', function () {
     $matchingPerson = Person::factory()->create();
     $otherPerson = Person::factory()->create();
 
-    $matching = Item::factory()->create(['document_overrides' => ['originators']]);
-    ItemOriginator::factory()->create([
-        'item_id' => $matching->id,
-        'person_id' => $matchingPerson->id,
-    ]);
+    $matchingItem = Item::factory()->create(['document_overrides' => ['originators']]);
+    ItemOriginator::factory()
+        ->for($matchingItem)
+        ->for($matchingPerson)
+        ->create();
 
     $other = Item::factory()->create(['document_overrides' => ['originators']]);
-    ItemOriginator::factory()->create([
-        'item_id' => $other->id,
-        'person_id' => $otherPerson->id,
-    ]);
+    ItemOriginator::factory()
+        ->for($other)
+        ->for($otherPerson)
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -284,7 +286,7 @@ it('can filter items by originator', function () {
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 });
 
 it('can filter items by locality', function (string $propertyKey, string $factoryClass) {
@@ -307,7 +309,7 @@ it('can filter items by locality', function (string $propertyKey, string $factor
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matchingItem->id);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'country' => ['country', Country::class],
     'region' => ['region', Region::class],

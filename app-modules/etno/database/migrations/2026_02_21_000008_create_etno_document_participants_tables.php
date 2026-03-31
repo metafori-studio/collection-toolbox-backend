@@ -9,10 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etno_document_authors', function (Blueprint $table) {
-            $table->string('document_id');
-            $table->foreign('document_id')
-                ->references('id')
-                ->on('etno_documents')
+            $table->foreignId('document_id')
+                ->constrained('etno_documents')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->foreignId('person_id')
@@ -25,10 +23,8 @@ return new class extends Migration
         });
 
         Schema::create('etno_document_researchers', function (Blueprint $table) {
-            $table->string('document_id');
-            $table->foreign('document_id')
-                ->references('id')
-                ->on('etno_documents')
+            $table->foreignId('document_id')
+                ->constrained('etno_documents')
                 ->cascadeOnDelete();
             $table->foreignId('person_id')
                 ->constrained('people')
@@ -41,10 +37,8 @@ return new class extends Migration
 
         Schema::create('etno_document_originators', function (Blueprint $table) {
             $table->id();
-            $table->string('document_id');
-            $table->foreign('document_id')
-                ->references('id')
-                ->on('etno_documents')
+            $table->foreignId('document_id')
+                ->constrained('etno_documents')
                 ->cascadeOnDelete();
             $table->foreignId('person_id')
                 ->nullable()

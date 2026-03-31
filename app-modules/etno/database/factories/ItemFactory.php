@@ -26,6 +26,7 @@ class ItemFactory extends Factory
         return [
             ...$this->documentAttributes(),
             'document_id' => Document::factory(),
+            'suffix' => fake()->unique()->regexify('[A-Z0-9]{3}'),
         ];
     }
 

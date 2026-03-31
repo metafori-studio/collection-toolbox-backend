@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Filament\Resources\Items\Tables;
 
 use Filament\Actions;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -13,8 +14,9 @@ class ItemsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID')
+                TextColumn::make('identifier')
+                    ->label('Composite ID')
+                    ->fontFamily(FontFamily::Mono)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('title')

@@ -2,7 +2,6 @@
 
 namespace Metafori\Etno\Database\Factories\Concerns;
 
-use Illuminate\Support\Str;
 use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -58,7 +57,6 @@ trait HasDocumentAttributes
         ]);
 
         return [
-            'id' => Str::uuid()->toString(),
             'doi' => fake()->optional()->numerify('10.####/#######'),
             'type' => fake()->randomElement(ItemType::cases()),
             'extents' => fake()->boolean() ? [

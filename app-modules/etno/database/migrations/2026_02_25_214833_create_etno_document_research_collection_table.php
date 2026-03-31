@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etno_document_research_collection', function (Blueprint $table) {
-            $table->string('document_id');
-            $table->foreign('document_id')->references('id')->on('etno_documents')->cascadeOnDelete();
+            $table->foreignId('document_id')->constrained('etno_documents')->cascadeOnDelete();
             $table->foreignId('research_collection_id')
                 ->constrained('etno_research_collections')
                 ->cascadeOnDelete();

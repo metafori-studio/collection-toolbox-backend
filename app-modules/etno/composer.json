@@ -6,7 +6,8 @@
 	"license": "proprietary",
 	"require": {
         "laravel/scout": "^10.24",
-		"metafori/core": "*"
+		"metafori/core": "*",
+		"tpetry/laravel-postgresql-enhanced": "^3.5"
 	},
 	"autoload": {
 		"psr-4": {
