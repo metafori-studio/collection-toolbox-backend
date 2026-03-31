@@ -21,6 +21,32 @@ use Metafori\Etno\Models\Project;
 
 use function Pest\Livewire\livewire;
 
+it('creates item with unique identifier even when soft deleted record exists', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->create();
+    $item = Item::factory()->create([
+        'document_id' => $document->id,
+    ]);
+
+    livewire(EditItem::class, [
+        'parentRecord' => $document,
+        'record' => $item->id,
+    ])
+        ->fillForm([
+            'suffix' => '1',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    // Verify database
+    $item->refresh();
+
+    expect($item->suffix)->toEqual('1');
+    expect($item->identifier)->toEqual($document->id.':1');
+});
+
 it('saves and overrides correctly for primitive fields', function (string $column, mixed $parentValue, mixed $overrideValue) {
     $parentValue = value($parentValue);
     $overrideValue = value($overrideValue);

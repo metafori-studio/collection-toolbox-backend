@@ -3,9 +3,9 @@
 namespace Metafori\Etno\Filament\Forms\Components;
 
 use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Component;
-use Tpetry\PostgresqlEnhanced\Query\Builder;
 
 class SuffixInput extends TextInput
 {
