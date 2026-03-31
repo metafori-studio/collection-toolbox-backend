@@ -22,6 +22,7 @@ use Spatie\MediaLibrary\ResponsiveImages\TinyPlaceholderGenerator\Blurred;
 use Spatie\MediaLibrary\ResponsiveImages\WidthCalculator\FileSizeOptimizedWidthCalculator;
 use Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer;
 use Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover;
+use Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator;
 use Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator;
 use Spatie\MediaLibraryPro\Models\TemporaryUpload;
 
@@ -106,7 +107,7 @@ return [
     /*
      * The class that contains the strategy for determining a media file's path.
      */
-    'path_generator' => \Metafori\Archeo\Support\ArcheoPathGenerator::class,
+    'path_generator' => env('MEDIA_PATH_GENERATOR', DefaultPathGenerator::class),
 
     /*
      * The class that contains the strategy for determining how to remove files.
@@ -132,7 +133,7 @@ return [
      * Moves media on updating to keep path consistent. Enable it only with a custom
      * PathGenerator that uses, for example, the media UUID.
      */
-    'moves_media_on_update' => true,
+    'moves_media_on_update' => env('MEDIA_MOVES_ON_UPDATE', false),
 
     /*
      * Whether to activate versioning when urls to files get generated.
