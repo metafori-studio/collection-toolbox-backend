@@ -3,7 +3,6 @@
 namespace Metafori\Etno\Filament\Forms\Components;
 
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rules\Unique;
 use Livewire\Component;
 
@@ -18,11 +17,8 @@ class SuffixInput extends TextInput
             ->required()
             ->unique(
                 ignoreRecord: true,
-                modifyRuleUsing: fn (Unique $rule, Component $livewire) => $rule
-                    ->where(fn (Builder $query) => $query
-                        ->where('document_id', $livewire->parentRecord?->id)
-                        ->whereNull('deleted_at')
-                    )
+                modifyRuleUsing: fn (Unique $rule) => $rule
+                    ->withoutTrashed()
             )
             ->maxLength(255);
     }
