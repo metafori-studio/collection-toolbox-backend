@@ -4,6 +4,7 @@ namespace Metafori\Archeo\Filament\Resources\ActivityResource\RelationManagers;
 
 use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
@@ -27,7 +28,7 @@ class PdfDocumentsRelationManager extends RelationManager
     {
         return $schema
             ->schema([
-                TextEntry::make('file_name')
+                TextInput::make('file_name')
                     ->label(__('archeo::activities.fields.file_name')),
             ]);
     }
