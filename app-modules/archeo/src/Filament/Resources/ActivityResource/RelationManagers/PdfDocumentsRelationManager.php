@@ -93,7 +93,7 @@ class PdfDocumentsRelationManager extends RelationManager
                         FileUpload::make('files')
                             ->label(__('archeo::activities.fields.pdfs'))
                             ->acceptedFileTypes(['application/pdf'])
-                            ->disk('s3')
+                            ->disk(config('archeo.pdfs_disk', 'public'))
                             ->multiple()
                             ->storeFileNamesIn('original_names')
                             ->maxSize(512000)
@@ -117,7 +117,7 @@ class PdfDocumentsRelationManager extends RelationManager
                                     ->toMediaCollection('pdfs', $targetDisk);
                             } elseif (is_string($file)) {
                                 // SeaweedFS Optimization: use stream to avoid circular HTTP requests or CopyObject issues
-                                $stream = Storage::disk('s3')->readStream($file);
+                                $stream = Storage::disk($targetDisk)->readStream($file);
                                 if ($stream) {
                                     try {
                                         $record->addMediaFromStream($stream)
