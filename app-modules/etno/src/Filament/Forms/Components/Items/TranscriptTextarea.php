@@ -25,6 +25,7 @@ class TranscriptTextarea extends Textarea
 
         $dropzoneAttributes = [
             'x-on:drop.prevent' => $dropzoneJs,
+            'x-on:dragover.prevent' => '',
         ];
 
         $this->rows(8)
