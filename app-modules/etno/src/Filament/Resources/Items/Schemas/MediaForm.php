@@ -11,23 +11,22 @@ class MediaForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components(self::getComponents())
+        return $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->columnSpanFull(),
+            ...self::transcriptionFields(),
+        ])
             ->columns(2);
     }
 
-    public static function getComponents(): array
+    public static function transcriptionFields(): iterable
     {
-        $components = [];
-        $components[] = TextInput::make('name')
-            ->required()
-            ->columnSpanFull();
-
-        foreach (TranscriptFormat::cases() as $format) {
-            $components[] = TranscriptTextarea::make("custom_properties.transcripts.{$format->value}")
-                ->label("Transcript ({$format->getLabel()})")
-                ->placeholder("You can drag & drop a {$format->getLabel()} file here...");
-        }
-
-        return $components;
+        return collect(TranscriptFormat::cases())
+            ->map(
+                fn (TranscriptFormat $format) => TranscriptTextarea::make("custom_properties.transcripts.{$format->value}")
+                    ->label("Transcript ({$format->getLabel()})")
+                    ->placeholder("You can drag & drop a {$format->getLabel()} file here...")
+            );
     }
 }
