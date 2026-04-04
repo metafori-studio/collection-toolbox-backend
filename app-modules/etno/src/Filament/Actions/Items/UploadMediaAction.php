@@ -45,6 +45,17 @@ class UploadMediaAction extends Action
 
                         $set('transcripts', $transcripts);
                         $set('media', $media->toArray());
+                    })
+                    ->rule(fn (Get $get) => function (string $attribute, $value, Closure $fail) use ($get) {
+                        $files = $get->array('files') ?? [];
+
+                        [$transcripts, $mediaFiles] = collect($files)
+                            ->partition($this->isTranscript(...))
+                            ->all();
+
+                        if ($mediaFiles->isEmpty() && $transcripts->isNotEmpty()) {
+                            $fail('Cannot upload transcripts without corresponding media files.');
+                        }
                     }),
 
                 Hidden::make('transcripts')

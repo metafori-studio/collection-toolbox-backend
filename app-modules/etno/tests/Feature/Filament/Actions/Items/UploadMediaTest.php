@@ -112,3 +112,21 @@ it('can reorder media files by file name', function () {
     expect($item->getMedia()->firstWhere('file_name', 'test1.jpg')->order_column)->toBe(1)
         ->and($item->getMedia()->firstWhere('file_name', 'test2.jpg')->order_column)->toBe(2);
 });
+
+it('cannot upload transcripts without media files', function () {
+    $item = Item::factory()->create();
+
+    $transcript = UploadedFile::fake()->createWithContent('test.txt', 'text');
+
+    livewire(EditItem::class, [
+        'parentRecord' => $item->document,
+        'record' => $item->id,
+    ])
+        ->callAction(TestAction::make('upload_media'), [
+            'files' => [
+                $transcript,
+            ],
+        ])
+        ->assertHasErrors()
+        ->assertNoRedirect();
+});
