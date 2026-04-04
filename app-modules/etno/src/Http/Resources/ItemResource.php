@@ -4,9 +4,11 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
+use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Http\Resources\Concerns\InheritsDocument;
 use Metafori\Etno\Http\Resources\Concerns\ResolvesLocality;
 use Metafori\Etno\Models\Item;
@@ -77,6 +79,19 @@ class ItemResource extends JsonResource
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
             'document_id' => $this->document_id,
+            /** @var array{audios?: MediaResource[], documents?: MediaResource[], images?: MediaResource[], videos?: MediaResource[]} */
+            'media' => $this->whenLoaded('media', fn () => $this->when(
+                Gate::allows('viewMedia', $this->resource),
+                fn () => collect([
+                    MediaType::Audio,
+                    MediaType::Document,
+                    MediaType::Image,
+                    MediaType::Video,
+                ])
+                    ->mapWithKeys(fn (MediaType $type) => [$type->value => $this->loadMedia($type->value)])
+                    ->filter(fn ($media) => $media->isNotEmpty())
+                    ->map(MediaResource::collection(...))
+            )),
         ];
     }
 }
