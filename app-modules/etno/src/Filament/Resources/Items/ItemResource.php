@@ -45,6 +45,13 @@ class ItemResource extends Resource
         return ItemsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            'media' => RelationManagers\MediaRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

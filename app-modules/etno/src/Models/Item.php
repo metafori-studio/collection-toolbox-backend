@@ -24,10 +24,12 @@ use Metafori\Core\Models\Region;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Metafori\Etno\Models\Contracts\Inheritable;
 use Metafori\Etno\Models\Pivots\ItemPivot;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Item extends Model implements Inheritable
+class Item extends Model implements HasMedia, Inheritable
 {
-    use HasDocumentMetadata, HasFactory, Searchable, SoftDeletes;
+    use HasDocumentMetadata, HasFactory, InteractsWithMedia, Searchable, SoftDeletes;
 
     protected $table = 'etno_items';
 
