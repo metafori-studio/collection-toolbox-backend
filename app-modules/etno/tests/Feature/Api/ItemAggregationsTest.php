@@ -1,8 +1,21 @@
 <?php
 
+use Metafori\Core\Enums\Language;
+use Metafori\Core\Enums\License;
+use Metafori\Core\Models\Keyword;
+use Metafori\Core\Models\Location;
+use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
+use Metafori\Core\Models\Person;
+use Metafori\Etno\Enums\AccessRights;
+use Metafori\Etno\Enums\AccrualMethod;
+use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemType;
+use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Item;
+use Metafori\Etno\Models\ItemOriginator;
+use Metafori\Etno\Models\Project;
+use Metafori\Etno\Models\ResearchCollection;
 use Metafori\Etno\Repositories\ItemRepository;
 use Metafori\Opensearch\Testing\RefreshIndices;
 
@@ -130,4 +143,117 @@ it('resolves model labels for aggregations', function () {
 
     expect($orgAgg['label'])->toBe('Test Organization')
         ->and($orgAgg['count'])->toBe(1);
+});
+
+it('can filter aggregations by time period', function () {
+    $matchingOrg = Organization::factory()->create();
+    $otherOrg = Organization::factory()->create();
+
+    Item::factory()->create([
+        'institution_id' => $matchingOrg->id,
+        'time_period_start' => '1950-12-31',
+        'time_period_end' => '1950-12-31',
+        'document_overrides' => ['institution', 'time_period_start', 'time_period_end'],
+    ]);
+
+    Item::factory()->create([
+        'institution_id' => $otherOrg->id,
+        'time_period_start' => '1800-01-01',
+        'time_period_end' => '1840-01-01',
+        'document_overrides' => ['institution', 'time_period_start', 'time_period_end'],
+    ]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.aggregations', [
+        'filter' => ['time_period_from' => 1950],
+    ]));
+
+    $response->assertStatus(200);
+
+    $data = $response->json('data');
+    $instData = $data['institution.id'] ?? [];
+
+    expect(collect($instData)->firstWhere('value', $matchingOrg->id)['count'])->toBe(1)
+        ->and(collect($instData)->firstWhere('value', $otherOrg->id))->toBeNull();
+});
+
+it('can filter aggregations by all filterables at once', function () {
+    $municipalityPart = MunicipalityPart::factory()->create();
+    $municipality = $municipalityPart->municipality;
+    $district = $municipality->district;
+    $region = $district->region;
+    $country = $region->country;
+
+    $location = Location::factory()
+        ->for($municipalityPart, 'parent')
+        ->create();
+
+    $institution = Organization::factory()->create();
+    $project = Project::factory()->create();
+    $author = Person::factory()->create();
+    $researcher = Person::factory()->create();
+    $keyword = Keyword::factory()->create();
+    $researchCollection = ResearchCollection::factory()->create();
+    $originatorPerson = Person::factory()->create();
+
+    $matching = Item::factory()
+        ->for($location, 'locality')
+        ->hasAttached($author, [], 'authors')
+        ->hasAttached($researcher, [], 'researchers')
+        ->hasAttached($keyword, [], 'keywords')
+        ->hasAttached($researchCollection, [], 'researchCollections')
+        ->create([
+            'type' => ItemType::AudioRecording,
+            'language' => Language::Slovak,
+            'accrual_method' => AccrualMethod::Purchase,
+            'collection_method' => CollectionMethod::FieldResearch,
+            'access_rights' => AccessRights::OpenAccess,
+            'license' => License::CcBy,
+            'production_methods' => [ProductionMethod::Drawing],
+            'institution_id' => $institution->id,
+            'project_id' => $project->id,
+            'time_period_start' => '1900-01-01',
+            'time_period_end' => '1950-01-01',
+            'document_overrides' => Item::INHERITABLES,
+        ]);
+
+    ItemOriginator::factory()
+        ->for($matching)
+        ->for($originatorPerson)
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.aggregations', [
+        'filter' => [
+            'type' => [ItemType::AudioRecording->value],
+            'language' => [Language::Slovak->value],
+            'accrual_method' => [AccrualMethod::Purchase->value],
+            'collection_method' => [CollectionMethod::FieldResearch->value],
+            'access_rights' => [AccessRights::OpenAccess->value],
+            'license' => [License::CcBy->value],
+            'production_methods' => [ProductionMethod::Drawing->value],
+            'institution.id' => [$institution->id],
+            'project.id' => [$project->id],
+            'author.person_id' => [$author->id],
+            'researcher.person_id' => [$researcher->id],
+            'keyword.id' => [$keyword->id],
+            'research_collection.id' => [$researchCollection->id],
+            'originator.person_id' => [$originatorPerson->id],
+            'country.id' => [$country->id],
+            'region.id' => [$region->id],
+            'district.id' => [$district->id],
+            'municipality.id' => [$municipality->id],
+            'municipality_part.id' => [$municipalityPart->id],
+            'location.id' => [$location->id],
+            'time_period_from' => 1940,
+            'time_period_to' => 1960,
+        ],
+    ]));
+
+    $data = $response->json('data');
+
+    expect(collect($data['type'])->firstWhere('value', ItemType::AudioRecording->value)['count'])->toBe(1)
+        ->and(collect($data['type'])->firstWhere('value', ItemType::Map->value))->toBeNull();
 });

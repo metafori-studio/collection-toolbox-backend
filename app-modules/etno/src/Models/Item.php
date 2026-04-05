@@ -301,6 +301,10 @@ class Item extends Model implements Inheritable
             'access_rights' => $resolveValue('access_rights')?->value,
             'license' => $resolveValue('license')?->value,
             'production_methods' => collect($resolveValue('production_methods'))->map->value->toArray(),
+            'time_period' => \array_filter([
+                'gte' => $resolveValue('time_period_start'),
+                'lte' => $resolveValue('time_period_end'),
+            ]),
             'author' => ['person_id' => $resolveRelationIds('authors')],
             'researcher' => ['person_id' => $resolveRelationIds('researchers')],
             'originator' => ['person_id' => $resolveRelationIds('originators', 'person_id')],
