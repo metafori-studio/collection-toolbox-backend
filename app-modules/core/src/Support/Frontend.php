@@ -43,7 +43,7 @@ class Frontend
             $search = "{{$key}}";
 
             if (\is_string($key) && \str_contains($path, $search)) {
-                $path = \str_replace($search, \urlencode((string) $value), $path);
+                $path = \str_replace($search, \rawurlencode((string) $value), $path);
             } else {
                 $query[$key] = (string) $value;
             }
