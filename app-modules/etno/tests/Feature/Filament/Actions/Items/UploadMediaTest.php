@@ -127,6 +127,8 @@ it('cannot upload transcripts without media files', function () {
                 $transcript,
             ],
         ])
-        ->assertHasErrors()
+        ->assertHasErrors([
+            'mountedActions.0.data.files' => 'Cannot upload transcripts without corresponding media files.',
+        ])
         ->assertNoRedirect();
 });
