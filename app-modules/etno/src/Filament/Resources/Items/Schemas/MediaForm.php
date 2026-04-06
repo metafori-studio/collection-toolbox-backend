@@ -15,12 +15,12 @@ class MediaForm
             TextInput::make('name')
                 ->required()
                 ->columnSpanFull(),
-            ...self::transcriptionFields(),
+            ...self::transcriptFields(),
         ])
             ->columns(2);
     }
 
-    public static function transcriptionFields(): iterable
+    public static function transcriptFields(): iterable
     {
         return collect(TranscriptFormat::cases())
             ->map(

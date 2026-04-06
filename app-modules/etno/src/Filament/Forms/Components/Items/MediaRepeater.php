@@ -20,6 +20,7 @@ class MediaRepeater extends Repeater
                 fn (TranscriptFormat $format) => Action::make("has_{$format->value}")
                     ->tooltip("{$format->getLabel()} Transcript Attached")
                     ->icon(Heroicon::CheckCircle)
+                    ->color('primary')
                     ->disabled(true)
                     ->hidden(fn (array $arguments, self $component): bool => ! $this->hasTranscript($format, $arguments['item'], $component))
             );
@@ -45,7 +46,7 @@ class MediaRepeater extends Repeater
             })
             ->schema([
                 \Filament\Forms\Components\Hidden::make('file'),
-                ...MediaForm::transcriptionFields(),
+                ...MediaForm::transcriptFields(),
             ])
             ->columns(2)
             ->disableLabel()
@@ -55,7 +56,6 @@ class MediaRepeater extends Repeater
             ->defaultItems(0)
             ->addable(false)
             ->reorderableWithDragAndDrop()
-            ->reorderableWithButtons()
             ->hintAction(
                 Action::make('order_by_name')
                     ->hidden(fn (array $state) => \count($state ?? []) < 2)

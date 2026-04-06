@@ -2,14 +2,17 @@
 
 namespace Metafori\Etno\Filament\Concerns;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Metafori\Etno\Enums\TranscriptFormat;
+use Metafori\Etno\Models\Item;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 trait HandlesMediaUploads
 {
-    protected function extractTranscripts(array $files, array $transcripts): array
+    protected function extractTranscripts(array $files, array $transcripts = []): array
     {
         [$transcriptFiles, $mediaFiles] = collect($files)
             ->partition($this->isTranscript(...))
@@ -21,23 +24,24 @@ trait HandlesMediaUploads
             $transcripts[$basename][$format->value] ??= $file->get();
         }
 
-        return [$transcripts, $mediaFiles];
+        return [$transcripts, $mediaFiles->toArray()];
     }
 
-    protected function syncMedia(Collection $files, Collection $media): void
+    protected function syncMedia(array $files, array $media): array
     {
-        $removedKeys = $media
-            ->reject(fn ($medium) => $files->contains($medium['file']))
-            ->keys();
+        $media = array_filter($media, fn ($medium) => \in_array($medium['file'], $files, strict: false));
 
-        $media->forget($removedKeys);
+        $mediaFiles = array_column($media, 'file');
+        foreach ($files as $file) {
+            if (! \in_array($file, $mediaFiles, strict: false)) {
+                $media[(string) Str::uuid()] = [
+                    'file' => $file,
+                    'custom_properties' => [],
+                ];
+            }
+        }
 
-        $files
-            ->reject(fn ($file) => $media->contains('file', $file))
-            ->each(fn ($file) => $media->push([
-                'file' => $file,
-                'custom_properties' => [],
-            ]));
+        return $media;
     }
 
     protected function getTranscriptFormat(TemporaryUploadedFile $file): ?TranscriptFormat
@@ -52,20 +56,34 @@ trait HandlesMediaUploads
         return $this->getTranscriptFormat($file) !== null;
     }
 
-    protected function applyTranscriptsToMedia(Collection $media, array $transcripts): void
+    protected function applyTranscriptsToMedium(array $medium, array $transcripts): array
     {
-        $media
-            ->transform(function ($medium) use ($transcripts) {
-                $file = $medium['file'];
-                $basename = File::name($file->getClientOriginalName());
+        $basename = File::name($medium['file']->getClientOriginalName());
 
-                foreach (TranscriptFormat::cases() as $format) {
-                    if (isset($transcripts[$basename][$format->value])) {
-                        $medium['custom_properties']['transcripts'][$format->value] ??= $transcripts[$basename][$format->value];
-                    }
-                }
+        foreach (TranscriptFormat::cases() as $format) {
+            if (isset($transcripts[$basename][$format->value])) {
+                $medium['custom_properties']['transcripts'][$format->value] ??= $transcripts[$basename][$format->value];
+            }
+        }
 
-                return $medium;
-            });
+        return $medium;
+    }
+
+    protected function applyTranscriptsToMedia(array $media, array $transcripts): array
+    {
+        foreach ($media as &$medium) {
+            $medium = $this->applyTranscriptsToMedium($medium, $transcripts);
+        }
+
+        return $media;
+    }
+
+    protected function addItemMedia(Item $item, TemporaryUploadedFile $file, array $customProperties): Media
+    {
+        return $item->addMediaFromDisk($file->getClientOriginalPath(), FileUploadConfiguration::disk())
+            ->usingName(File::name($file->getClientOriginalName()))
+            ->usingFileName($file->getClientOriginalName())
+            ->withCustomProperties($customProperties)
+            ->toMediaCollection();
     }
 }

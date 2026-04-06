@@ -9,8 +9,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Facades\File;
-use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Metafori\Etno\Filament\Concerns\HandlesMediaUploads;
 use Metafori\Etno\Filament\Forms\Components\Items\MediaRepeater;
 use Metafori\Etno\Filament\Resources\Items\ItemResource;
@@ -35,16 +33,16 @@ class UploadMediaAction extends Action
                     ->multiple()
                     ->live()
                     ->afterStateUpdated(function (array $state, Set $set, Get $get) {
-                        $media = collect($get->array('media'));
+                        $media = $get->array('media');
                         $transcripts = $get->array('transcripts');
 
                         [$transcripts, $mediaFiles] = $this->extractTranscripts($state, $transcripts);
 
-                        $this->syncMedia($mediaFiles, $media);
-                        $this->applyTranscriptsToMedia($media, $transcripts);
+                        $media = $this->syncMedia($mediaFiles, $media);
+                        $media = $this->applyTranscriptsToMedia($media, $transcripts);
 
                         $set('transcripts', $transcripts);
-                        $set('media', $media->toArray());
+                        $set('media', $media);
                     })
                     ->rule(fn (Get $get) => function (string $attribute, $value, Closure $fail) use ($get) {
                         $files = $get->array('files') ?? [];
@@ -75,11 +73,7 @@ class UploadMediaAction extends Action
             ])
             ->action(function (array $data, Item $record): void {
                 foreach ($data['media'] ?? [] as $media) {
-                    $record->addMediaFromDisk($media['file']->getClientOriginalPath(), FileUploadConfiguration::disk())
-                        ->usingName(File::name($media['file']->getClientOriginalName()))
-                        ->usingFileName($media['file']->getClientOriginalName())
-                        ->withCustomProperties($media['custom_properties'] ?? [])
-                        ->toMediaCollection();
+                    $this->addItemMedia($record, $media['file'], $media['custom_properties']);
                 }
 
                 $this->redirect(ItemResource::getUrl('edit', [
