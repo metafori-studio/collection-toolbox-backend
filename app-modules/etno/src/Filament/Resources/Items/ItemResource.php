@@ -16,6 +16,8 @@ class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
+    protected static ?string $recordTitleAttribute = 'identifier';
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -57,6 +59,7 @@ class ItemResource extends Resource
         return [
             'create' => Pages\CreateItem::route('/create'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
+            'create-from-files' => Pages\CreateItemsFromFiles::route('/create-from-files'),
         ];
     }
 }

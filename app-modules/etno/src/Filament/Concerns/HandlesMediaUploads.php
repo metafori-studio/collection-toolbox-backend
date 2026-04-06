@@ -78,6 +78,15 @@ trait HandlesMediaUploads
         return $media;
     }
 
+    protected function applyTranscriptsToItems(array $items, array $transcripts): array
+    {
+        foreach ($items as $uuid => $item) {
+            $items[$uuid]['media'] = $this->applyTranscriptsToMedium($item['media'], $transcripts);
+        }
+
+        return $items;
+    }
+
     protected function addItemMedia(Item $item, TemporaryUploadedFile $file, array $customProperties): Media
     {
         $collection = Item::getMediaCollectionName($file->getMimeType()) ?? throw new \InvalidArgumentException("Unsupported mime type: {$file->getMimeType()}");
