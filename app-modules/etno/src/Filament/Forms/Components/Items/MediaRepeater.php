@@ -8,6 +8,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Support\Icons\Heroicon;
 use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Resources\Items\Schemas\MediaForm;
+use Metafori\Etno\Models\Item;
 
 class MediaRepeater extends Repeater
 {
@@ -35,13 +36,14 @@ class MediaRepeater extends Repeater
                 ->alpineClickHandler('isCollapsed = !isCollapsed'),
         ])
             ->rule(fn () => function (string $attribute, $value, Closure $fail) {
-                $mimeTypes = collect($value)
+                $mediaTypes = collect($value)
                     ->pluck('file')
                     ->map->getMimeType()
+                    ->map(Item::getMediaCollectionName(...))
                     ->unique();
 
-                if ($mimeTypes->count() > 1) {
-                    $fail('The mime type of the file must match the other media files.');
+                if ($mediaTypes->count() > 1) {
+                    $fail('The media type of the file must match the other media files.');
                 }
             })
             ->schema([

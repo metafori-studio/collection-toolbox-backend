@@ -80,10 +80,12 @@ trait HandlesMediaUploads
 
     protected function addItemMedia(Item $item, TemporaryUploadedFile $file, array $customProperties): Media
     {
+        $collection = Item::getMediaCollectionName($file->getMimeType()) ?? throw new \InvalidArgumentException("Unsupported mime type: {$file->getMimeType()}");
+
         return $item->addMediaFromDisk($file->getClientOriginalPath(), FileUploadConfiguration::disk())
             ->usingName(File::name($file->getClientOriginalName()))
             ->usingFileName($file->getClientOriginalName())
             ->withCustomProperties($customProperties)
-            ->toMediaCollection();
+            ->toMediaCollection($collection);
     }
 }

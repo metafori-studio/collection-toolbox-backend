@@ -32,6 +32,11 @@ class UploadMediaAction extends Action
                     ->previewable(false)
                     ->multiple()
                     ->live()
+                    ->acceptedFileTypes(fn (Item $record) => [
+                        ...$record->allowedMediaMimeTypes(),
+                        'text/plain',
+                        'text/xml',
+                    ])
                     ->afterStateUpdated(function (array $state, Set $set, Get $get) {
                         $media = $get->array('media');
                         $transcripts = $get->array('transcripts');
@@ -61,13 +66,14 @@ class UploadMediaAction extends Action
 
                 MediaRepeater::make('media')
                     ->rule(fn (Item $record) => function (string $attribute, $value, Closure $fail) use ($record) {
-                        $mimeTypes = $record->getMedia()
+                        $mediaTypes = $record->media
                             ->pluck('mime_type')
                             ->merge(collect($value)->pluck('file')->map->getMimeType())
+                            ->map(Item::getMediaCollectionName(...))
                             ->unique();
 
-                        if ($mimeTypes->count() > 1) {
-                            $fail("The mime type of the file must match the other item's media files.");
+                        if ($mediaTypes->count() > 1) {
+                            $fail("The media type of the file must match the other item's media files.");
                         }
                     }),
             ])

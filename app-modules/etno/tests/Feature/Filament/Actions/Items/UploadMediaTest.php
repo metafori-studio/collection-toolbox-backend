@@ -39,7 +39,7 @@ it('uploads media files and assigns custom properties', function () {
             'relation' => 'media',
         ]));
 
-    $media = $item->getMedia()->first();
+    $media = $item->media->first();
     expect($media)->not->toBeNull()
         ->and($media->name)->toBe('test')
         ->and($media->file_name)->toBe('test.jpg')
@@ -63,7 +63,7 @@ it('cannot assign media files of various mime types to one item', function () {
             ],
         ])
         ->assertHasErrors([
-            'mountedActions.0.data.media' => 'The mime type of the file must match the other media files.',
+            'mountedActions.0.data.media' => 'The media type of the file must match the other media files.',
         ])
         ->assertNoRedirect();
 });
@@ -84,7 +84,7 @@ it('cannot assign media files of different mime type than already set', function
             ],
         ])
         ->assertHasErrors([
-            'mountedActions.0.data.media' => 'The mime type of the file must match the other item\'s media files.',
+            'mountedActions.0.data.media' => 'The media type of the file must match the other item\'s media files.',
         ])
         ->assertNoRedirect();
 });
@@ -109,8 +109,8 @@ it('can reorder media files by file name', function () {
         ->callAction(TestAction::make('order_by_name')->schemaComponent('media'))
         ->callMountedAction();
 
-    expect($item->getMedia()->firstWhere('file_name', 'test1.jpg')->order_column)->toBe(1)
-        ->and($item->getMedia()->firstWhere('file_name', 'test2.jpg')->order_column)->toBe(2);
+    expect($item->media->firstWhere('file_name', 'test1.jpg')->order_column)->toBe(1)
+        ->and($item->media->firstWhere('file_name', 'test2.jpg')->order_column)->toBe(2);
 });
 
 it('cannot upload transcripts without media files', function () {
