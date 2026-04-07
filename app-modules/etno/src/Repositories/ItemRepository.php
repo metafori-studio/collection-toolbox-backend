@@ -6,6 +6,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Etno\Models\Item;
@@ -27,7 +28,18 @@ class ItemRepository
 
     public function paginate(array $filters = [], array $sorts = []): LengthAwarePaginator
     {
-        $query = Item::search();
+        $timePeriodFilter = $this->buildDateFilter(
+            Arr::pull($filters, 'time_period_from'),
+            Arr::pull($filters, 'time_period_to'),
+        );
+
+        $query = Item::search('*', function (Client $client, string $query, array $params) use ($timePeriodFilter) {
+            if ($timePeriodFilter) {
+                $params['body']['query']['bool']['filter']['bool']['must'][]['range']['time_period'] = $timePeriodFilter;
+            }
+
+            return $client->search($params);
+        });
 
         foreach ($filters as $field => $value) {
             $query->whereIn($field, $value);
@@ -62,6 +74,11 @@ class ItemRepository
 
     public function aggregations(array $filters = [], int $size = 1000): Collection
     {
+        $timePeriodFilter = $this->buildDateFilter(
+            Arr::pull($filters, 'time_period_from'),
+            Arr::pull($filters, 'time_period_to'),
+        );
+
         $aggs = collect(FacetMetadata::all())
             ->mapWithKeys(fn (string $field) => [
                 $field => collect($filters)
@@ -69,6 +86,9 @@ class ItemRepository
                     ->map(fn (array $values, string $key) => [
                         'terms' => [$key => $values],
                     ])
+                    ->when($timePeriodFilter, fn ($filters) => $filters->push([
+                        'range' => ['time_period' => $timePeriodFilter],
+                    ]))
                     ->values(),
             ])
             ->map(fn (Collection $activeFilters, string $field) => [
@@ -167,5 +187,13 @@ class ItemRepository
     public function refreshIndex(): void
     {
         app(Client::class)->indices()->refresh(['index' => (new Item)->searchableAs()]);
+    }
+
+    protected function buildDateFilter(mixed $from, mixed $to): array
+    {
+        return \array_filter([
+            'gte' => \is_numeric($from) ? "{$from}||/y" : $from,
+            'lte' => \is_numeric($to) ? "{$to}||/y" : $to,
+        ]);
     }
 }

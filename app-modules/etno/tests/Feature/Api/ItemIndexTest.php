@@ -335,3 +335,175 @@ it('can filter items by locality', function (string $propertyKey, string $factor
     'municipality_part' => ['municipality_part', MunicipalityPart::class],
     'location' => ['location', Location::class],
 ]);
+
+it('can filter items by overlapping time period specifying only lower bound', function () {
+    $matching = Item::factory()->create([
+        'time_period_start' => '1950-12-31',
+        'time_period_end' => '1950-12-31',
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    Item::factory()->create([
+        'time_period_start' => '1800-01-01',
+        'time_period_end' => '1850-01-01',
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [
+            'time_period_from' => 1950,
+        ],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matching->identifier);
+});
+
+it('can filter items by overlapping time period specifying only upper bound', function () {
+    $matching = Item::factory()->create([
+        'time_period_start' => '1950-12-31',
+        'time_period_end' => '1950-12-31',
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    Item::factory()->create([
+        'time_period_start' => '2000-01-01',
+        'time_period_end' => '2000-01-01',
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [
+            'time_period_to' => 1950,
+        ],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matching->identifier);
+});
+
+it('can filter items by overlapping time period when end date is null', function () {
+    $matching = Item::factory()->create([
+        'time_period_start' => '1950-12-31',
+        'time_period_end' => null,
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    Item::factory()->create([
+        'time_period_start' => '1800-01-01',
+        'time_period_end' => '1850-01-01',
+        'document_overrides' => ['time_period_start', 'time_period_end'],
+    ]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [
+            'time_period_from' => 2000,
+            'time_period_to' => 2000,
+        ],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matching->identifier);
+});
+
+it('validates time period bounds', function () {
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [
+            'time_period_from' => 1950,
+            'time_period_to' => 1949,
+        ],
+    ]));
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors([
+            'filter.time_period_to' => 'The filter.time_period_to must be greater than or equal to filter.time_period_from.',
+        ]);
+});
+
+it('can filter items by all filterables at once', function () {
+    $municipalityPart = MunicipalityPart::factory()->create();
+    $municipality = $municipalityPart->municipality;
+    $district = $municipality->district;
+    $region = $district->region;
+    $country = $region->country;
+
+    $location = Location::factory()
+        ->for($municipalityPart, 'parent')
+        ->create();
+
+    $institution = Organization::factory()->create();
+    $project = Project::factory()->create();
+    $author = Person::factory()->create();
+    $researcher = Person::factory()->create();
+    $keyword = Keyword::factory()->create();
+    $researchCollection = ResearchCollection::factory()->create();
+    $originatorPerson = Person::factory()->create();
+
+    $matching = Item::factory()
+        ->for($location, 'locality')
+        ->hasAttached($author, [], 'authors')
+        ->hasAttached($researcher, [], 'researchers')
+        ->hasAttached($keyword, [], 'keywords')
+        ->hasAttached($researchCollection, [], 'researchCollections')
+        ->create([
+            'type' => ItemType::AudioRecording,
+            'language' => Language::Slovak,
+            'accrual_method' => AccrualMethod::Purchase,
+            'collection_method' => CollectionMethod::FieldResearch,
+            'access_rights' => AccessRights::OpenAccess,
+            'license' => License::CcBy,
+            'production_methods' => [ProductionMethod::Drawing],
+            'institution_id' => $institution->id,
+            'project_id' => $project->id,
+            'time_period_start' => '1900-01-01',
+            'time_period_end' => '1950-01-01',
+            'document_overrides' => Item::INHERITABLES,
+        ]);
+
+    ItemOriginator::factory()
+        ->for($matching)
+        ->for($originatorPerson)
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [
+            'type' => [ItemType::AudioRecording->value],
+            'language' => [Language::Slovak->value],
+            'accrual_method' => [AccrualMethod::Purchase->value],
+            'collection_method' => [CollectionMethod::FieldResearch->value],
+            'access_rights' => [AccessRights::OpenAccess->value],
+            'license' => [License::CcBy->value],
+            'production_methods' => [ProductionMethod::Drawing->value],
+            'institution.id' => [$institution->id],
+            'project.id' => [$project->id],
+            'author.person_id' => [$author->id],
+            'researcher.person_id' => [$researcher->id],
+            'keyword.id' => [$keyword->id],
+            'research_collection.id' => [$researchCollection->id],
+            'originator.person_id' => [$originatorPerson->id],
+            'country.id' => [$country->id],
+            'region.id' => [$region->id],
+            'district.id' => [$district->id],
+            'municipality.id' => [$municipality->id],
+            'municipality_part.id' => [$municipalityPart->id],
+            'location.id' => [$location->id],
+            'time_period_from' => 1940,
+            'time_period_to' => 1960,
+        ],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matching->identifier);
+});

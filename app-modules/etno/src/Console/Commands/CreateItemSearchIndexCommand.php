@@ -92,6 +92,9 @@ class CreateItemSearchIndexCommand extends Command
                         'license' => ['type' => 'keyword'],
                         'production_methods' => ['type' => 'keyword'],
 
+                        // Ranges
+                        'time_period' => ['type' => 'date_range'],
+
                         // Localities
                         'country' => [
                             'properties' => ['id' => ['type' => 'keyword']],
