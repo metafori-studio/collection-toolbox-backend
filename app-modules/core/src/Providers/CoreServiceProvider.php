@@ -23,6 +23,7 @@ use Metafori\Core\Facades\Frontend as FrontendFacade;
 use Metafori\Core\Faker\Providers\OrcidProvider;
 use Metafori\Core\Faker\Providers\RorIdProvider;
 use Metafori\Core\Http\Middleware\AcceptLanguage;
+use Metafori\Core\Http\Middleware\IsAuthenticated;
 use Metafori\Core\Models\Country;
 use Metafori\Core\Models\District;
 use Metafori\Core\Models\Location;
@@ -61,6 +62,7 @@ class CoreServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Route::prependMiddlewareToGroup('api', EnsureFrontendRequestsAreStateful::class);
+        Route::pushMiddlewareToGroup('api', IsAuthenticated::class);
         Route::pushMiddlewareToGroup('api', AcceptLanguage::class);
 
         ResetPassword::createUrlUsing(FrontendFacade::resetPasswordUrl(...));
