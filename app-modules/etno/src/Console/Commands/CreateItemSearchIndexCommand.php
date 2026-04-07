@@ -43,6 +43,8 @@ class CreateItemSearchIndexCommand extends Command
 
         $this->info("Creating index '{$indexName}' with mappings...");
 
+        $locales = collect(config('app.locales'));
+
         $client->indices()->create([
             'index' => $indexName,
             'body' => [
@@ -50,6 +52,36 @@ class CreateItemSearchIndexCommand extends Command
                     'properties' => [
                         'id' => ['type' => 'keyword'],
                         'document_id' => ['type' => 'keyword'],
+
+                        // Translatable fields
+                        'title' => [
+                            'properties' => $locales->mapWithKeys(fn (string $locale) => [
+                                $locale => [
+                                    'type' => 'text',
+                                    'fields' => [
+                                        'keyword' => [
+                                            'type' => 'keyword',
+                                            'ignore_above' => 256,
+                                        ],
+                                    ],
+                                ],
+                            ])->toArray(),
+                        ],
+                        ...collect([
+                            'subtitle',
+                            'abstract',
+                            'general_note',
+                            'terms_of_use',
+                            'location_note',
+                            'content_note',
+                            'technical_note',
+                        ])->mapWithKeys(fn (string $field) => [
+                            $field => [
+                                'properties' => $locales->mapWithKeys(fn (string $locale) => [
+                                    $locale => ['type' => 'text'],
+                                ])->toArray(),
+                            ],
+                        ]),
 
                         // Exact match enum-like fields
                         'type' => ['type' => 'keyword'],
