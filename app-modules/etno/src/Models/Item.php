@@ -221,6 +221,13 @@ class Item extends Model implements HasMedia, Inheritable
         return $this->document;
     }
 
+    public function resolveInheritableAttribute(string $attribute): mixed
+    {
+        return $this->isInherited($attribute)
+            ? $this->getParent()?->{$attribute}
+            : $this->{$attribute};
+    }
+
     public static function relations(): array
     {
         return self::documentRelations([
