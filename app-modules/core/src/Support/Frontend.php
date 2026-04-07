@@ -17,12 +17,10 @@ class Frontend
      */
     public function resetPasswordUrl(User $user, string $token): string
     {
-        return (string) Uri::of($this->url())
-            ->withPath(config('frontend.routes.reset_password'))
-            ->withQuery([
-                'token' => $token,
-                'email' => $user->getEmailForPasswordReset(),
-            ]);
+        return $this->route('reset_password', [
+            'token' => $token,
+            'email' => $user->getEmailForPasswordReset(),
+        ]);
     }
 
     /**
@@ -30,11 +28,33 @@ class Frontend
      */
     public function setPasswordUrl(User $user, string $token): string
     {
-        return (string) Uri::of($this->url())
-            ->withPath(config('frontend.routes.set_password'))
-            ->withQuery([
-                'token' => $token,
-                'email' => $user->email,
-            ]);
+        return $this->route('set_password', [
+            'token' => $token,
+            'email' => $user->email,
+        ]);
+    }
+
+    protected function route(string $name, array $parameters = []): string
+    {
+        $path = config("frontend.routes.{$name}");
+        $query = [];
+
+        foreach ($parameters as $key => $value) {
+            $search = "{{$key}}";
+
+            if (\is_string($key) && \str_contains($path, $search)) {
+                $path = \str_replace($search, \rawurlencode((string) $value), $path);
+            } else {
+                $query[$key] = (string) $value;
+            }
+        }
+
+        if (\preg_match('/\{([^}]+)\}/', $path, $matches)) {
+            throw new \InvalidArgumentException("Missing frontend route parameter [{$matches[1]}].");
+        }
+
+        $uri = Uri::of($this->url())->withPath($path);
+
+        return (string) $uri->withQuery($query);
     }
 }
