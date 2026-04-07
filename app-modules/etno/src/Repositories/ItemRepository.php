@@ -34,7 +34,7 @@ class ItemRepository
         }
 
         foreach ($sorts as $field => $dir) {
-            $query->orderBy($field, $dir);
+            $query->orderBy($this->resolveSortField($field), $dir);
         }
 
         $query->query(function ($eloquentQuery) {
@@ -49,6 +49,15 @@ class ItemRepository
         $perPage = request()->query('per_page', 15);
 
         return $query->paginate($perPage);
+    }
+
+    protected function resolveSortField(string $field): string
+    {
+        if ($field === 'title') {
+            return 'title.'.app()->getLocale().'.keyword';
+        }
+
+        return $field;
     }
 
     public function aggregations(array $filters = [], int $size = 1000): Collection

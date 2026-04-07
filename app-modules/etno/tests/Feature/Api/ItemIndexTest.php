@@ -202,6 +202,23 @@ it('can sort items', function () {
     expect($data->pluck('id')->toArray())->toBe([$items[2]->identifier, $items[1]->identifier, $items[0]->identifier]);
 });
 
+it('can sort items by title using active locale keyword', function () {
+    $document1 = Document::factory()->create(['title' => ['en' => 'Zebra']]);
+    $document2 = Document::factory()->create(['title' => ['en' => 'Apple']]);
+    $document3 = Document::factory()->create(['title' => ['en' => 'Mango']]);
+
+    $item1 = Item::factory()->for($document1)->create();
+    $item2 = Item::factory()->for($document2)->create();
+    $item3 = Item::factory()->for($document3)->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', ['sort' => 'title']));
+    $response->assertStatus(200);
+    $data = collect($response->json('data'));
+    expect($data->pluck('id')->toArray())->toBe([$item2->identifier, $item3->identifier, $item1->identifier]);
+});
+
 it('can filter items by belongsTo property', function (string $propertyKey, string $factoryClass) {
     $matchingEntity = $factoryClass::factory()->create();
     $otherEntity = $factoryClass::factory()->create();
