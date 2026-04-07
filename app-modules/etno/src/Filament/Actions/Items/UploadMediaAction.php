@@ -9,6 +9,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
+use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Concerns\HandlesMediaUploads;
 use Metafori\Etno\Filament\Forms\Components\Items\MediaRepeater;
 use Metafori\Etno\Filament\Resources\Items\ItemResource;
@@ -27,15 +28,14 @@ class UploadMediaAction extends Action
             ->form([
                 FileUpload::make('files')
                     ->maxParallelUploads(6)
-                    ->disableLabel()
+                    ->hiddenLabel()
                     ->storeFiles(false)
                     ->previewable(false)
                     ->multiple()
                     ->live()
                     ->acceptedFileTypes(fn (Item $record) => [
                         ...$record->allowedMediaMimeTypes(),
-                        'text/plain',
-                        'text/xml',
+                        ...TranscriptFormat::mimeTypes(),
                     ])
                     ->afterStateUpdated(function (array $state, Set $set, Get $get) {
                         $media = $get->array('media');
