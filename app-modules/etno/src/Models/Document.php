@@ -68,6 +68,26 @@ class Document extends Model
 
     public function items(): HasMany
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Item::class)
+            ->orderByRaw('LENGTH(suffix)')
+            ->orderBy('suffix');
+    }
+
+    public function generateNextSequenceSuffix(): string
+    {
+        $maxSuffix = $this->items()
+            ->pluck('suffix')
+            ->last();
+
+        if ($maxSuffix === null) {
+            return 'a';
+        }
+
+        return self::incrementSuffix($maxSuffix);
+    }
+
+    public static function incrementSuffix(string $suffix): string
+    {
+        return str_increment($suffix);
     }
 }

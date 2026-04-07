@@ -21,13 +21,18 @@ use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
 use Metafori\Core\Models\Region;
+use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Metafori\Etno\Models\Contracts\Inheritable;
 use Metafori\Etno\Models\Pivots\ItemPivot;
+use Spatie\Image\Enums\Fit;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Item extends Model implements Inheritable
+class Item extends Model implements HasMedia, Inheritable
 {
-    use HasDocumentMetadata, HasFactory, Searchable, SoftDeletes;
+    use HasDocumentMetadata, HasFactory, InteractsWithMedia, Searchable, SoftDeletes;
 
     protected $table = 'etno_items';
 
@@ -74,6 +79,43 @@ class Item extends Model implements Inheritable
         'originators',
         'keywords',
         'researchCollections',
+    ];
+
+    protected const array MEDIA_MIME_TYPES_MAP = [
+        // Audio
+        'audio/mpeg' => MediaType::Audio,
+        'audio/wav' => MediaType::Audio,
+        'audio/ogg' => MediaType::Audio,
+        'audio/webm' => MediaType::Audio,
+        'audio/aac' => MediaType::Audio,
+        'audio/mp3' => MediaType::Audio,
+        'audio/flac' => MediaType::Audio,
+        'audio/m4a' => MediaType::Audio,
+        'audio/opus' => MediaType::Audio,
+
+        // Documents
+        'application/pdf' => MediaType::Document,
+
+        // Images
+        'image/jpeg' => MediaType::Image,
+        'image/png' => MediaType::Image,
+        'image/gif' => MediaType::Image,
+        'image/webp' => MediaType::Image,
+        'image/svg+xml' => MediaType::Image,
+        'image/bmp' => MediaType::Image,
+        'image/tiff' => MediaType::Image,
+        'image/avif' => MediaType::Image,
+        'image/heic' => MediaType::Image,
+
+        // Videos
+        'video/mp4' => MediaType::Video,
+        'video/webm' => MediaType::Video,
+        'video/ogg' => MediaType::Video,
+        'video/quicktime' => MediaType::Video,
+        'video/mpeg' => MediaType::Video,
+        'video/avi' => MediaType::Video,
+        'video/mov' => MediaType::Video,
+        'video/wmv' => MediaType::Video,
     ];
 
     protected static function booted(): void
@@ -177,6 +219,13 @@ class Item extends Model implements Inheritable
     public function getParent(): ?Document
     {
         return $this->document;
+    }
+
+    public function resolveInheritableAttribute(string $attribute): mixed
+    {
+        return $this->isInherited($attribute)
+            ? $this->getParent()?->{$attribute}
+            : $this->{$attribute};
     }
 
     public static function relations(): array
@@ -314,5 +363,64 @@ class Item extends Model implements Inheritable
             'project' => ['id' => $resolveRelationIds('project')],
             ...$resolveLocalityHierarchy(),
         ];
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection(MediaType::Document->value)
+            ->acceptsMimeTypes(self::allowedMimeTypesForCollection(MediaType::Document));
+
+        $this->addMediaCollection(MediaType::Image->value)
+            ->acceptsMimeTypes(self::allowedMimeTypesForCollection(MediaType::Image));
+
+        $this->addMediaCollection(MediaType::Video->value)
+            ->acceptsMimeTypes(self::allowedMimeTypesForCollection(MediaType::Video));
+
+        $this->addMediaCollection(MediaType::Audio->value)
+            ->acceptsMimeTypes(self::allowedMimeTypesForCollection(MediaType::Audio));
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('full')
+            ->width(1280)
+            ->height(1280)
+            ->fit(Fit::Contain)
+            ->performOnCollections(MediaType::Image->value);
+
+        $this->addMediaConversion('thumbnail')
+            ->width(300)
+            ->height(300)
+            ->fit(Fit::Crop)
+            ->performOnCollections(MediaType::Image->value);
+    }
+
+    public static function allowedMimeTypesForCollection(MediaType $collection): array
+    {
+        return array_keys(array_filter(self::MEDIA_MIME_TYPES_MAP, fn (MediaType $value) => $value === $collection));
+    }
+
+    public function allowedMediaMimeTypes()
+    {
+        if ($this->media->isEmpty()) {
+            return array_keys(self::MEDIA_MIME_TYPES_MAP);
+        }
+
+        return $this->media
+            ->pluck('collection_name')
+            ->unique()
+            ->map(MediaType::tryFrom(...))
+            ->filter()
+            ->flatMap(self::allowedMimeTypesForCollection(...));
+    }
+
+    public static function getMediaType(string $mimeType): ?MediaType
+    {
+        return self::MEDIA_MIME_TYPES_MAP[$mimeType] ?? null;
+    }
+
+    public static function getMediaCollectionName(string $mimeType): ?string
+    {
+        return self::getMediaType($mimeType)?->value;
     }
 }

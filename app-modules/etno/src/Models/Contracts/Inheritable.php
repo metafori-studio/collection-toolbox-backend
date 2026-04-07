@@ -13,4 +13,6 @@ interface Inheritable
     public function isInheritableAndInherited(string $attribute): bool;
 
     public function getParent(): ?Model;
+
+    public function resolveInheritableAttribute(string $attribute): mixed;
 }

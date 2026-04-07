@@ -1,11 +1,14 @@
 <?php
 
 use Metafori\Core\Models\MunicipalityPart;
+use Metafori\Core\Models\User;
+use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
 use Metafori\Opensearch\Testing\RefreshIndices;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
 
 uses(RefreshIndices::class);
@@ -233,4 +236,54 @@ it('returns 404 for non-existent item', function () {
     $response = getJson(route('api.etno.items.show', 'invalid-id'));
 
     $response->assertStatus(404);
+});
+
+it('shows media when access rights are open access', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::OpenAccess]);
+
+    $response = getJson(route('api.etno.items.show', $item->identifier));
+
+    $response->assertStatus(200)
+        ->assertJsonStructure(['data' => ['media' => [
+            'documents' => [['name', 'file_name', 'url', 'transcript']],
+        ]]])
+        ->assertJsonCount(1, 'data.media.documents');
+});
+
+it('does not show media when access rights are restricted and user is not authenticated', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::RestrictedAccess]);
+
+    $response = getJson(route('api.etno.items.show', $item->identifier));
+
+    $response->assertStatus(200);
+    expect($response->json('data'))->not->toHaveKey('media');
+});
+
+it('shows media when access rights are restricted and user is authenticated', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::RestrictedAccess]);
+
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->getJson(route('api.etno.items.show', $item->identifier));
+
+    $response->assertStatus(200)
+        ->assertJsonStructure(['data' => ['media' => [
+            'documents' => [['name', 'file_name', 'url', 'transcript']],
+        ]]])
+        ->assertJsonCount(1, 'data.media.documents');
+});
+
+it('does not show media when access rights are closed and user is authenticated', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::ClosedAccess]);
+
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->getJson(route('api.etno.items.show', $item->identifier));
+
+    $response->assertStatus(200);
+    expect($response->json('data'))->not->toHaveKey('media');
 });

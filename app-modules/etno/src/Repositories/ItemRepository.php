@@ -21,7 +21,10 @@ class ItemRepository
     public function findOrFail(string $id): Item
     {
         return Item::query()
-            ->with(Item::relations())
+            ->with([
+                'media',
+                ...Item::relations(),
+            ])
             ->where('identifier', $id)
             ->firstOrFail();
     }

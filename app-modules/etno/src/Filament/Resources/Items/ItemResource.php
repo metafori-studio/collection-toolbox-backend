@@ -16,6 +16,8 @@ class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
+    protected static ?string $recordTitleAttribute = 'identifier';
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
@@ -45,11 +47,19 @@ class ItemResource extends Resource
         return ItemsTable::configure($table);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            'media' => RelationManagers\MediaRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'create' => Pages\CreateItem::route('/create'),
             'edit' => Pages\EditItem::route('/{record}/edit'),
+            'create-from-files' => Pages\CreateItemsFromFiles::route('/create-from-files'),
         ];
     }
 }
