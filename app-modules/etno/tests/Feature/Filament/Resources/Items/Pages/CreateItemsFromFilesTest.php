@@ -42,3 +42,32 @@ it('extracts transcripts, syncs items and applies transcripts', function () {
     expect($item2->media)->toHaveCount(1);
     expect($item2->media->first()->custom_properties['transcripts']['txt'])->toBeNull();
 });
+
+it('can reorder items by file name', function () {
+    $document = Document::factory()->create(['id' => 'AA000001']);
+
+    $image1 = UploadedFile::fake()->create('z_test.jpg', 100, 'image/jpeg');
+    $image2 = UploadedFile::fake()->create('a_test.jpg', 100, 'image/jpeg');
+
+    $livewire = livewire(CreateItemsFromFiles::class, [
+        'parentRecord' => $document,
+    ])
+        ->fillForm([
+            'files' => [$image1, $image2],
+        ])
+        ->goToNextWizardStep();
+
+    $itemsState = $livewire->instance()->form->getState()['items'];
+    $keys = array_keys($itemsState);
+
+    expect($itemsState[$keys[0]]['media']['file']->getClientOriginalName())->toBe('z_test.jpg')
+        ->and($itemsState[$keys[1]]['media']['file']->getClientOriginalName())->toBe('a_test.jpg');
+
+    $livewire->callFormComponentAction('items', 'order_by_name');
+
+    $itemsState = $livewire->instance()->form->getState()['items'];
+    $keys = array_keys($itemsState);
+
+    expect($itemsState[$keys[0]]['media']['file']->getClientOriginalName())->toBe('a_test.jpg')
+        ->and($itemsState[$keys[1]]['media']['file']->getClientOriginalName())->toBe('z_test.jpg');
+});

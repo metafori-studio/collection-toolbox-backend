@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Support\Icons\Heroicon;
 use Metafori\Etno\Enums\TranscriptFormat;
+use Metafori\Etno\Filament\Actions\Items\OrderFilesByNameAction;
 use Metafori\Etno\Filament\Resources\Items\Schemas\MediaForm;
 use Metafori\Etno\Models\Item;
 
@@ -59,18 +60,8 @@ class MediaRepeater extends Repeater
             ->addable(false)
             ->reorderableWithDragAndDrop()
             ->hintAction(
-                Action::make('order_by_name')
-                    ->hidden(fn (array $state) => \count($state ?? []) < 2)
-                    ->label('Order by Name')
-                    ->icon(Heroicon::BarsArrowDown)
-                    ->action(function (self $component) {
-                        $state = $component->getState();
-                        uasort($state, fn ($a, $b) => strnatcasecmp(
-                            $a['file']->getClientOriginalName(),
-                            $b['file']->getClientOriginalName()
-                        ));
-                        $component->state($state);
-                    })
+                OrderFilesByNameAction::make('order_by_name')
+                    ->fileStatePath('file')
             );
     }
 
