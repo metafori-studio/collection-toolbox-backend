@@ -46,4 +46,9 @@ class OrderFilesByNameAction extends Action
 
         return $this;
     }
+
+    public function getFileStatePath(): ?string
+    {
+        return $this->fileStatePath;
+    }
 }
