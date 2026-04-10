@@ -9,6 +9,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
 use Metafori\Etno\Enums\TranscriptFormat;
+use Metafori\Etno\Filament\Actions\Items\OrderFilesByNameAction;
 use Metafori\Etno\Filament\Forms\Components\SuffixInput;
 use Metafori\Etno\Filament\Resources\Items\Schemas\MediaForm;
 
@@ -55,7 +56,11 @@ class ItemsFromFilesRepeater extends Repeater
             ->collapsible()
             ->collapsed()
             ->addable(false)
-            ->reorderableWithDragAndDrop();
+            ->reorderableWithDragAndDrop()
+            ->hintAction(
+                OrderFilesByNameAction::make('order_by_name')
+                    ->fileStatePath('media.file')
+            );
     }
 
     public function hasTranscript(TranscriptFormat $format, string $item, self $component): bool
