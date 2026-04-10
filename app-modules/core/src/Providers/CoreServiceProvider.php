@@ -50,6 +50,7 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->mergeConfigFrom(__DIR__.'/../../config/frontend.php', 'frontend');
+        $this->mergeConfigFrom(__DIR__.'/../../config/file-upload.php', 'file-upload');
 
         $this->app->singleton('frontend', fn () => new Frontend);
         $this->app->extend('auth.password', fn ($_service, Application $app) => new PasswordBrokerManager($app));

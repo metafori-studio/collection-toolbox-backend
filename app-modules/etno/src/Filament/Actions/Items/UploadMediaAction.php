@@ -4,11 +4,11 @@ namespace Metafori\Etno\Filament\Actions\Items;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Icons\Heroicon;
+use Metafori\Core\Filament\Forms\Components\FileUpload;
 use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Concerns\HandlesMediaUploads;
 use Metafori\Etno\Filament\Forms\Components\Items\MediaRepeater;
@@ -27,7 +27,6 @@ class UploadMediaAction extends Action
             ->icon(Heroicon::OutlinedArrowUpTray)
             ->form([
                 FileUpload::make('files')
-                    ->maxParallelUploads(6)
                     ->hiddenLabel()
                     ->storeFiles(false)
                     ->previewable(false)

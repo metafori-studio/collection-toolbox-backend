@@ -3,7 +3,6 @@
 namespace Metafori\Etno\Filament\Resources\Items\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -15,6 +14,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Metafori\Core\Filament\Forms\Components\FileUpload;
 use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Actions\Items\RegenerateIds;
 use Metafori\Etno\Filament\Concerns\HandlesMediaUploads;
