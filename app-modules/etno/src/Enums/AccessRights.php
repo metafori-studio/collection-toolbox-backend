@@ -15,4 +15,15 @@ enum AccessRights: string implements HasLabel
     case MetadataOnlyAccess = 'metadata-only-access';
     case PaidAccess = 'paid-access';
     case ClosedAccess = 'closed-access';
+
+    public static function published(): array
+    {
+        return [
+            self::OpenAccess,
+            self::RestrictedAccess,
+            self::EmbargoedAccess,
+            self::MetadataOnlyAccess,
+            self::PaidAccess,
+        ];
+    }
 }

@@ -12,6 +12,8 @@ class DocumentOriginator extends Model
 
     protected $table = 'etno_document_originators';
 
+    protected $touches = ['document'];
+
     protected $guarded = [];
 
     public function document(): BelongsTo

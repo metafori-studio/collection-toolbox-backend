@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 use Laravel\Scout\Searchable;
 use Metafori\Core\Models\District;
 use Metafori\Core\Models\Keyword;
@@ -22,6 +21,7 @@ use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
 use Metafori\Core\Models\Region;
+use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Metafori\Etno\Models\Contracts\Inheritable;
@@ -277,34 +277,40 @@ class Item extends Model implements HasMedia, Inheritable
         ];
     }
 
+    public function shouldBeSearchable(): bool
+    {
+        return $this->isPublished();
+    }
+
+    public function isPublished(): bool
+    {
+        return \in_array(
+            $this->resolveInheritableAttribute('access_rights'),
+            AccessRights::published(),
+        );
+    }
+
+    public function scopePublished(Builder $query): void
+    {
+        $query->where(function (Builder $query) {
+            $query->where(function (Builder $q) {
+                $q->whereJsonContains('etno_items.document_overrides', 'access_rights')
+                    ->whereIn('etno_items.access_rights', AccessRights::published());
+            })->orWhere(function (Builder $q) {
+                $q->whereJsonDoesntContain('etno_items.document_overrides', 'access_rights')
+                    ->whereHas('document', function (Builder $dq) {
+                        $dq->whereIn('etno_documents.access_rights', AccessRights::published());
+                    });
+            });
+        });
+    }
+
     public function toSearchableArray(): array
     {
         $this->loadMissing(self::relations());
 
-        $resolveRelationIds = function (string $relation, string $key = 'id') {
-            $value = $this->isInheritableAndInherited($relation)
-                ? $this->getParent()?->{$relation}
-                : $this->{$relation};
-
-            if ($value === null) {
-                return [];
-            }
-
-            if ($value instanceof Collection) {
-                return $value->pluck($key)->toArray();
-            }
-
-            return [$value->{$key}];
-        };
-
-        $resolveValue = function (string $attribute) {
-            return $this->isInheritableAndInherited($attribute)
-                ? $this->document?->{$attribute}
-                : $this->{$attribute};
-        };
-
         $resolveTranslations = function (string $attribute) {
-            if ($this->isInheritableAndInherited($attribute)) {
+            if ($this->isInherited($attribute)) {
                 return $this->document?->getTranslations($attribute) ?? [];
             }
 
@@ -312,9 +318,7 @@ class Item extends Model implements HasMedia, Inheritable
         };
 
         $resolveLocalityHierarchy = function () {
-            $locality = $this->isInheritableAndInherited('locality')
-                ? $this->getParent()?->locality
-                : $this->locality;
+            $locality = $this->resolveInheritableAttribute('locality');
 
             if (! $locality) {
                 return [];
@@ -351,24 +355,24 @@ class Item extends Model implements HasMedia, Inheritable
             'location_note' => $resolveTranslations('location_note'),
             'content_note' => $resolveTranslations('content_note'),
             'technical_note' => $resolveTranslations('technical_note'),
-            'type' => $resolveValue('type')?->value,
-            'language' => $resolveValue('language')?->value,
-            'accrual_method' => $resolveValue('accrual_method')?->value,
-            'collection_method' => $resolveValue('collection_method')?->value,
-            'access_rights' => $resolveValue('access_rights')?->value,
-            'license' => $resolveValue('license')?->value,
-            'production_methods' => collect($resolveValue('production_methods'))->map->value->toArray(),
+            'type' => $this->resolveInheritableAttribute('type')?->value,
+            'language' => $this->resolveInheritableAttribute('language')?->value,
+            'accrual_method' => $this->resolveInheritableAttribute('accrual_method')?->value,
+            'collection_method' => $this->resolveInheritableAttribute('collection_method')?->value,
+            'access_rights' => $this->resolveInheritableAttribute('access_rights')?->value,
+            'license' => $this->resolveInheritableAttribute('license')?->value,
+            'production_methods' => collect($this->resolveInheritableAttribute('production_methods'))->map->value->toArray(),
             'time_period' => \array_filter([
-                'gte' => $resolveValue('time_period_start'),
-                'lte' => $resolveValue('time_period_end'),
+                'gte' => $this->resolveInheritableAttribute('time_period_start'),
+                'lte' => $this->resolveInheritableAttribute('time_period_end'),
             ]),
-            'author' => ['person_id' => $resolveRelationIds('authors')],
-            'researcher' => ['person_id' => $resolveRelationIds('researchers')],
-            'originator' => ['person_id' => $resolveRelationIds('originators', 'person_id')],
-            'keyword' => ['id' => $resolveRelationIds('keywords')],
-            'research_collection' => ['id' => $resolveRelationIds('researchCollections')],
-            'institution' => ['id' => $resolveRelationIds('institution')],
-            'project' => ['id' => $resolveRelationIds('project')],
+            'author' => ['person_id' => $this->resolveInheritableAttribute('authors')->pluck('id')],
+            'researcher' => ['person_id' => $this->resolveInheritableAttribute('researchers')->pluck('id')],
+            'originator' => ['person_id' => $this->resolveInheritableAttribute('originators')->pluck('person_id')],
+            'keyword' => ['id' => $this->resolveInheritableAttribute('keywords')->pluck('id')],
+            'research_collection' => ['id' => $this->resolveInheritableAttribute('researchCollections')->pluck('id')],
+            'institution' => ['id' => $this->resolveInheritableAttribute('institution_id')],
+            'project' => ['id' => $this->resolveInheritableAttribute('project_id')],
             ...$resolveLocalityHierarchy(),
         ];
     }

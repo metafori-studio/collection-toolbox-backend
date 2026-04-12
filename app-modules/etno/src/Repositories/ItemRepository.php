@@ -21,6 +21,7 @@ class ItemRepository
     public function findOrFail(string $id): Item
     {
         return Item::query()
+            ->published()
             ->with([
                 'media',
                 ...Item::relations(),
@@ -167,6 +168,7 @@ class ItemRepository
         return Cache::rememberForever(
             self::MAP_POINTS_CACHE_KEY,
             Item::query()
+                ->published()
                 ->select([
                     'document_id',
                     'suffix',
