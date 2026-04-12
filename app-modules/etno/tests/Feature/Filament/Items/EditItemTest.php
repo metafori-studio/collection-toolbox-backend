@@ -7,6 +7,7 @@ use Filament\Actions\Testing\TestAction;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Organization;
+use Metafori\Core\Models\Person;
 use Metafori\Core\Models\User;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
@@ -277,8 +278,8 @@ dataset('inheritable_inputs_relational_belongsto', [
 ]);
 
 dataset('inheritable_inputs_relational_many', [
-    'authors' => ['authors', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
-    'researchers' => ['researchers', fn () => [\Metafori\Core\Models\Person::factory()->create()->id], fn () => [\Metafori\Core\Models\Person::factory()->create()->id]],
+    'authors' => ['authors', fn () => [Person::factory()->create()->id], fn () => [Person::factory()->create()->id]],
+    'researchers' => ['researchers', fn () => [Person::factory()->create()->id], fn () => [Person::factory()->create()->id]],
 ]);
 
 it('saves and overrides correctly for precision date sections', function (string $sectionName, array $parentValues, array $overrideValues) {

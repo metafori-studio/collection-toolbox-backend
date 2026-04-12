@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Filament\Resources\Items;
 
+use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -30,7 +31,7 @@ class ItemResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    public static function getParentResourceRegistration(): ?\Filament\Resources\ParentResourceRegistration
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return DocumentResource::asParent()
             ->relationship('items')

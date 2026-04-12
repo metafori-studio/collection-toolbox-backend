@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Observers;
 
+use Illuminate\Database\Eloquent\Model;
 use Metafori\Core\Models\Contracts\Locality;
 use Metafori\Etno\Repositories\ItemRepository;
 
@@ -11,7 +12,7 @@ class LocalityObserver
 
     public function saved(Locality $locality): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $locality */
+        /** @var Model $locality */
         if ($locality->wasChanged('latitude') || $locality->wasChanged('longitude')) {
             $this->repository->invalidateMapPointsCache();
         }

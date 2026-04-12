@@ -8,7 +8,7 @@ use Metafori\Etno\Models\Item;
 use Metafori\Etno\Models\ItemOriginator;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Etno\Models\ItemOriginator>
+ * @extends Factory<ItemOriginator>
  */
 class ItemOriginatorFactory extends Factory
 {

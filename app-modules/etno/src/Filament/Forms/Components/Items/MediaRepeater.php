@@ -4,6 +4,7 @@ namespace Metafori\Etno\Filament\Forms\Components\Items;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Support\Icons\Heroicon;
 use Metafori\Etno\Enums\TranscriptFormat;
@@ -48,7 +49,7 @@ class MediaRepeater extends Repeater
                 }
             })
             ->schema([
-                \Filament\Forms\Components\Hidden::make('file'),
+                Hidden::make('file'),
                 ...MediaForm::transcriptFields(),
             ])
             ->columns(2)

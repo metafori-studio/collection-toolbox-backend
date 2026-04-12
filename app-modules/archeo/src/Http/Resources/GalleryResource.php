@@ -3,6 +3,7 @@
 namespace Metafori\Archeo\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -17,7 +18,7 @@ class GalleryResource extends JsonResource
      * @return array{
      *     id: int,
      *     title: string,
-     *     images: \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     *     images: AnonymousResourceCollection
      * }
      */
     public function toArray(Request $request): array

@@ -2,6 +2,7 @@
 
 namespace Metafori\Etno\Http\Controllers\Api;
 
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Http\JsonResponse;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
@@ -31,7 +32,7 @@ class TranslationController
     }
 
     /**
-     * @param  class-string<\BackedEnum & \Filament\Support\Contracts\HasLabel>  $enumClass
+     * @param  class-string<\BackedEnum & HasLabel>  $enumClass
      * @return array<string, string>
      */
     protected function getEnumValues(string $enumClass): array
