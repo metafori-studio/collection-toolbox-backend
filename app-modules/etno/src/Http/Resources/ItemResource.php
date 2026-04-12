@@ -79,6 +79,10 @@ class ItemResource extends JsonResource
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
             'document_id' => $this->document_id,
+            'first_media' => $this->whenLoaded('firstMedia', fn () => $this->when(
+                Gate::allows('viewMedia', $this->resource),
+                fn () => new MediaResource($this->firstMedia)
+            )),
             /** @var array{audios?: MediaResource[], documents?: MediaResource[], images?: MediaResource[], videos?: MediaResource[]} */
             'media' => $this->whenLoaded('media', fn () => $this->when(
                 Gate::allows('viewMedia', $this->resource),

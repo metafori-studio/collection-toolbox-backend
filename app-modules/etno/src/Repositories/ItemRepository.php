@@ -53,12 +53,15 @@ class ItemRepository
         }
 
         $query->query(function ($eloquentQuery) {
-            $eloquentQuery->with(Item::documentRelations([
-                'authors',
-                'researchers',
-                'originators.person',
-                ...Item::localityRelations(),
-            ]));
+            $eloquentQuery->with([
+                'firstMedia',
+                ...Item::documentRelations([
+                    'authors',
+                    'researchers',
+                    'originators.person',
+                    ...Item::localityRelations(),
+                ]),
+            ]);
         });
 
         $perPage = request()->query('per_page', 15);
