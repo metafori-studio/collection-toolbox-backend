@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Models\Document;
 
 /**
@@ -26,5 +27,18 @@ class DocumentFactory extends Factory
             'id' => fake()->unique()->regexify('[A-Z]{2}[0-9]{5,6}'),
             ...$this->documentAttributes(),
         ];
+    }
+
+    public function published(bool $published = true): self
+    {
+        $accessRights = fake()->randomElement(
+            $published
+            ? AccessRights::published()
+            : [AccessRights::ClosedAccess, null]
+        );
+
+        return $this->state([
+            'access_rights' => $accessRights,
+        ]);
     }
 }

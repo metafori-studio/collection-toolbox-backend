@@ -12,8 +12,8 @@ use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
-use Metafori\Etno\Models\Item;
-use Metafori\Etno\Models\ItemOriginator;
+use Metafori\Etno\Models\Document;
+use Metafori\Etno\Models\DocumentOriginator;
 use Metafori\Etno\Models\Project;
 use Metafori\Etno\Models\ResearchCollection;
 use Metafori\Etno\Repositories\ItemRepository;
@@ -24,15 +24,15 @@ use function Pest\Laravel\getJson;
 uses(RefreshIndices::class);
 
 it('can get aggregations for items', function () {
-    Item::factory()->create([
-        'type' => ItemType::AudioRecording,
-        'document_overrides' => ['type'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create(['type' => ItemType::AudioRecording]);
 
-    Item::factory()->count(2)->create([
-        'type' => ItemType::Map,
-        'document_overrides' => ['type'],
-    ]);
+    Document::factory()
+        ->hasItems(2)
+        ->published()
+        ->create(['type' => ItemType::Map]);
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -60,17 +60,21 @@ it('can filter aggregations by another property', function () {
     $org1 = Organization::factory()->create();
     $org2 = Organization::factory()->create();
 
-    Item::factory()->create([
-        'type' => ItemType::AudioRecording,
-        'institution_id' => $org1->id,
-        'document_overrides' => ['type', 'institution'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create([
+            'type' => ItemType::AudioRecording,
+            'institution_id' => $org1->id,
+        ]);
 
-    Item::factory()->create([
-        'type' => ItemType::Map,
-        'institution_id' => $org2->id,
-        'document_overrides' => ['type', 'institution'],
-    ]);
+    Document::factory()
+        ->hasItems(2)
+        ->published()
+        ->create([
+            'type' => ItemType::Map,
+            'institution_id' => $org2->id,
+        ]);
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -90,17 +94,21 @@ it('ignores filters for the same field when aggregating', function () {
     $org1 = Organization::factory()->create();
     $org2 = Organization::factory()->create();
 
-    Item::factory()->create([
-        'type' => ItemType::AudioRecording,
-        'institution_id' => $org1->id,
-        'document_overrides' => ['type', 'institution'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create([
+            'type' => ItemType::AudioRecording,
+            'institution_id' => $org1->id,
+        ]);
 
-    Item::factory()->create([
-        'type' => ItemType::Map,
-        'institution_id' => $org2->id,
-        'document_overrides' => ['type', 'institution'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create([
+            'type' => ItemType::Map,
+            'institution_id' => $org2->id,
+        ]);
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -125,10 +133,10 @@ it('ignores filters for the same field when aggregating', function () {
 it('resolves model labels for aggregations', function () {
     $org = Organization::factory()->create(['name' => 'Test Organization']);
 
-    Item::factory()->create([
-        'institution_id' => $org->id,
-        'document_overrides' => ['institution'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create(['institution_id' => $org->id]);
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -149,19 +157,23 @@ it('can filter aggregations by time period', function () {
     $matchingOrg = Organization::factory()->create();
     $otherOrg = Organization::factory()->create();
 
-    Item::factory()->create([
-        'institution_id' => $matchingOrg->id,
-        'time_period_start' => '1950-12-31',
-        'time_period_end' => '1950-12-31',
-        'document_overrides' => ['institution', 'time_period_start', 'time_period_end'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create([
+            'institution_id' => $matchingOrg->id,
+            'time_period_start' => '1950-12-31',
+            'time_period_end' => '1950-12-31',
+        ]);
 
-    Item::factory()->create([
-        'institution_id' => $otherOrg->id,
-        'time_period_start' => '1800-01-01',
-        'time_period_end' => '1840-01-01',
-        'document_overrides' => ['institution', 'time_period_start', 'time_period_end'],
-    ]);
+    Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create([
+            'institution_id' => $otherOrg->id,
+            'time_period_start' => '1800-01-01',
+            'time_period_end' => '1840-01-01',
+        ]);
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -197,12 +209,15 @@ it('can filter aggregations by all filterables at once', function () {
     $researchCollection = ResearchCollection::factory()->create();
     $originatorPerson = Person::factory()->create();
 
-    $matching = Item::factory()
+    Document::factory()
+        ->published()
         ->for($location, 'locality')
         ->hasAttached($author, [], 'authors')
         ->hasAttached($researcher, [], 'researchers')
         ->hasAttached($keyword, [], 'keywords')
         ->hasAttached($researchCollection, [], 'researchCollections')
+        ->has(DocumentOriginator::factory()->for($originatorPerson), 'originators')
+        ->hasItems(1)
         ->create([
             'type' => ItemType::AudioRecording,
             'language' => Language::Slovak,
@@ -215,13 +230,7 @@ it('can filter aggregations by all filterables at once', function () {
             'project_id' => $project->id,
             'time_period_start' => '1900-01-01',
             'time_period_end' => '1950-01-01',
-            'document_overrides' => Item::INHERITABLES,
         ]);
-
-    ItemOriginator::factory()
-        ->for($matching)
-        ->for($originatorPerson)
-        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -256,4 +265,20 @@ it('can filter aggregations by all filterables at once', function () {
 
     expect(collect($data['type'])->firstWhere('value', ItemType::AudioRecording->value)['count'])->toBe(1)
         ->and(collect($data['type'])->firstWhere('value', ItemType::Map->value))->toBeNull();
+});
+
+it('does not include unpublished items in aggregations', function () {
+    Document::factory()
+        ->hasItems(1)
+        ->published(false)
+        ->create(['type' => ItemType::Map]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.aggregations'));
+    $response->assertStatus(200);
+
+    $typeData = $response->json('data.type');
+
+    expect(collect($typeData)->firstWhere('value', ItemType::Map->value))->toBeNull();
 });

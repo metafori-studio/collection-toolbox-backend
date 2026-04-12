@@ -8,7 +8,7 @@ use Metafori\Opensearch\Testing\RefreshIndices;
 uses(RefreshIndices::class);
 
 it('synchronizes item search indexing when a document is deleted and restored', function () {
-    $document = Document::factory()->create();
+    $document = Document::factory()->published()->create();
     $item = Item::factory()->for($document, 'document')->create();
 
     app(ItemRepository::class)->refreshIndex();
