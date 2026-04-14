@@ -59,5 +59,5 @@ it('throws exception when placeholder is missing', function () {
     $user = User::factory()->make(['email' => 'test@example.com']);
 
     expect(fn () => $frontend->resetPasswordUrl($user, 'secret-token'))
-        ->toThrow(\InvalidArgumentException::class, 'Missing frontend route parameter [missing].');
+        ->toThrow(InvalidArgumentException::class, 'Missing frontend route parameter [missing].');
 });

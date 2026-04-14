@@ -6,13 +6,13 @@ use Metafori\Core\Tests\Concerns\InteractsWithStatefulHeaders;
 use Metafori\Core\Tests\TestCase;
 
 pest()->extend(TestCase::class)
-    ->in('Unit');
+    ->in(__DIR__.'/Unit');
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->use(InteractsWithStatefulHeaders::class)
-    ->in('Feature');
+    ->in(__DIR__.'/Feature');
 
 pest()->beforeEach(function () {
     $this->seed(RoleSeeder::class);
-})->in('Feature/Filament');
+})->in(__DIR__.'/Feature/Filament');

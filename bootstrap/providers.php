@@ -1,7 +1,11 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\ArcheoPanelProvider;
+use App\Providers\Filament\EtnoPanelProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\ArcheoPanelProvider::class,
-    App\Providers\Filament\EtnoPanelProvider::class,
+    AppServiceProvider::class,
+    ArcheoPanelProvider::class,
+    EtnoPanelProvider::class,
 ];

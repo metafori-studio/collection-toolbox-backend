@@ -4,9 +4,10 @@ namespace Metafori\Archeo\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * @property \Spatie\MediaLibrary\MediaCollections\Models\Media $resource
+ * @property Media $resource
  */
 class MediaResource extends JsonResource
 {

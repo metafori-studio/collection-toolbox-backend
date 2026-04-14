@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Metafori\Core\Models\Keyword;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\Keyword>
+ * @extends Factory<Keyword>
  */
 class KeywordFactory extends Factory
 {

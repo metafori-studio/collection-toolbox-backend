@@ -12,7 +12,7 @@ use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\Location>
+ * @extends Factory<Location>
  */
 class LocationFactory extends Factory
 {

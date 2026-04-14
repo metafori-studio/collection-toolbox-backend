@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Metafori\Core\Enums\Role;
+use Metafori\Core\Models\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Metafori\Core\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
