@@ -20,7 +20,6 @@ trait HasDocumentMetadata
     protected function getTranslatableAttributes(): array
     {
         return [
-            ...(array) $this->translatable,
             'title',
             'subtitle',
             'abstract',

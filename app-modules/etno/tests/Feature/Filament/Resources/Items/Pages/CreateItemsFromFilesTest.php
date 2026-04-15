@@ -37,9 +37,9 @@ it('extracts transcripts, syncs items and applies transcripts', function () {
     $item1 = $items->firstWhere('identifier', 'AA000001:a');
     $item2 = $items->firstWhere('identifier', 'AA000001:b');
 
-    expect($item1->media)->toHaveCount(1);
+    expect($item1->load('media')->media)->toHaveCount(1);
     expect($item1->media->first()->custom_properties['transcripts']['txt'])->toBe('transcript one text');
-    expect($item2->media)->toHaveCount(1);
+    expect($item2->load('media')->media)->toHaveCount(1);
     expect($item2->media->first()->custom_properties['transcripts']['txt'])->toBeNull();
 });
 
