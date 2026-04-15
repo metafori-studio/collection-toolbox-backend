@@ -13,7 +13,7 @@ beforeEach(function () {
 
 it('includes newly created item with locality in map points', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     getJson(route('api.etno.items.map-points'))
@@ -22,7 +22,7 @@ it('includes newly created item with locality in map points', function () {
 });
 
 it('does not include item without locality in map points', function () {
-    $document = Document::factory()->withoutLocality();
+    $document = Document::factory()->published()->withoutLocality();
     $item = Item::factory()->for($document, 'document')->create();
 
     $response = getJson(route('api.etno.items.map-points'));
@@ -32,22 +32,15 @@ it('does not include item without locality in map points', function () {
 
 it('updates map points when item locality is updated', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     // fetch to populate cache
     getJson(route('api.etno.items.map-points'));
 
     $newLocalityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $item->locality()->associate($newLocalityWithCoordinates);
-
-    $overrides = $item->document_overrides ?? [];
-    if (! in_array('locality', $overrides)) {
-        $overrides[] = 'locality';
-        $item->document_overrides = $overrides;
-    }
-
-    $item->save();
+    $item->document->locality()->associate($newLocalityWithCoordinates);
+    $item->document->save();
 
     $response = getJson(route('api.etno.items.map-points'));
 
@@ -58,7 +51,7 @@ it('updates map points when item locality is updated', function () {
 
 it('removes item from map points when item with locality is deleted', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     getJson(route('api.etno.items.map-points'));
@@ -74,7 +67,7 @@ it('updates map points when locality coordinates are updated', function () {
         'latitude' => fake()->unique(reset: true)->latitude(),
         'longitude' => fake()->unique()->longitude(),
     ]);
-    $document = Document::factory()->for($locality, 'locality');
+    $document = Document::factory()->published()->for($locality, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     getJson(route('api.etno.items.map-points'));
@@ -96,7 +89,7 @@ it('updates map points when locality coordinates are updated', function () {
 
 it('removes item from map points when locality is deleted', function () {
     $locality = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($locality, 'locality');
+    $document = Document::factory()->published()->for($locality, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     getJson(route('api.etno.items.map-points'));
@@ -109,7 +102,7 @@ it('removes item from map points when locality is deleted', function () {
 
 it('includes item in map points when item with locality is restored', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
     $item->delete();
 
@@ -123,7 +116,7 @@ it('includes item in map points when item with locality is restored', function (
 
 it('does not include item in map points when document is deleted', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
 
     getJson(route('api.etno.items.map-points'));
@@ -136,14 +129,14 @@ it('does not include item in map points when document is deleted', function () {
 
 it('returns map points as a sequential array when items are filtered out', function () {
     $locality1 = Location::factory()->withCoordinates()->create();
-    $document1 = Document::factory()->for($locality1, 'locality');
+    $document1 = Document::factory()->published()->for($locality1, 'locality');
     $item1 = Item::factory()->for($document1, 'document')->create();
 
-    $document2 = Document::factory()->withoutLocality();
+    $document2 = Document::factory()->published()->withoutLocality();
     $item2 = Item::factory()->for($document2, 'document')->create();
 
     $locality3 = Location::factory()->withCoordinates()->create();
-    $document3 = Document::factory()->for($locality3, 'locality');
+    $document3 = Document::factory()->published()->for($locality3, 'locality');
     $item3 = Item::factory()->for($document3, 'document')->create();
 
     $response = getJson(route('api.etno.items.map-points'));
@@ -161,7 +154,7 @@ it('returns map points as a sequential array when items are filtered out', funct
 
 it('includes item in map points when document is restored', function () {
     $localityWithCoordinates = Location::factory()->withCoordinates()->create();
-    $document = Document::factory()->for($localityWithCoordinates, 'locality');
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
     $item = Item::factory()->for($document, 'document')->create();
     $item->document->delete();
 
@@ -171,4 +164,13 @@ it('includes item in map points when document is restored', function () {
 
     $response = getJson(route('api.etno.items.map-points'));
     expect(collect($response->json('data'))->pluck('id'))->toContain($item->identifier);
+});
+
+it('does not include unpublished items in map points', function () {
+    $localityWithCoordinates = Location::factory()->withCoordinates()->create();
+    $document = Document::factory()->published(false)->for($localityWithCoordinates, 'locality');
+    $item = Item::factory()->for($document, 'document')->create();
+
+    $response = getJson(route('api.etno.items.map-points'));
+    expect(collect($response->json('data'))->pluck('id'))->not->toContain($item->identifier);
 });

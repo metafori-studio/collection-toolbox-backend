@@ -18,7 +18,7 @@ class ItemObserver
 
     public function updated(Item $item): void
     {
-        if ($item->wasChanged('locality_id') || $item->wasChanged('locality_type')) {
+        if ($item->wasChanged(['locality_id', 'locality_type', 'access_rights', 'document_overrides'])) {
             $this->repository->invalidateMapPointsCache();
         }
     }

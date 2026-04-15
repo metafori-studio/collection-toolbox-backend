@@ -17,6 +17,7 @@ use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
+use Metafori\Etno\Models\DocumentOriginator;
 use Metafori\Etno\Models\Item;
 use Metafori\Etno\Models\ItemOriginator;
 use Metafori\Etno\Models\Project;
@@ -29,13 +30,12 @@ use function Pest\Laravel\getJson;
 uses(RefreshIndices::class);
 
 it('can list items', function () {
-    $document = Document::factory()
+    Document::factory()
+        ->published()
+        ->hasItems(2)
         ->hasAuthors(2)
         ->hasResearchers(2)
-        ->hasOriginators(2);
-    Item::factory()
-        ->count(2)
-        ->for($document, 'document')
+        ->hasOriginators(2)
         ->create();
 
     app(ItemRepository::class)->refreshIndex();
@@ -94,15 +94,14 @@ it('can filter items by simple property', function (string $property, string $en
     $matchingValue = $cases->first();
     $otherValue = $cases->last();
 
-    $matchingItem = Item::factory()->create([
-        $property => $matchingValue,
-        'document_overrides' => [$property],
-    ]);
+    $matchingItem = Item::factory()
+        ->for(Document::factory()->published()->create([$property => $matchingValue]))
+        ->create();
 
-    Item::factory()->count(2)->create([
-        $property => $otherValue,
-        'document_overrides' => [$property],
-    ]);
+    Item::factory()
+        ->for(Document::factory()->published()->create([$property => $otherValue]))
+        ->count(2)
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -118,7 +117,6 @@ it('can filter items by simple property', function (string $property, string $en
     'language' => ['language', Language::class],
     'accrual_method' => ['accrual_method', AccrualMethod::class],
     'collection_method' => ['collection_method', CollectionMethod::class],
-    'access_rights' => ['access_rights', AccessRights::class],
     'license' => ['license', License::class],
 ]);
 
@@ -127,13 +125,19 @@ it('can filter items by simple property inherited', function (string $property, 
     $matchingValue = $cases->first();
     $otherValue = $cases->last();
 
-    Item::factory()
+    $otherDocument = Document::factory()
+        ->published()
+        ->create([$property => $otherValue]);
+    $otherItem = Item::factory()
         ->count(2)
-        ->for(Document::factory()->create([$property => $otherValue]), 'document')
+        ->for($otherDocument)
         ->create();
 
+    $matchingDocument = Document::factory()
+        ->published()
+        ->create([$property => $matchingValue]);
     $matchingItem = Item::factory()
-        ->for(Document::factory()->create([$property => $matchingValue]), 'document')
+        ->for($matchingDocument)
         ->create();
 
     app(ItemRepository::class)->refreshIndex();
@@ -150,20 +154,21 @@ it('can filter items by simple property inherited', function (string $property, 
     'language' => ['language', Language::class],
     'accrual_method' => ['accrual_method', AccrualMethod::class],
     'collection_method' => ['collection_method', CollectionMethod::class],
-    'access_rights' => ['access_rights', AccessRights::class],
     'license' => ['license', License::class],
 ]);
 
 it('can filter items by array property', function () {
-    $matchingItem = Item::factory()->create([
-        'production_methods' => [ProductionMethod::Drawing],
-        'document_overrides' => ['production_methods'],
-    ]);
+    $matchingItem = Item::factory()
+        ->for(Document::factory()->published()->create([
+            'production_methods' => [ProductionMethod::Drawing],
+        ]))
+        ->create();
 
-    Item::factory()->create([
-        'production_methods' => [ProductionMethod::Painting],
-        'document_overrides' => ['production_methods'],
-    ]);
+    Item::factory()
+        ->for(Document::factory()->published()->create([
+            'production_methods' => [ProductionMethod::Painting],
+        ]))
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -178,18 +183,9 @@ it('can filter items by array property', function () {
 
 it('can sort items', function () {
     $items = [
-        Item::factory()->create([
-            'type' => ItemType::AudioRecording,
-            'document_overrides' => ['type'],
-        ]),
-        Item::factory()->create([
-            'type' => ItemType::Drawing,
-            'document_overrides' => ['type'],
-        ]),
-        Item::factory()->create([
-            'type' => ItemType::Map,
-            'document_overrides' => ['type'],
-        ]),
+        Item::factory()->for(Document::factory()->published()->create(['type' => ItemType::AudioRecording]))->create(),
+        Item::factory()->for(Document::factory()->published()->create(['type' => ItemType::Drawing]))->create(),
+        Item::factory()->for(Document::factory()->published()->create(['type' => ItemType::Map]))->create(),
     ];
 
     app(ItemRepository::class)->refreshIndex();
@@ -203,9 +199,9 @@ it('can sort items', function () {
 });
 
 it('can sort items by title using active locale keyword', function () {
-    $document1 = Document::factory()->create(['title' => ['en' => 'Zebra']]);
-    $document2 = Document::factory()->create(['title' => ['en' => 'Apple']]);
-    $document3 = Document::factory()->create(['title' => ['en' => 'Mango']]);
+    $document1 = Document::factory()->published()->create(['title' => ['en' => 'Zebra']]);
+    $document2 = Document::factory()->published()->create(['title' => ['en' => 'Apple']]);
+    $document3 = Document::factory()->published()->create(['title' => ['en' => 'Mango']]);
 
     $item1 = Item::factory()->for($document1)->create();
     $item2 = Item::factory()->for($document2)->create();
@@ -223,15 +219,17 @@ it('can filter items by belongsTo property', function (string $propertyKey, stri
     $matchingEntity = $factoryClass::factory()->create();
     $otherEntity = $factoryClass::factory()->create();
 
-    $matchingItem = Item::factory()->create([
-        "{$propertyKey}_id" => $matchingEntity->id,
-        'document_overrides' => [$propertyKey],
-    ]);
+    $matchingItem = Item::factory()
+        ->for(Document::factory()
+            ->published()
+            ->create(["{$propertyKey}_id" => $matchingEntity->id]))
+        ->create();
 
-    Item::factory()->create([
-        "{$propertyKey}_id" => $otherEntity->id,
-        'document_overrides' => [$propertyKey],
-    ]);
+    Item::factory()
+        ->for(Document::factory()
+            ->published()
+            ->create(["{$propertyKey}_id" => $otherEntity->id]))
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -252,16 +250,18 @@ it('can filter items by belongsToMany property', function (string $propertyKey, 
     $otherEntity = $factoryClass::factory()->create();
 
     $matchingItem = Item::factory()
-        ->hasAttached($matchingEntity, [], $relation)
-        ->create([
-            'document_overrides' => [$relation],
-        ]);
+        ->for(Document::factory()
+            ->published()
+            ->hasAttached($matchingEntity, [], $relation)
+            ->create())
+        ->create();
 
     Item::factory()
-        ->hasAttached($otherEntity, [], $relation)
-        ->create([
-            'document_overrides' => [$relation],
-        ]);
+        ->for(Document::factory()
+            ->published()
+            ->hasAttached($otherEntity, [], $relation)
+            ->create())
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -283,16 +283,20 @@ it('can filter items by originator', function () {
     $matchingPerson = Person::factory()->create();
     $otherPerson = Person::factory()->create();
 
-    $matchingItem = Item::factory()->create(['document_overrides' => ['originators']]);
-    ItemOriginator::factory()
-        ->for($matchingItem)
-        ->for($matchingPerson)
+    $matchingDocument = Document::factory()
+        ->published()
+        ->has(DocumentOriginator::factory()->for($matchingPerson), 'originators')
+        ->create();
+    $matchingItem = Item::factory()
+        ->for($matchingDocument)
         ->create();
 
-    $other = Item::factory()->create(['document_overrides' => ['originators']]);
-    ItemOriginator::factory()
-        ->for($other)
-        ->for($otherPerson)
+    $otherDocument = Document::factory()
+        ->published()
+        ->has(DocumentOriginator::factory()->for($otherPerson), 'originators')
+        ->create();
+    $otherItem = Item::factory()
+        ->for($otherDocument)
         ->create();
 
     app(ItemRepository::class)->refreshIndex();
@@ -311,11 +315,11 @@ it('can filter items by locality', function (string $propertyKey, string $factor
     $otherLocality = $factoryClass::factory()->create();
 
     $matchingItem = Item::factory()
-        ->for(Document::factory()->for($matchingLocality, 'locality'), 'document')
+        ->for(Document::factory()->published()->for($matchingLocality, 'locality'))
         ->create();
 
     Item::factory()
-        ->for(Document::factory()->for($otherLocality, 'locality'), 'document')
+        ->for(Document::factory()->published()->for($otherLocality, 'locality'))
         ->create();
 
     app(ItemRepository::class)->refreshIndex();
@@ -337,17 +341,17 @@ it('can filter items by locality', function (string $propertyKey, string $factor
 ]);
 
 it('can filter items by overlapping time period specifying only lower bound', function () {
-    $matching = Item::factory()->create([
+    $matchingDocument = Document::factory()->published()->create([
         'time_period_start' => '1950-12-31',
         'time_period_end' => '1950-12-31',
-        'document_overrides' => ['time_period_start', 'time_period_end'],
     ]);
+    $matchingItem = Item::factory()->for($matchingDocument)->create();
 
-    Item::factory()->create([
+    $otherDocument = Document::factory()->published()->create([
         'time_period_start' => '1800-01-01',
         'time_period_end' => '1850-01-01',
-        'document_overrides' => ['time_period_start', 'time_period_end'],
     ]);
+    $otherItem = Item::factory()->for($otherDocument)->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -359,21 +363,23 @@ it('can filter items by overlapping time period specifying only lower bound', fu
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $matching->identifier);
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
 });
 
 it('can filter items by overlapping time period specifying only upper bound', function () {
-    $matching = Item::factory()->create([
-        'time_period_start' => '1950-12-31',
-        'time_period_end' => '1950-12-31',
-        'document_overrides' => ['time_period_start', 'time_period_end'],
-    ]);
+    $matching = Item::factory()
+        ->for(Document::factory()->published()->create([
+            'time_period_start' => '1950-12-31',
+            'time_period_end' => '1950-12-31',
+        ]))
+        ->create();
 
-    Item::factory()->create([
-        'time_period_start' => '2000-01-01',
-        'time_period_end' => '2000-01-01',
-        'document_overrides' => ['time_period_start', 'time_period_end'],
-    ]);
+    Item::factory()
+        ->for(Document::factory()->published()->create([
+            'time_period_start' => '2000-01-01',
+            'time_period_end' => '2000-01-01',
+        ]))
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -389,17 +395,19 @@ it('can filter items by overlapping time period specifying only upper bound', fu
 });
 
 it('can filter items by overlapping time period when end date is null', function () {
-    $matching = Item::factory()->create([
-        'time_period_start' => '1950-12-31',
-        'time_period_end' => null,
-        'document_overrides' => ['time_period_start', 'time_period_end'],
-    ]);
+    $matching = Item::factory()
+        ->for(Document::factory()->published()->create([
+            'time_period_start' => '1950-12-31',
+            'time_period_end' => null,
+        ]))
+        ->create();
 
-    Item::factory()->create([
-        'time_period_start' => '1800-01-01',
-        'time_period_end' => '1850-01-01',
-        'document_overrides' => ['time_period_start', 'time_period_end'],
-    ]);
+    Item::factory()
+        ->for(Document::factory()->published()->create([
+            'time_period_start' => '1800-01-01',
+            'time_period_end' => '1850-01-01',
+        ]))
+        ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
@@ -533,4 +541,22 @@ it('does not show first media in index when access rights are restricted and use
 
     $response->assertStatus(200);
     expect($response->json('data.0'))->not->toHaveKey('first_media');
+});
+
+it('does not list unpublished items in index', function () {
+    $itemOpen = Item::factory()
+        ->for(Document::factory()->published())
+        ->create();
+
+    Item::factory()
+        ->for(Document::factory()->published(false))
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index'));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $itemOpen->identifier);
 });

@@ -11,11 +11,11 @@ class DocumentObserver
 
     public function updated(Document $document): void
     {
-        if ($document->wasChanged('locality_id') || $document->wasChanged('locality_type')) {
+        if ($document->wasChanged(['locality_id', 'locality_type', 'access_rights'])) {
             $this->repository->invalidateMapPointsCache();
         }
 
-        $document->items()->searchable();
+        $this->syncSearchableItems($document);
     }
 
     public function deleted(Document $document): void
@@ -41,6 +41,15 @@ class DocumentObserver
             $this->repository->invalidateMapPointsCache();
         }
 
-        $document->items()->searchable();
+        $this->syncSearchableItems($document);
+    }
+
+    protected function syncSearchableItems(Document $document): void
+    {
+        $items = $document->items()->get();
+        [$searchable, $unsearchable] = $items->partition->shouldBeSearchable();
+
+        $searchable->searchable();
+        $unsearchable->unsearchable();
     }
 }

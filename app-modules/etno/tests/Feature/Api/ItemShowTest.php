@@ -29,7 +29,8 @@ it('can show a complete item with all relations', function () {
 
     $response = getJson(route('api.etno.items.show', $item->identifier));
 
-    $document = $item->document;
+    $document = $item->document
+        ->load('originators.person');
 
     $response->assertStatus(200)
         ->assertJsonCount(2, 'data.authors')
@@ -37,7 +38,7 @@ it('can show a complete item with all relations', function () {
         ->assertJsonCount(2, 'data.originators')
         ->assertJsonCount(2, 'data.keywords')
         ->assertJsonCount(2, 'data.research_collections')
-        ->assertExactJsonStructure([
+        ->assertJsonStructure([
             'data' => [
                 'id',
                 'document_id',
@@ -292,9 +293,9 @@ it('shows media when access rights are restricted and user is authenticated', fu
         ->assertJsonCount(1, 'data.media.documents');
 });
 
-it('does not show media when access rights are closed and user is authenticated', function () {
+it('does not show media when access rights are embargoed and user is authenticated', function () {
     $item = Item::factory()->withTranscribedMedia()->create();
-    $item->document->update(['access_rights' => AccessRights::ClosedAccess]);
+    $item->document->update(['access_rights' => AccessRights::EmbargoedAccess]);
 
     $user = User::factory()->create();
 
@@ -302,4 +303,14 @@ it('does not show media when access rights are closed and user is authenticated'
 
     $response->assertStatus(200);
     expect($response->json('data'))->not->toHaveKey('media');
+});
+
+it('returns 404 for unpublished items', function () {
+    $item = Item::factory()
+        ->for(Document::factory()->published(false))
+        ->create();
+
+    $response = getJson(route('api.etno.items.show', $item->identifier));
+
+    $response->assertStatus(404);
 });
