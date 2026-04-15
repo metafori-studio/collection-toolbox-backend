@@ -507,3 +507,30 @@ it('can filter items by all filterables at once', function () {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $matching->identifier);
 });
+
+it('shows first media in index when access rights are open access', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::OpenAccess]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index'));
+
+    $response->assertStatus(200)
+        ->assertJsonStructure(['data' => [['first_media' => [
+            'name', 'file_name', 'url', 'transcript',
+        ]]]]);
+    expect($response->json('data.0.first_media'))->not->toBeNull();
+});
+
+it('does not show first media in index when access rights are restricted and user is unauthenticated', function () {
+    $item = Item::factory()->withTranscribedMedia()->create();
+    $item->document->update(['access_rights' => AccessRights::RestrictedAccess]);
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index'));
+
+    $response->assertStatus(200);
+    expect($response->json('data.0'))->not->toHaveKey('first_media');
+});

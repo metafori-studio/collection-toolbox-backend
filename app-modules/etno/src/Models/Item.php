@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -195,6 +196,13 @@ class Item extends Model implements HasMedia, Inheritable
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
+    }
+
+    public function firstMedia(): MorphOne
+    {
+        return $this->media()
+            ->one()
+            ->ofMany('order_column', 'min');
     }
 
     public function isInheritable(string $attribute): bool

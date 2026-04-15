@@ -15,6 +15,7 @@ uses(RefreshIndices::class);
 
 it('can show a complete item with all relations', function () {
     $document = Document::factory()
+        ->state(['access_rights' => AccessRights::OpenAccess])
         ->hasAuthors(2)
         ->hasResearchers(2)
         ->hasKeywords(2)
@@ -22,6 +23,7 @@ it('can show a complete item with all relations', function () {
         ->hasOriginators(2)
         ->for(MunicipalityPart::factory(), 'locality');
     $item = Item::factory()
+        ->withTranscribedMedia()
         ->for($document, 'document')
         ->create();
 
@@ -49,6 +51,20 @@ it('can show a complete item with all relations', function () {
                 'content_note',
                 'technical_note',
                 'type',
+                'media' => [
+                    'documents' => [
+                        '*' => [
+                            'conversions',
+                            'file_name',
+                            'human_readable_size',
+                            'id',
+                            'mime_type',
+                            'name',
+                            'transcript',
+                            'url',
+                        ],
+                    ],
+                ],
                 'language',
                 'accrual_method',
                 'collection_method',
