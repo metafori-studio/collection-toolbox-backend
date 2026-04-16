@@ -6,7 +6,9 @@ use Filament\Panel;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
+use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Models\ActivityAssignment;
+use Metafori\Archeo\Observers\ActivityObserver;
 use Metafori\Core\Models\User;
 
 class ArcheoServiceProvider extends ServiceProvider
@@ -35,5 +37,7 @@ class ArcheoServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
+        Activity::observe(ActivityObserver::class);
     }
 }
