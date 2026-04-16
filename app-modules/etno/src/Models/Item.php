@@ -307,7 +307,7 @@ class Item extends Model implements HasMedia, Inheritable
 
     public function toSearchableArray(): array
     {
-        $this->loadMissing(self::relations());
+        $this->load(['media', ...self::relations()]);
 
         $resolveTranslations = function (string $attribute) {
             if ($this->isInherited($attribute)) {
@@ -350,11 +350,6 @@ class Item extends Model implements HasMedia, Inheritable
             'title' => $resolveTranslations('title'),
             'subtitle' => $resolveTranslations('subtitle'),
             'abstract' => $resolveTranslations('abstract'),
-            'general_note' => $resolveTranslations('general_note'),
-            'terms_of_use' => $resolveTranslations('terms_of_use'),
-            'location_note' => $resolveTranslations('location_note'),
-            'content_note' => $resolveTranslations('content_note'),
-            'technical_note' => $resolveTranslations('technical_note'),
             'type' => $this->resolveInheritableAttribute('type')?->value,
             'language' => $this->resolveInheritableAttribute('language')?->value,
             'accrual_method' => $this->resolveInheritableAttribute('accrual_method')?->value,
@@ -373,6 +368,11 @@ class Item extends Model implements HasMedia, Inheritable
             'research_collection' => ['id' => $this->resolveInheritableAttribute('researchCollections')->pluck('id')],
             'institution' => ['id' => $this->resolveInheritableAttribute('institution_id')],
             'project' => ['id' => $this->resolveInheritableAttribute('project_id')],
+            'transcripts' => $this->media
+                ->pluck('custom_properties.transcripts.txt')
+                ->filter()
+                ->values()
+                ->toArray(),
             ...$resolveLocalityHierarchy(),
         ];
     }

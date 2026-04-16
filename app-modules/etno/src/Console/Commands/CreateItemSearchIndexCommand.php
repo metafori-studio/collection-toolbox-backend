@@ -48,40 +48,54 @@ class CreateItemSearchIndexCommand extends Command
         $client->indices()->create([
             'index' => $indexName,
             'body' => [
+                'settings' => [
+                    'analysis' => [
+                        'filter' => [
+                            'cs_stemmer' => [
+                                'type' => 'stemmer',
+                                'language' => 'czech',
+                            ],
+                        ],
+                        'analyzer' => [
+                            'sk_analyzer' => [
+                                'type' => 'custom',
+                                'tokenizer' => 'standard',
+                                'filter' => [
+                                    'lowercase',
+                                    'asciifolding',
+                                    'cs_stemmer', // todo use slovak lemmatizer
+                                ],
+                            ],
+                            'default_analyzer' => [
+                                'type' => 'custom',
+                                'tokenizer' => 'standard',
+                                'filter' => [
+                                    'lowercase',
+                                    'asciifolding',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'mappings' => [
                     'properties' => [
                         'id' => ['type' => 'keyword'],
                         'document_id' => ['type' => 'keyword'],
 
                         // Translatable fields
-                        'title' => [
-                            'properties' => $locales->mapWithKeys(fn (string $locale) => [
-                                $locale => [
-                                    'type' => 'text',
-                                    'fields' => [
-                                        'keyword' => [
-                                            'type' => 'keyword',
-                                            'ignore_above' => 256,
-                                        ],
-                                    ],
-                                ],
-                            ])->toArray(),
-                        ],
                         ...collect([
+                            'title',
                             'subtitle',
                             'abstract',
-                            'general_note',
-                            'terms_of_use',
-                            'location_note',
-                            'content_note',
-                            'technical_note',
                         ])->mapWithKeys(fn (string $field) => [
                             $field => [
                                 'properties' => $locales->mapWithKeys(fn (string $locale) => [
-                                    $locale => ['type' => 'text'],
+                                    $locale => $this->getTextFieldMapping($locale, includeKeyword: $field === 'title'),
                                 ])->toArray(),
                             ],
                         ]),
+                        // Transcripts
+                        'transcripts' => $this->getTextFieldMapping('sk'),
 
                         // Exact match enum-like fields
                         'type' => ['type' => 'keyword'],
@@ -149,5 +163,39 @@ class CreateItemSearchIndexCommand extends Command
         $this->info('Items imported successfully.');
 
         return self::SUCCESS;
+    }
+
+    protected function resolveAnalyzerForLocale(string $locale): string
+    {
+        return match ($locale) {
+            'en' => 'english',
+            'sk' => 'sk_analyzer',
+            default => 'default_analyzer',
+        };
+    }
+
+    protected function getTextFieldMapping(string $locale, bool $includeSuggest = true, bool $includeKeyword = false): array
+    {
+        $fields = [];
+
+        if ($includeSuggest) {
+            $fields['suggest'] = [
+                'type' => 'search_as_you_type',
+                'analyzer' => 'default_analyzer',
+            ];
+        }
+
+        if ($includeKeyword) {
+            $fields['keyword'] = [
+                'type' => 'keyword',
+                'ignore_above' => 256,
+            ];
+        }
+
+        return [
+            'type' => 'text',
+            'analyzer' => $this->resolveAnalyzerForLocale($locale),
+            'fields' => $fields,
+        ];
     }
 }
