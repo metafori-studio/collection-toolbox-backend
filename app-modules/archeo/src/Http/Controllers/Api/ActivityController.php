@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
 use Metafori\Archeo\Http\Requests\Api\ActivityIndexRequest;
+use Metafori\Archeo\Http\Resources\ActivityMapPointResource;
 use Metafori\Archeo\Http\Resources\ActivityResource;
 use Metafori\Archeo\Models\Activity;
 
@@ -142,6 +144,23 @@ class ActivityController extends Controller
             ->firstOrFail();
 
         return new ActivityResource($activity);
+    }
+
+    /**
+     * Display map points for activities.
+     */
+    public function mapPoints(): AnonymousResourceCollection
+    {
+        $activities = Cache::rememberForever(
+            Activity::MAP_POINTS_CACHE_KEY,
+            Activity::query()
+                ->select(['activity_number', 'latitude', 'longitude', 'localization_degree'])
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->get(...)
+        );
+
+        return ActivityMapPointResource::collection($activities);
     }
 
     protected function applyFilters(Builder $query, array $filters): void
