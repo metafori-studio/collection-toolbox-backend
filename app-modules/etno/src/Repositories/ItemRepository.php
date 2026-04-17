@@ -30,7 +30,7 @@ class ItemRepository
             ->firstOrFail();
     }
 
-    public function paginate(array $filters = [], array $sorts = []): LengthAwarePaginator
+    public function paginate(array $filters, array $sorts, string $locale): LengthAwarePaginator
     {
         $timePeriodFilter = $this->buildDateFilter(
             Arr::pull($filters, 'time_period_from'),
@@ -50,7 +50,7 @@ class ItemRepository
         }
 
         foreach ($sorts as $field => $dir) {
-            $query->orderBy($this->resolveSortField($field), $dir);
+            $query->orderBy($this->resolveSortField($field, $locale), $dir);
         }
 
         $query->query(function ($eloquentQuery) {
@@ -70,16 +70,72 @@ class ItemRepository
         return $query->paginate($perPage);
     }
 
-    protected function resolveSortField(string $field): string
+    public function search(string $query, int $size, string $locale): EloquentCollection
+    {
+        $textFields = [
+            "title.{$locale}",
+            "subtitle.{$locale}",
+            "abstract.{$locale}",
+            'transcripts',
+        ];
+
+        $suggestFields = [
+            "title.{$locale}.suggest",
+            "subtitle.{$locale}.suggest",
+            "abstract.{$locale}.suggest",
+            'transcripts.suggest',
+        ];
+
+        $scoutQuery = Item::search($query, function (Client $client, string $q, array $params) use ($textFields, $suggestFields) {
+            $params['body']['query'] = [
+                'bool' => [
+                    'should' => [
+                        [
+                            'multi_match' => [
+                                'query' => $q,
+                                'fields' => $textFields,
+                            ],
+                        ],
+                        [
+                            'multi_match' => [
+                                'query' => $q,
+                                'type' => 'bool_prefix',
+                                'fields' => $suggestFields,
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+
+            return $client->search($params);
+        });
+
+        $scoutQuery->query(function ($eloquentQuery) {
+            $eloquentQuery->with([
+                'firstMedia',
+                ...Item::documentRelations([
+                    'authors',
+                    'researchers',
+                    'originators.person',
+                    ...Item::localityRelations(),
+                ]),
+            ]);
+        });
+
+        return $scoutQuery->take($size)->get();
+    }
+
+    protected function resolveSortField(string $field, string $locale): string
     {
         if ($field === 'title') {
-            return 'title.'.app()->getLocale().'.keyword';
+            return "title.{$locale}.keyword";
         }
 
         return $field;
     }
 
-    public function aggregations(array $filters = [], int $size = 1000): Collection
+    public function aggregations(array $filters, int $size): Collection
     {
         $timePeriodFilter = $this->buildDateFilter(
             Arr::pull($filters, 'time_period_from'),

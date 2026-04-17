@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Metafori\Etno\Http\Requests\Api\ItemAggregationsRequest;
 use Metafori\Etno\Http\Requests\Api\ItemIndexRequest;
+use Metafori\Etno\Http\Requests\Api\ItemSearchRequest;
 use Metafori\Etno\Http\Resources\ItemMapPointCollection;
 use Metafori\Etno\Http\Resources\ItemResource;
 use Metafori\Etno\Models\Item;
@@ -22,8 +23,20 @@ class ItemController
     {
         $filters = $request->validated('filter', []);
         $sorts = $request->sorts();
+        $locale = app()->getLocale();
 
-        $items = $this->repository->paginate($filters, $sorts);
+        $items = $this->repository->paginate($filters, $sorts, $locale);
+
+        return ItemResource::collection($items);
+    }
+
+    public function search(ItemSearchRequest $request): ResourceCollection
+    {
+        $query = $request->string('q');
+        $size = $request->integer('size', 10);
+        $locale = app()->getLocale();
+
+        $items = $this->repository->search((string) $query, $size, $locale);
 
         return ItemResource::collection($items);
     }
@@ -32,7 +45,7 @@ class ItemController
     {
         $filters = $request->validated('filter', []);
 
-        $aggregations = $this->repository->aggregations($filters);
+        $aggregations = $this->repository->aggregations($filters, size: 1000);
 
         return response()->json([
             /** @var array<string, array<array{value: string, label: string, count: int}>> */
