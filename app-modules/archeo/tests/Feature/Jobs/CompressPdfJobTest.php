@@ -191,5 +191,5 @@ it('does nothing when the media record no longer exists', function () {
 
     (new CompressPdfJob(999999))->handle();
 
-    Process::assertRanTimes(function () {}, 0);
+    Process::assertNothingRan();
 });

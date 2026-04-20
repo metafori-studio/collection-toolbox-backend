@@ -85,12 +85,9 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
                 return;
             }
 
-            // Update size before writing so that if the write succeeds but the
-            // DB update fails on a retry, the job re-downloads the already-
-            // compressed file, finds the output larger, and exits cleanly.
-            $media->update(['size' => $compressedSize]);
-
             $this->streamToDisk($media->disk, $relativePath, $tempOutput);
+
+            $media->update(['size' => $compressedSize]);
 
             if ($this->user) {
                 Notification::make()
