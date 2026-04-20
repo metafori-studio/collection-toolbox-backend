@@ -55,7 +55,7 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
         try {
             $this->streamFromDisk($media->disk, $relativePath, $tempInput);
 
-            $result = Process::timeout(1800)->run([
+            $result = Process::timeout($this->timeout - 30)->run([
                 config('archeo.ghostscript_binary', 'gs'),
                 '-sDEVICE=pdfwrite',
                 '-dCompatibilityLevel=1.4',
