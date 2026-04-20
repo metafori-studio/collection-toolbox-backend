@@ -3,13 +3,16 @@
 namespace Metafori\Archeo\Providers;
 
 use Filament\Panel;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
+use Metafori\Archeo\Listeners\CompressPdfOnUploadListener;
 use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Models\ActivityAssignment;
 use Metafori\Archeo\Observers\ActivityObserver;
 use Metafori\Core\Models\User;
+use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 
 class ArcheoServiceProvider extends ServiceProvider
 {
@@ -39,5 +42,7 @@ class ArcheoServiceProvider extends ServiceProvider
         });
 
         Activity::observe(ActivityObserver::class);
+
+        Event::listen(MediaHasBeenAddedEvent::class, CompressPdfOnUploadListener::class);
     }
 }
