@@ -59,10 +59,17 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
                 config('archeo.ghostscript_binary', 'gs'),
                 '-sDEVICE=pdfwrite',
                 '-dCompatibilityLevel=1.4',
-                '-dPDFSETTINGS=/printer',
                 '-dNOPAUSE',
                 '-dQUIET',
                 '-dBATCH',
+                // Downsample colour and grayscale images to 150 dpi
+                // using bicubic interpolation.
+                '-dDownsampleColorImages=true',
+                '-dDownsampleGrayImages=true',
+                '-dColorImageDownsampleType=/Bicubic',
+                '-dGrayImageDownsampleType=/Bicubic',
+                '-dColorImageResolution=150',
+                '-dGrayImageResolution=150',
                 "-sOutputFile={$tempOutput}",
                 $tempInput,
             ]);
