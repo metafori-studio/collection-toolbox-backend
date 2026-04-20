@@ -117,13 +117,11 @@ it('applies watermark and replaces the file in storage', function () {
             return Process::result(output: '595x842', exitCode: 0);
         }
 
-        // magick canvas/composite call — write the stamp file
-        // qpdf call — write the watermarked output
-        $outputArg = collect($command)->last();
-        if (str_ends_with((string) $outputArg, '.pdf') || str_starts_with((string) $outputArg, 'pdf:')) {
-            $path = str_starts_with($outputArg, 'pdf:') ? substr($outputArg, 4) : $outputArg;
-            file_put_contents($path, $watermarkedContent);
-        }
+        // magick writes "pdf:{$tempStamp}", qpdf writes to $tempOutput (no prefix).
+        // Both use the last argument as the output path.
+        $outputArg = (string) collect($command)->last();
+        $path = str_starts_with($outputArg, 'pdf:') ? substr($outputArg, 4) : $outputArg;
+        file_put_contents($path, $watermarkedContent);
 
         return Process::result(exitCode: 0);
     });

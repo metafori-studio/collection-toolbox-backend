@@ -20,7 +20,7 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $timeout = 300; // 5 minutes
+    public int $timeout = 600; // 10 minutes
 
     public int $tries = 3;
 
@@ -66,7 +66,7 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
 
             $watermarkWidth = (int) ($width * 0.7);
 
-            $magickResult = Process::timeout(120)->run([
+            $magickResult = Process::timeout(60)->run([
                 config('archeo.magick_binary', 'magick'),
                 '-size', "{$width}x{$height}",
                 'canvas:none',
@@ -87,7 +87,8 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
                 throw new RuntimeException('ImageMagick failed to create watermark stamp: '.$magickResult->errorOutput());
             }
 
-            $qpdfResult = Process::timeout($this->timeout - 30)->run([
+            // identify (≤30s) + magick (≤60s) + overhead — leave the rest for qpdf
+            $qpdfResult = Process::timeout($this->timeout - 120)->run([
                 config('archeo.qpdf_binary', 'qpdf'),
                 $tempInput,
                 '--overlay', $tempStamp,
@@ -132,7 +133,7 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
      */
     private function getPageDimensions(string $pdfPath): array
     {
-        $result = Process::timeout(60)->run([
+        $result = Process::timeout(30)->run([
             config('archeo.magick_binary', 'magick'),
             'identify',
             '-format', '%wx%h',
