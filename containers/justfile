@@ -1,0 +1,31 @@
+set shell := ["bash", "-c"]
+
+default:
+    @just --list
+
+module := "archeo"
+backend_ref := "main"
+frontend_ref := "main"
+vite_remote_url := ""
+vite_mapbox_token := ""
+image_name := "ghcr.io/metafori-studio/collection-toolbox"
+
+# Build for a specific module
+build module="archeo" backend_ref="main" frontend_ref="main":
+    podman build \
+        --format docker \
+        --build-arg=MODULE={{module}} \
+        --build-arg=BACKEND_REF={{backend_ref}} \
+        --build-arg=FRONTEND_REF={{frontend_ref}} \
+        --build-arg=VITE_REMOTE_URL={{vite_remote_url}} \
+        --build-arg=VITE_MAPBOX_TOKEN={{vite_mapbox_token}} \
+        -t {{image_name}}:{{module}}-$(echo {{backend_ref}} | sed 's|.*/||')-$(echo {{frontend_ref}} | sed 's|.*/||') .
+
+# Push a specific module image
+push module="archeo" backend_ref="main" frontend_ref="main":
+    podman push {{image_name}}:{{module}}-$(echo {{backend_ref}} | sed 's|.*/||')-$(echo {{frontend_ref}} | sed 's|.*/||')
+
+# Build and push a module
+deploy module="archeo" backend_ref="main" frontend_ref="main" vite_remote_url="" vite_mapbox_token="":
+    @just build {{module}} {{backend_ref}} {{frontend_ref}} {{vite_remote_url}} {{vite_mapbox_token}}
+    @just push {{module}} {{backend_ref}} {{frontend_ref}}

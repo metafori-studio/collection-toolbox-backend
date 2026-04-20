@@ -1,0 +1,71 @@
+FROM docker.io/node:24-alpine AS frontend-builder
+
+ARG MODULE
+ARG FRONTEND_REF=main
+ARG VITE_REMOTE_URL
+ARG VITE_MAPBOX_TOKEN
+RUN test -n "${MODULE}" || (echo "missing --build-arg=MODULE=<archeo|etno>" && exit 1)
+
+WORKDIR /frontend
+RUN apk add --no-cache git=~2 && \
+    git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
+
+RUN npm install && \
+    VITE_REMOTE_URL=${VITE_REMOTE_URL} VITE_MAPBOX_TOKEN=${VITE_MAPBOX_TOKEN} npm run build --workspace=apps/${MODULE}
+
+
+FROM docker.io/composer:2.9.5 AS vendor-builder
+
+ARG BACKEND_REF=main
+WORKDIR /app
+RUN git clone --depth 1 --branch ${BACKEND_REF} https://github.com/metafori-studio/collection-toolbox-backend.git . && \
+    rm -rf .git
+RUN composer install \
+    --no-interaction \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts \
+    --ignore-platform-req=php
+
+
+FROM docker.io/dunglas/frankenphp:1.12.1-php8.5
+
+ARG MODULE
+ARG BACKEND_REF=main
+RUN test -n "${MODULE}" || (echo "ERROR: MODULE build arg is required (archeo or etno)" && exit 1)
+ENV MODULE=${MODULE}
+
+RUN apt-get update && apt-get install -y --no-install-recommends git ghostscript imagemagick && rm -rf /var/lib/apt/lists/*
+
+RUN install-php-extensions \
+    pdo_pgsql \
+    pgsql \
+    redis \
+    imagick \
+    opentelemetry \
+    pcntl \
+    intl \
+    zip \
+    opcache \
+    curl
+
+WORKDIR /app
+
+RUN git clone --depth 1 --branch ${BACKEND_REF} https://github.com/metafori-studio/collection-toolbox-backend.git /tmp/backend && \
+    cp -a /tmp/backend/. . && \
+    rm -rf /tmp/backend
+
+RUN rm -rf bootstrap/cache/*.php
+
+COPY --from=vendor-builder /app/vendor/ /app/vendor/
+RUN php artisan package:discover --ansi \
+    && php artisan modules:sync
+
+COPY --from=frontend-builder /frontend/apps/${MODULE}/dist/ /app/public/
+
+RUN php artisan octane:install --server=frankenphp
+
+ENV OCTANE_SERVER=frankenphp
+
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
