@@ -53,3 +53,5 @@ jobs:
             VITE_REMOTE_URL=${{ secrets.VITE_REMOTE_URL }}
             VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
+          cache-from: type=gha,scope=${{ matrix.module }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.module }}

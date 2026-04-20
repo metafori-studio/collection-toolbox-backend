@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM docker.io/node:24-alpine AS frontend-builder
 
 ARG MODULE
@@ -7,10 +8,12 @@ ARG VITE_MAPBOX_TOKEN
 RUN test -n "${MODULE}" || (echo "missing --build-arg=MODULE=<archeo|etno>" && exit 1)
 
 WORKDIR /frontend
-RUN apk add --no-cache git=~2 && \
-    git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
+RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
+    apk add git=~2
+RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
 
-RUN npm install && \
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm install && \
     VITE_REMOTE_URL=${VITE_REMOTE_URL} VITE_MAPBOX_TOKEN=${VITE_MAPBOX_TOKEN} npm run build --workspace=apps/${MODULE}
 
 
@@ -20,7 +23,8 @@ ARG BACKEND_REF=main
 WORKDIR /app
 RUN git clone --depth 1 --branch ${BACKEND_REF} https://github.com/metafori-studio/collection-toolbox-backend.git . && \
     rm -rf .git
-RUN composer install \
+RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
+    composer install \
     --no-interaction \
     --no-dev \
     --prefer-dist \
@@ -36,9 +40,12 @@ ARG BACKEND_REF=main
 RUN test -n "${MODULE}" || (echo "ERROR: MODULE build arg is required (archeo or etno)" && exit 1)
 ENV MODULE=${MODULE}
 
-RUN apt-get update && apt-get install -y --no-install-recommends git ghostscript imagemagick && rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,id=apt,sharing=locked,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,sharing=locked,target=/var/lib/apt \
+    apt-get update && apt-get install -y --no-install-recommends git ghostscript imagemagick
 
-RUN install-php-extensions \
+RUN --mount=type=cache,id=php-ext,target=/tmp/docker-php-extension-installer \
+    install-php-extensions \
     pdo_pgsql \
     pgsql \
     redis \
