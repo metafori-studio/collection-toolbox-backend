@@ -16,6 +16,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 beforeEach(function () {
     Storage::fake('public');
+    Queue::fake();
 });
 
 it('dispatches CompressPdfJob with the authenticated user when a PDF is added to the pdfs collection', function () {
