@@ -31,7 +31,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # if: (github.event_name == 'release' && startsWith(github.ref_name, matrix.module)) || (github.event_name == 'workflow_dispatch' && matrix.module == inputs.module) || github.event_name == 'pull_request'
+    if: (github.event_name == 'release' && startsWith(github.ref_name, matrix.module)) || (github.event_name == 'workflow_dispatch' && matrix.module == inputs.module) || github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
@@ -72,6 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push ${{ matrix.module }}
+        id: build
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: .
@@ -86,3 +87,11 @@ jobs:
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
+
+      - name: Report build status
+        if: github.event_name == 'pull_request' && always()
+        run: |
+          outcome="${{ steps.build.outcome }}"
+          icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
+          echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\` (not pushed on PR)" >> "$GITHUB_STEP_SUMMARY"
