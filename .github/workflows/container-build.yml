@@ -67,7 +67,7 @@ jobs:
           fi
 
       - name: Validate required secrets
-        if: steps.guard.outputs.skip != 'true' && github.event_name != 'pull_request'
+        if: steps.guard.outputs.skip != 'true'
         env:
           MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
           VITE_REMOTE_URL: ${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
