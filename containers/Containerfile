@@ -82,8 +82,8 @@ COPY . .
 RUN rm -rf bootstrap/cache/*.php
 
 COPY --from=vendor-builder /app/vendor/ /app/vendor/
-RUN php artisan package:discover --ansi \
-    && php artisan modules:sync
+RUN OTEL_SDK_DISABLED=true php artisan package:discover --ansi \
+    && OTEL_SDK_DISABLED=true php artisan modules:sync
 
 COPY --from=frontend-builder /frontend/apps/${MODULE}/dist/ /app/public/
 
