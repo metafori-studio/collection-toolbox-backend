@@ -26,9 +26,18 @@ jobs:
       - name: Resolve refs and image tag
         id: refs
         run: |
-          echo "backend_ref=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_OUTPUT"
           echo "frontend_ref=main" >> "$GITHUB_OUTPUT"
-          echo "image_tag=${{ matrix.module }}-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate required secrets
+        run: |
+          if [ "${{ matrix.module }}" = "archeo" ]; then
+            echo "Checking VITE_MAPBOX_TOKEN_ARCHEO"
+            echo "${{ secrets.VITE_MAPBOX_TOKEN_ARCHEO }}" | wc -c
+          else
+            echo "Checking VITE_MAPBOX_TOKEN_ETNO"
+            echo "${{ secrets.VITE_MAPBOX_TOKEN_ETNO }}" | wc -c
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -43,15 +52,15 @@ jobs:
       - name: Build and push ${{ matrix.module }}
         uses: docker/build-push-action@v6
         with:
-          context: containers
+          context: .
           file: containers/Containerfile
           push: true
           build-args: |
             MODULE=${{ matrix.module }}
-            BACKEND_REF=${{ steps.refs.outputs.backend_ref }}
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
             VITE_REMOTE_URL=${{ secrets.VITE_REMOTE_URL }}
-            VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
+          secrets: |
+            "mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}"
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}

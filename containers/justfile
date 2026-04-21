@@ -3,29 +3,54 @@ set shell := ["bash", "-c"]
 default:
     @just --list
 
+# Default values
 module := "archeo"
-backend_ref := "main"
 frontend_ref := "main"
 vite_remote_url := ""
-vite_mapbox_token := ""
 image_name := "ghcr.io/metafori-studio/collection-toolbox"
 
+# Module-specific Mapbox token environment variable names
+mapbox_token_env := if module == "archeo" { "VITE_MAPBOX_TOKEN_ARCHEO" } else { "VITE_MAPBOX_TOKEN_ETNO" }
+
 # Build for a specific module
-build module="archeo" backend_ref="main" frontend_ref="main":
+build module="archeo" frontend_ref="main":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get the appropriate token environment variable
+    TOKEN_ENV="{{mapbox_token_env}}"
+    if [ -z "${!TOKEN_ENV:-}" ]; then
+        echo "Warning: $TOKEN_ENV is not set, using empty token"
+        TOKEN_ENV="VITE_MAPBOX_TOKEN_DUMMY"
+        export VITE_MAPBOX_TOKEN_DUMMY=""
+    fi
+
     podman build \
         --format docker \
         --build-arg=MODULE={{module}} \
-        --build-arg=BACKEND_REF={{backend_ref}} \
         --build-arg=FRONTEND_REF={{frontend_ref}} \
         --build-arg=VITE_REMOTE_URL={{vite_remote_url}} \
-        --build-arg=VITE_MAPBOX_TOKEN={{vite_mapbox_token}} \
-        -t {{image_name}}:{{module}}-$(echo {{backend_ref}} | sed 's|.*/||')-$(echo {{frontend_ref}} | sed 's|.*/||') .
+        --secret=id=mapbox_token,env={{mapbox_token_env}} \
+        -f containers/Containerfile \
+        -t {{image_name}}:{{module}}-$(echo {{frontend_ref}} | sed 's|.*/||') .
 
 # Push a specific module image
-push module="archeo" backend_ref="main" frontend_ref="main":
-    podman push {{image_name}}:{{module}}-$(echo {{backend_ref}} | sed 's|.*/||')-$(echo {{frontend_ref}} | sed 's|.*/||')
+push module="archeo" frontend_ref="main":
+    podman push {{image_name}}:{{module}}-$(echo {{frontend_ref}} | sed 's|.*/||')
 
 # Build and push a module
-deploy module="archeo" backend_ref="main" frontend_ref="main" vite_remote_url="" vite_mapbox_token="":
-    @just build {{module}} {{backend_ref}} {{frontend_ref}} {{vite_remote_url}} {{vite_mapbox_token}}
-    @just push {{module}} {{backend_ref}} {{frontend_ref}}
+deploy module="archeo" frontend_ref="main" vite_remote_url="":
+    @just build {{module}} {{frontend_ref}} {{vite_remote_url}}
+    @just push {{module}} {{frontend_ref}}
+
+# Help message
+help:
+    @echo "Usage:"
+    @echo "  just build [module] [frontend_ref]   - Build container image"
+    @echo "  just push [module] [frontend_ref]    - Push container image"
+    @echo "  just deploy [module] [frontend_ref]  - Build and push container image"
+    @echo ""
+    @echo "Environment variables:"
+    @echo "  VITE_MAPBOX_TOKEN_ARCHEO  - Mapbox token for archeo module"
+    @echo "  VITE_MAPBOX_TOKEN_ETNO    - Mapbox token for etno module"
+    @echo "  VITE_REMOTE_URL           - Frontend remote URL"

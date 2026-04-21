@@ -4,7 +4,8 @@ FROM docker.io/node:24-alpine AS frontend-builder
 ARG MODULE
 ARG FRONTEND_REF=main
 ARG VITE_REMOTE_URL
-ARG VITE_MAPBOX_TOKEN
+# Run this command to create a .env file for Vite at build time
+# The token should be passed via --secret when building
 RUN test -n "${MODULE}" || (echo "missing --build-arg=MODULE=<archeo|etno>" && exit 1)
 
 WORKDIR /frontend
@@ -12,17 +13,28 @@ RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
     apk add git=~2
 RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
 
+# Create .env file from mounted secret or environment variable
+RUN --mount=type=secret,id=mapbox_token,target=/run/secrets/mapbox_token,required=false \
+    if [ -f "/run/secrets/mapbox_token" ]; then \
+        echo "VITE_REMOTE_URL=${VITE_REMOTE_URL}" > .env && \
+        echo "VITE_MAPBOX_TOKEN=$(cat /run/secrets/mapbox_token)" >> .env; \
+    elif [ -n "${VITE_MAPBOX_TOKEN}" ]; then \
+        echo "VITE_REMOTE_URL=${VITE_REMOTE_URL}" > .env && \
+        echo "VITE_MAPBOX_TOKEN=${VITE_MAPBOX_TOKEN}" >> .env; \
+    else \
+        echo "VITE_REMOTE_URL=${VITE_REMOTE_URL}" > .env && \
+        echo "VITE_MAPBOX_TOKEN=" >> .env; \
+    fi
+
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     npm install && \
-    VITE_REMOTE_URL=${VITE_REMOTE_URL} VITE_MAPBOX_TOKEN=${VITE_MAPBOX_TOKEN} npm run build --workspace=apps/${MODULE}
+    npm run build --workspace=apps/${MODULE}
 
 
 FROM docker.io/composer:2.9.5 AS vendor-builder
 
-ARG BACKEND_REF=main
 WORKDIR /app
-RUN git clone --depth 1 --branch ${BACKEND_REF} https://github.com/metafori-studio/collection-toolbox-backend.git . && \
-    rm -rf .git
+COPY . .
 RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
     composer install \
     --no-interaction \
@@ -36,7 +48,6 @@ RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
 FROM docker.io/dunglas/frankenphp:1.12.1-php8.5
 
 ARG MODULE
-ARG BACKEND_REF=main
 RUN test -n "${MODULE}" || (echo "ERROR: MODULE build arg is required (archeo or etno)" && exit 1)
 ENV MODULE=${MODULE}
 
@@ -59,10 +70,7 @@ RUN --mount=type=cache,id=php-ext,target=/tmp/docker-php-extension-installer \
 
 WORKDIR /app
 
-RUN git clone --depth 1 --branch ${BACKEND_REF} https://github.com/metafori-studio/collection-toolbox-backend.git /tmp/backend && \
-    cp -a /tmp/backend/. . && \
-    rm -rf /tmp/backend
-
+COPY . .
 RUN rm -rf bootstrap/cache/*.php
 
 COPY --from=vendor-builder /app/vendor/ /app/vendor/
