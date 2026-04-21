@@ -27,6 +27,7 @@ on:
 permissions:
   contents: read
   packages: write
+  pull-requests: write
 
 jobs:
   build:
@@ -111,3 +112,38 @@ jobs:
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
           echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
           echo "Tag: \`${{ steps.refs.outputs.image_tag }}\` (not pushed on PR)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post build status to pull request
+        if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const module = '${{ matrix.module }}';
+            const outcome = '${{ steps.build.outcome }}';
+            const icon = outcome === 'success' ? '✅' : '❌';
+            const tag = '${{ steps.refs.outputs.image_tag }}';
+            const marker = `<!-- docker-build-status:${module} -->`;
+            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`, not pushed on PR)`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
