@@ -1,0 +1,149 @@
+name: Build and Push Container
+
+on:
+  pull_request:
+    branches:
+      - main
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Module to build'
+        required: true
+        type: choice
+        options:
+          - archeo
+          - etno
+      backend_ref:
+        description: 'Backend branch or tag'
+        required: true
+        default: 'main'
+      frontend_ref:
+        description: 'Frontend branch or tag (collection-toolbox-frontend)'
+        required: true
+        default: 'main'
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [archeo, etno]
+
+    steps:
+      - name: Check module relevance
+        id: guard
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          ref: ${{ inputs.backend_ref || github.ref }}
+
+      - name: Resolve refs and image tag
+        id: refs
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "image_tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate required secrets
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
+          VITE_REMOTE_URL: ${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
+        run: |
+          test -n "$MAPBOX_TOKEN" || { echo "Missing VITE_MAPBOX_TOKEN_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
+          test -n "$VITE_REMOTE_URL" || { echo "Missing VITE_REMOTE_URL_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
+
+      - name: Set up Docker Buildx
+        if: steps.guard.outputs.skip != 'true'
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - name: Log in to ghcr.io
+        if: steps.guard.outputs.skip != 'true'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.module }}
+        if: steps.guard.outputs.skip != 'true'
+        id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          file: containers/Containerfile
+          push: true
+          build-args: |
+            MODULE=${{ matrix.module }}
+            FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
+            VITE_REMOTE_URL=${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
+          secrets: |
+            "mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}"
+          tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
+          cache-from: type=gha,scope=${{ matrix.module }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.module }}
+
+      - name: Report build status
+        if: always() && steps.guard.outputs.skip != 'true'
+        run: |
+          outcome="${{ steps.build.outcome }}"
+          icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
+          echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post build status to pull request
+        if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const module = '${{ matrix.module }}';
+            const outcome = '${{ steps.build.outcome }}';
+            const icon = outcome === 'success' ? '✅' : '❌';
+            const tag = '${{ steps.refs.outputs.image_tag }}';
+            const marker = `<!-- docker-build-status:${module} -->`;
+            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`)`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
