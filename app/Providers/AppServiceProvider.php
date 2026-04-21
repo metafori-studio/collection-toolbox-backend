@@ -18,13 +18,13 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(TelescopeServiceProvider::class);
         }
 
-        // Prevent OpenTelemetry from loading if all exporters are set to null
+        // Only load OpenTelemetry when at least one exporter is configured.
         $tracesExporter = config('opentelemetry.traces.exporter');
         $metricsExporter = config('opentelemetry.metrics.exporter');
         $logsExporter = config('opentelemetry.logs.exporter');
 
-        if ($tracesExporter === 'null' && $metricsExporter === 'null' && $logsExporter === 'null') {
-            $this->app->register(LaravelOpenTelemetryServiceProvider::class, false);
+        if ($tracesExporter !== 'null' || $metricsExporter !== 'null' || $logsExporter !== 'null') {
+            $this->app->register(LaravelOpenTelemetryServiceProvider::class);
         }
     }
 

@@ -9,16 +9,18 @@ frontend_ref := "main"
 vite_remote_url := ""
 image_name := "ghcr.io/metafori-studio/collection-toolbox"
 
-# Module-specific Mapbox token environment variable names
-mapbox_token_env := if module == "archeo" { "VITE_MAPBOX_TOKEN_ARCHEO" } else { "VITE_MAPBOX_TOKEN_ETNO" }
 
 # Build for a specific module
-build module="archeo" frontend_ref="main":
+build module="archeo" frontend_ref="main" vite_remote_url="":
     #!/usr/bin/env bash
     set -euo pipefail
 
     # Get the appropriate token environment variable
-    TOKEN_ENV="{{mapbox_token_env}}"
+    case "{{module}}" in
+        archeo) TOKEN_ENV="VITE_MAPBOX_TOKEN_ARCHEO" ;;
+        etno) TOKEN_ENV="VITE_MAPBOX_TOKEN_ETNO" ;;
+        *) echo "Unsupported module: {{module}}"; exit 1 ;;
+    esac
     if [ -z "${!TOKEN_ENV:-}" ]; then
         echo "Warning: $TOKEN_ENV is not set, using empty token"
         TOKEN_ENV="VITE_MAPBOX_TOKEN_DUMMY"
@@ -30,7 +32,7 @@ build module="archeo" frontend_ref="main":
         --build-arg=MODULE={{module}} \
         --build-arg=FRONTEND_REF={{frontend_ref}} \
         --build-arg=VITE_REMOTE_URL={{vite_remote_url}} \
-        --secret=id=mapbox_token,env={{mapbox_token_env}} \
+        --secret=id=mapbox_token,env=${TOKEN_ENV} \
         -f containers/Containerfile \
         -t {{image_name}}:{{module}}-$(echo {{frontend_ref}} | sed 's|.*/||') .
 
