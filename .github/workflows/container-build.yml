@@ -31,19 +31,32 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: (github.event_name == 'release' && startsWith(github.ref_name, matrix.module)) || (github.event_name == 'workflow_dispatch' && matrix.module == inputs.module) || github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
         module: [archeo, etno]
 
     steps:
+      - name: Check module relevance
+        id: guard
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: steps.guard.outputs.skip != 'true'
         with:
           ref: ${{ inputs.backend_ref || github.ref }}
 
       - name: Resolve refs and image tag
         id: refs
+        if: steps.guard.outputs.skip != 'true'
         run: |
           echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]]; then
@@ -53,7 +66,7 @@ jobs:
           fi
 
       - name: Validate required secrets
-        if: github.event_name != 'pull_request'
+        if: steps.guard.outputs.skip != 'true' && github.event_name != 'pull_request'
         env:
           MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
           VITE_REMOTE_URL: ${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
@@ -62,9 +75,11 @@ jobs:
           test -n "$VITE_REMOTE_URL" || { echo "Missing VITE_REMOTE_URL_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
 
       - name: Set up Docker Buildx
+        if: steps.guard.outputs.skip != 'true'
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Log in to ghcr.io
+        if: steps.guard.outputs.skip != 'true'
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
@@ -72,6 +87,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push ${{ matrix.module }}
+        if: steps.guard.outputs.skip != 'true'
         id: build
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
@@ -89,7 +105,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
 
       - name: Report build status
-        if: github.event_name == 'pull_request' && always()
+        if: always() && steps.guard.outputs.skip != 'true'
         run: |
           outcome="${{ steps.build.outcome }}"
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
