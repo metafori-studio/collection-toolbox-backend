@@ -66,6 +66,7 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
                 // using bicubic interpolation.
                 '-dDownsampleColorImages=true',
                 '-dDownsampleGrayImages=true',
+                '-dFastWebView=true',
                 '-dColorImageDownsampleType=/Bicubic',
                 '-dGrayImageDownsampleType=/Bicubic',
                 '-dColorImageResolution=150',
