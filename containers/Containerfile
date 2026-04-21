@@ -51,7 +51,6 @@ RUN --mount=type=cache,id=php-ext,target=/tmp/docker-php-extension-installer \
     redis \
     imagick \
     opentelemetry \
-    grpc \
     pcntl \
     intl \
     zip \
