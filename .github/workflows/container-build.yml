@@ -94,7 +94,7 @@ jobs:
         with:
           context: .
           file: containers/Containerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           build-args: |
             MODULE=${{ matrix.module }}
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
@@ -111,7 +111,7 @@ jobs:
           outcome="${{ steps.build.outcome }}"
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
           echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
-          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\` (not pushed on PR)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Post build status to pull request
         if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
@@ -123,7 +123,7 @@ jobs:
             const icon = outcome === 'success' ? '✅' : '❌';
             const tag = '${{ steps.refs.outputs.image_tag }}';
             const marker = `<!-- docker-build-status:${module} -->`;
-            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`, not pushed on PR)`;
+            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`)`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
