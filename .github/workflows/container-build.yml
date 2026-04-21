@@ -7,6 +7,22 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      module:
+        description: 'Module to build'
+        required: true
+        type: choice
+        options:
+          - archeo
+          - etno
+      backend_ref:
+        description: 'Backend branch or tag'
+        required: true
+        default: 'main'
+      frontend_ref:
+        description: 'Frontend branch or tag (collection-toolbox-frontend)'
+        required: true
+        default: 'main'
 
 permissions:
   contents: read
@@ -15,6 +31,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # if: (github.event_name == 'release' && startsWith(github.ref_name, matrix.module)) || (github.event_name == 'workflow_dispatch' && matrix.module == inputs.module) || github.event_name == 'pull_request'
     strategy:
       fail-fast: false
       matrix:
@@ -22,21 +39,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.backend_ref || github.ref }}
 
       - name: Resolve refs and image tag
         id: refs
         run: |
-          echo "frontend_ref=main" >> "$GITHUB_OUTPUT"
-          echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+          echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "image_tag=${{ matrix.module }}-${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Validate required secrets
         if: github.event_name != 'pull_request'
         env:
           MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
-          VITE_REMOTE_URL: ${{ secrets.VITE_REMOTE_URL }}
+          VITE_REMOTE_URL: ${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
         run: |
-          test -n "$MAPBOX_TOKEN" || { echo "Missing Mapbox token for ${{ matrix.module }}"; exit 1; }
-          test -n "$VITE_REMOTE_URL" || { echo "Missing VITE_REMOTE_URL"; exit 1; }
+          test -n "$MAPBOX_TOKEN" || { echo "Missing VITE_MAPBOX_TOKEN_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
+          test -n "$VITE_REMOTE_URL" || { echo "Missing VITE_REMOTE_URL_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -57,7 +80,7 @@ jobs:
           build-args: |
             MODULE=${{ matrix.module }}
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
-            VITE_REMOTE_URL=${{ secrets.VITE_REMOTE_URL }}
+            VITE_REMOTE_URL=${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
           secrets: |
             "mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}"
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}

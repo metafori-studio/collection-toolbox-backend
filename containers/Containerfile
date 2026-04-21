@@ -4,8 +4,7 @@ FROM docker.io/node:24-alpine AS frontend-builder
 ARG MODULE
 ARG FRONTEND_REF=main
 ARG VITE_REMOTE_URL
-# Run this command to create a .env file for Vite at build time
-# The token should be passed via --secret when building
+
 RUN test -n "${MODULE}" || (echo "missing --build-arg=MODULE=<archeo|etno>" && exit 1)
 
 WORKDIR /frontend
@@ -42,7 +41,14 @@ RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
     --prefer-dist \
     --optimize-autoloader \
     --no-scripts \
-    --ignore-platform-req=php
+    --ignore-platform-req=php \
+    --ignore-platform-req=ext-intl \
+    --ignore-platform-req=ext-gd \
+    --ignore-platform-req=ext-exif \
+    --ignore-platform-req=ext-pgsql \
+    --ignore-platform-req=ext-redis \
+    --ignore-platform-req=ext-imagick \
+    --ignore-platform-req=ext-opentelemetry
 
 
 FROM docker.io/dunglas/frankenphp:1.12.1-php8.5
