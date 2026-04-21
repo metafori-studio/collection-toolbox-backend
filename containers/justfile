@@ -22,9 +22,8 @@ build module="archeo" frontend_ref="main" vite_remote_url="":
         *) echo "Unsupported module: {{module}}"; exit 1 ;;
     esac
     if [ -z "${!TOKEN_ENV:-}" ]; then
-        echo "Warning: $TOKEN_ENV is not set, using empty token"
-        TOKEN_ENV="VITE_MAPBOX_TOKEN_DUMMY"
-        export VITE_MAPBOX_TOKEN_DUMMY=""
+        echo "Error: $TOKEN_ENV is not set"
+        exit 1
     fi
 
     podman build \
