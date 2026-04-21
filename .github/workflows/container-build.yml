@@ -47,7 +47,7 @@ jobs:
         run: |
           echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]]; then
-            echo "image_tag=${{ matrix.module }}-${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "image_tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           else
             echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
           fi

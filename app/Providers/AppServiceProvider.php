@@ -18,18 +18,13 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(TelescopeServiceProvider::class);
         }
 
-        // Only load OpenTelemetry when explicitly configured (not using defaults).
-        // By default, all exporters are 'otlp' which requires gRPC dependencies.
-        $tracesExporter = config('opentelemetry.traces.exporter', 'otlp');
-        $metricsExporter = config('opentelemetry.metrics.exporter', 'otlp');
-        $logsExporter = config('opentelemetry.logs.exporter', 'otlp');
-
-        // Only load if at least one exporter is explicitly configured (not default otlp and not null)
-        $hasExplicitConfig = ($tracesExporter !== 'otlp' && $tracesExporter !== 'null') ||
-                           ($metricsExporter !== 'otlp' && $metricsExporter !== 'null') ||
-                           ($logsExporter !== 'otlp' && $logsExporter !== 'null');
-
-        if ($hasExplicitConfig) {
+        // Register OpenTelemetry only when at least one exporter is not disabled.
+        $exporters = [
+            config('opentelemetry.traces.exporter'),
+            config('opentelemetry.metrics.exporter'),
+            config('opentelemetry.logs.exporter'),
+        ];
+        if (array_filter($exporters, fn ($e) => $e !== null && $e !== 'null')) {
             $this->app->register(LaravelOpenTelemetryServiceProvider::class);
         }
     }
