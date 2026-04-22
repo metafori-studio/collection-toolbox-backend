@@ -2,12 +2,12 @@
 	"name": "metafori/opensearch",
 	"description": "",
 	"type": "library",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"license": "proprietary",
 	"require": {
-        "laravel/scout": "^10.24",
-        "opensearch-project/opensearch-php": "^2.5"
-    },
+		"laravel/scout": "^10.24",
+		"opensearch-project/opensearch-php": "^2.5"
+	},
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Opensearch\\": "src/",
