@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.1.0...etno-v1.2.0) (2026-04-22)
+
+
+### Features
+
+* **etno:** add media type to item api ([df2b71d](https://github.com/metafori-studio/collection-toolbox-backend/commit/df2b71d223ef7a5e7c5501c80da4f3e581335648))
+
 ## [1.1.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.0.0...etno-v1.1.0) (2026-04-21)
 
 
