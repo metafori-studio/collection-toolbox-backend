@@ -15,6 +15,7 @@ use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemType;
+use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\DocumentOriginator;
@@ -79,6 +80,7 @@ it('can list items', function () {
                         'id',
                         'name',
                     ],
+                    'media_type',
                 ],
             ],
             'meta',
@@ -529,6 +531,7 @@ it('shows first media in index when access rights are open access', function () 
             'name', 'file_name', 'url', 'transcript',
         ]]]]);
     expect($response->json('data.0.first_media'))->not->toBeNull();
+    expect($response->json('data.0.media_type'))->toBe(MediaType::Document->value);
 });
 
 it('does not show first media in index when access rights are restricted and user is unauthenticated', function () {
@@ -541,6 +544,7 @@ it('does not show first media in index when access rights are restricted and use
 
     $response->assertStatus(200);
     expect($response->json('data.0'))->not->toHaveKey('first_media');
+    expect($response->json('data.0.media_type'))->toBe(MediaType::Document->value);
 });
 
 it('does not list unpublished items in index', function () {
