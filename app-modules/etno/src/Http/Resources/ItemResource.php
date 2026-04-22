@@ -82,6 +82,8 @@ class ItemResource extends JsonResource
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
             'document_id' => $this->document_id,
+            /** @var MediaType|null */
+            'media_type' => $this->whenLoaded('firstMedia', fn () => $this->firstMedia ? MediaType::tryFrom($this->firstMedia->collection_name) : null),
             'first_media' => $this->whenLoaded('firstMedia', fn () => $this->when(
                 Gate::allows('viewMedia', $this->resource),
                 fn () => new MediaResource($this->firstMedia)
