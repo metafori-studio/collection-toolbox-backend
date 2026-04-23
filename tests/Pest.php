@@ -17,7 +17,7 @@ pest()->extend(TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
-foreach (glob(__DIR__.'/../app-modules/*/tests/Pest.php') as $file) {
+foreach (glob(__DIR__.'/../packages/*/tests/Pest.php') as $file) {
     require_once $file;
 }
 

@@ -6,7 +6,12 @@ includes:
 parameters:
 
     paths:
-        - app/
+        - apps/archeo/app/
+        - apps/archeo/src/
+        - apps/etno/app/
+        - apps/etno/src/
+        - packages/core/src/
+        - packages/opensearch/src/
 
     # Level 10 is the highest level
     level: 5

@@ -1,7 +1,9 @@
 {
   ".": "2.1.0",
-  "app-modules/archeo": "1.1.0",
-  "app-modules/core": "1.1.0",
-  "app-modules/etno": "1.2.0",
-  "app-modules/opensearch": "1.1.0"
+  "packages/archeo": "1.1.0",
+  "packages/core": "1.1.0",
+  "packages/etno": "1.2.0",
+  "packages/opensearch": "1.1.0",
+  "apps/etno": "1.0.0",
+  "apps/archeo": "1.0.0"
 }

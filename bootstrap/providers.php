@@ -1,11 +1,11 @@
 <?php
 
 use App\Providers\AppServiceProvider;
-use App\Providers\Filament\ArcheoPanelProvider;
-use App\Providers\Filament\EtnoPanelProvider;
+use Metafori\Core\Providers\CoreServiceProvider;
+use Metafori\Opensearch\Providers\OpensearchServiceProvider;
 
 return [
     AppServiceProvider::class,
-    ArcheoPanelProvider::class,
-    EtnoPanelProvider::class,
+    CoreServiceProvider::class,
+    OpensearchServiceProvider::class,
 ];

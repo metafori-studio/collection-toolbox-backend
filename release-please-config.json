@@ -5,25 +5,35 @@
       "release-type": "simple",
       "changelog-path": "CHANGELOG.md"
     },
-    "app-modules/archeo": {
+    "packages/archeo": {
       "release-type": "php",
       "changelog-path": "CHANGELOG.md",
       "component": "archeo"
     },
-    "app-modules/core": {
+    "packages/core": {
       "release-type": "php",
       "changelog-path": "CHANGELOG.md",
       "component": "core"
     },
-    "app-modules/etno": {
+    "packages/etno": {
       "release-type": "php",
       "changelog-path": "CHANGELOG.md",
       "component": "etno"
     },
-    "app-modules/opensearch": {
+    "packages/opensearch": {
       "release-type": "php",
       "changelog-path": "CHANGELOG.md",
       "component": "opensearch"
+    },
+    "apps/etno": {
+      "release-type": "php",
+      "changelog-path": "CHANGELOG.md",
+      "component": "app-etno"
+    },
+    "apps/archeo": {
+      "release-type": "php",
+      "changelog-path": "CHANGELOG.md",
+      "component": "app-archeo"
     }
   }
 }

@@ -7,10 +7,10 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
-    <testsuite name="Modules"><directory suffix="Test.php">./app-modules/*/tests</directory></testsuite></testsuites>
+    </testsuites>
     <source>
         <include>
-            <directory>app</directory>
+            <directory>packages/*/src</directory>
         </include>
     </source>
     <php>
@@ -31,5 +31,9 @@
         <env name="APP_LOCALE" value="en"/>
         <env name="APP_LOCALES" value="en,sk"/>
         <env name="APP_FALLBACK_LOCALE" value="en"/>
+        <env name="OPENSEARCH_URL" value="http://localhost:9200"/>
+        <env name="FILESYSTEM_DISK" value="local"/>
+        <env name="MEDIA_DISK" value="local"/>
+        <env name="LIVEWIRE_TEMPORARY_FILE_UPLOAD_DISK" value="local"/>
     </php>
 </phpunit>

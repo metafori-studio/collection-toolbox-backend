@@ -1,31 +1,32 @@
 {
-    "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
-    "type": "project",
     "description": "The skeleton application for the Laravel framework.",
+    "license": "MIT",
+    "type": "project",
     "keywords": [
         "laravel",
         "framework"
     ],
-    "license": "MIT",
     "require": {
         "php": "^8.5",
+        "abdulmajeed-jamaan/filament-translatable-tabs": "^5.0",
+        "codewithdennis/filament-select-tree": "4.x",
         "dedoc/scramble": "^0.13.14",
         "filament/filament": "^5.0",
         "filament/spatie-laravel-media-library-plugin": "^5.3",
-        "internachi/modular": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.13",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.24",
         "laravel/tinker": "^3.0",
         "league/flysystem": "^3.32",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "metafori/archeo": "*",
-        "metafori/etno": "*",
-        "metafori/opensearch": "*",
+        "opensearch-project/opensearch-php": "^2.5",
         "phpoffice/phpspreadsheet": "^5.5",
         "proj4php/proj4php": "^2.0",
         "spatie/laravel-medialibrary": "^11.21",
+        "spatie/laravel-permission": "^7.2",
+        "spatie/laravel-translatable": "^6.12",
         "tpetry/laravel-postgresql-enhanced": "^3.5"
     },
     "require-dev": {
@@ -40,18 +41,66 @@
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.3",
         "pestphp/pest-plugin-laravel": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.1"
+        "pestphp/pest-plugin-livewire": "^4.1",
+        "symplify/monorepo-builder": "^11.2"
     },
+    "repositories": [
+        {
+            "options": {
+                "symlink": true
+            },
+            "type": "path",
+            "url": "packages/*"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Metafori\\Archeo\\": "apps/archeo/src/",
+            "Metafori\\Archeo\\Database\\Factories\\": "apps/archeo/database/factories/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "apps/archeo/database/seeders/",
+            "Metafori\\Core\\": "packages/core/src/",
+            "Metafori\\Core\\Database\\Factories\\": "packages/core/database/factories/",
+            "Metafori\\Core\\Database\\Seeders\\": "packages/core/database/seeders/",
+            "Metafori\\Core\\Tests\\": "packages/core/tests/",
+            "Metafori\\Etno\\": "apps/etno/src/",
+            "Metafori\\Etno\\Database\\Factories\\": "apps/etno/database/factories/",
+            "Metafori\\Etno\\Database\\Seeders\\": "apps/etno/database/seeders/",
+            "Metafori\\Opensearch\\": "packages/opensearch/src/",
+            "Metafori\\Opensearch\\Database\\Factories\\": "packages/opensearch/database/factories/",
+            "Metafori\\Opensearch\\Database\\Seeders\\": "packages/opensearch/database/seeders/",
+            "Metafori\\Opensearch\\Tests\\": "packages/opensearch/tests/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true,
+            "tbachert/spi": true
+        },
+        "platform": {
+            "php": "8.5"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "laravel/telescope"
+            ],
+            "providers": [
+                "Metafori\\Core\\Providers\\CoreServiceProvider",
+                "Metafori\\Opensearch\\Providers\\OpensearchServiceProvider"
+            ]
         }
     },
     "scripts": {
@@ -68,15 +117,12 @@
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
         ],
         "test": [
-            "@php artisan config:clear --ansi",
-            "@php artisan etno:items-index --force",
             "@php artisan test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
-            "@php artisan filament:upgrade",
-            "@php artisan modules:sync"
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
@@ -94,35 +140,10 @@
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
         ]
     },
-    "extra": {
-        "laravel": {
-            "dont-discover": [
-                "laravel/telescope"
-            ]
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true,
-            "tbachert/spi": true
-        },
-        "platform": {
-            "php": "8.5"
-        }
+    "replace": {
+        "metafori/core": "self.version",
+        "metafori/opensearch": "self.version"
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "path",
-            "url": "app-modules/*",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+    "prefer-stable": true
 }

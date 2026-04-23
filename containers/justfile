@@ -24,11 +24,10 @@ build module="archeo" frontend_ref="main" vite_remote_url="":
 
     podman build \
         --format docker \
-        --build-arg=MODULE={{module}} \
         --build-arg=FRONTEND_REF={{frontend_ref}} \
         --build-arg=VITE_REMOTE_URL={{vite_remote_url}} \
         --secret=id=mapbox_token,env=${TOKEN_ENV} \
-        -f containers/Containerfile \
+        -f containers/{{module}}/Containerfile \
         -t {{image_name}}:{{module}}-$(echo {{frontend_ref}} | sed 's|.*/||') .
 
 # Push a specific module image
