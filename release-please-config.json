@@ -5,20 +5,10 @@
       "release-type": "simple",
       "changelog-path": "CHANGELOG.md"
     },
-    "packages/archeo": {
-      "release-type": "php",
-      "changelog-path": "CHANGELOG.md",
-      "component": "archeo"
-    },
     "packages/core": {
       "release-type": "php",
       "changelog-path": "CHANGELOG.md",
       "component": "core"
-    },
-    "packages/etno": {
-      "release-type": "php",
-      "changelog-path": "CHANGELOG.md",
-      "component": "etno"
     },
     "packages/opensearch": {
       "release-type": "php",
