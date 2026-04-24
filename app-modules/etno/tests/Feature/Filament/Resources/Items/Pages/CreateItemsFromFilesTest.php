@@ -3,8 +3,11 @@
 namespace Metafori\Etno\Tests\Feature\Filament\Resources\Items\Pages;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Queue;
 use Metafori\Core\Models\User;
 use Metafori\Etno\Filament\Resources\Items\Pages\CreateItemsFromFiles;
+use Metafori\Etno\Jobs\ProcessItemMediaUpload;
 use Metafori\Etno\Models\Document;
 
 use function Pest\Laravel\actingAs;
@@ -15,6 +18,8 @@ beforeEach(function () {
 });
 
 it('extracts transcripts, syncs items and applies transcripts', function () {
+    Queue::fake();
+
     $document = Document::factory()->create(['id' => 'AA000001']);
 
     $image1 = UploadedFile::fake()->create('test1.jpg', 100, 'image/jpeg');
@@ -37,10 +42,15 @@ it('extracts transcripts, syncs items and applies transcripts', function () {
     $item1 = $items->firstWhere('identifier', 'AA000001:a');
     $item2 = $items->firstWhere('identifier', 'AA000001:b');
 
-    expect($item1->load('media')->media)->toHaveCount(1);
-    expect($item1->media->first()->custom_properties['transcripts']['txt'])->toBe('transcript one text');
-    expect($item2->load('media')->media)->toHaveCount(1);
-    expect($item2->media->first()->custom_properties['transcripts']['txt'])->toBeNull();
+    Queue::assertPushed(
+        ProcessItemMediaUpload::class,
+        fn ($job) => $job->item->id === $item1->id && Arr::get($job->customProperties, 'transcripts.txt') === 'transcript one text'
+    );
+
+    Queue::assertPushed(
+        ProcessItemMediaUpload::class,
+        fn ($job) => $job->item->id === $item2->id && Arr::get($job->customProperties, 'transcripts.txt') === null
+    );
 });
 
 it('can reorder items by file name', function () {
