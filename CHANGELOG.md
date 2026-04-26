@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.1.0...v2.2.0) (2026-04-26)
+
+
+### Features
+
+* **etno:** add item media in background ([8be6751](https://github.com/metafori-studio/collection-toolbox-backend/commit/8be67519b802c9cd27e21076af03824ab619da0e))
+* **etno:** add item media in background ([5868c4f](https://github.com/metafori-studio/collection-toolbox-backend/commit/5868c4fadc90dd7fdeac50dbbe3dac8a0d9c66b9))
+
 ## [2.1.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.0.0...v2.1.0) (2026-04-22)
 
 
