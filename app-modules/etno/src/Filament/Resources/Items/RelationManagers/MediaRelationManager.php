@@ -11,6 +11,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Resources\Items\Schemas\MediaForm;
+use Metafori\Etno\Repositories\ItemRepository;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaRelationManager extends RelationManager
@@ -25,6 +26,18 @@ class MediaRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->poll(function (RelationManager $livewire, ItemRepository $itemRepository) {
+                $count = $itemRepository->getProcessingMediaCount($livewire->getOwnerRecord());
+
+                return $count > 0 ? '2s' : null;
+            })
+            ->description(function (RelationManager $livewire, ItemRepository $itemRepository) {
+                $count = $itemRepository->getProcessingMediaCount($livewire->getOwnerRecord());
+
+                return $count > 0
+                    ? trans_choice(':count media file is currently being processed in the background.|:count media files are currently being processed in the background.', $count)
+                    : null;
+            })
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
