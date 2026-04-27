@@ -4,9 +4,13 @@ namespace Metafori\Etno\Tests\Feature\Filament\Actions\Items;
 
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Queue;
 use Metafori\Core\Models\User;
 use Metafori\Etno\Filament\Resources\Items\ItemResource;
 use Metafori\Etno\Filament\Resources\Items\Pages\EditItem;
+use Metafori\Etno\Filament\Resources\Items\RelationManagers\MediaRelationManager;
+use Metafori\Etno\Jobs\ProcessItemMediaUpload;
 use Metafori\Etno\Models\Item;
 
 use function Pest\Laravel\actingAs;
@@ -17,6 +21,8 @@ beforeEach(function () {
 });
 
 it('uploads media files and assigns custom properties', function () {
+    Queue::fake();
+
     $item = Item::factory()->create();
 
     $image = UploadedFile::fake()->create('test.jpg', 100, 'image/jpeg');
@@ -39,11 +45,16 @@ it('uploads media files and assigns custom properties', function () {
             'relation' => 'media',
         ]));
 
-    $media = $item->media->first();
-    expect($media)->not->toBeNull()
-        ->and($media->name)->toBe('test')
-        ->and($media->file_name)->toBe('test.jpg')
-        ->and($media->getCustomProperty('transcripts.txt'))->toBe('text');
+    Queue::assertPushed(
+        ProcessItemMediaUpload::class,
+        fn ($job) => $job->item->id === $item->id
+            && Arr::get($job->customProperties, 'transcripts.txt') === 'text'
+    );
+
+    livewire(MediaRelationManager::class, [
+        'ownerRecord' => $item,
+        'pageClass' => EditItem::class,
+    ])->assertSee('1 media file is currently being processed in the background.');
 });
 
 it('cannot assign media files of various mime types to one item', function () {
