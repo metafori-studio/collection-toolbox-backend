@@ -263,7 +263,11 @@ class ItemRepository
 
     public function incrementProcessingMediaCount(Item $item): void
     {
-        Cache::increment($this->getProcessingMediaCacheKey($item));
+        $key = $this->getProcessingMediaCacheKey($item);
+
+        if (! Cache::add($key, 1)) {
+            Cache::increment($key);
+        }
     }
 
     public function decrementProcessingMediaCount(Item $item): void
