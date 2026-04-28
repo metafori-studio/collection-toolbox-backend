@@ -1,7 +1,6 @@
 <?php
 
 use Metafori\Core\Models\User;
-use Symfony\Component\HttpFoundation\Response;
 
 use function Pest\Laravel\postJson;
 
@@ -19,7 +18,7 @@ test('no password returns unprocessable entity response', function () {
 
     postJson(route('api.login'), [
         'email' => $user->email,
-    ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    ])->assertUnprocessable();
 });
 
 test('empty password returns unprocessable entity response', function () {
@@ -28,7 +27,7 @@ test('empty password returns unprocessable entity response', function () {
     postJson(route('api.login'), [
         'email' => $user->email,
         'password' => '',
-    ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    ])->assertUnprocessable();
 });
 
 test('wrong password returns unprocessable entity response', function () {
@@ -37,7 +36,7 @@ test('wrong password returns unprocessable entity response', function () {
     postJson(route('api.login'), [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    ])->assertUnprocessable();
 });
 
 test('login requests are throttled after 5 attempts', function () {
@@ -47,11 +46,22 @@ test('login requests are throttled after 5 attempts', function () {
         postJson($url, [
             'email' => 'test@example.com',
             'password' => 'password',
-        ])->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        ])->assertUnprocessable();
     }
 
     postJson($url, [
         'email' => 'test@example.com',
         'password' => 'password',
-    ])->assertStatus(Response::HTTP_TOO_MANY_REQUESTS);
+    ])->assertTooManyRequests();
+});
+
+test('stateless login requests are forbidden', function () {
+    $this->withoutHeader('referer');
+
+    $user = User::factory()->create();
+
+    postJson(route('api.login'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertForbidden();
 });
