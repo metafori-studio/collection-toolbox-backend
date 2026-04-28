@@ -247,6 +247,29 @@ it('can filter items by belongsTo property', function (string $propertyKey, stri
     'project' => ['project', Project::class],
 ]);
 
+it('can filter items by document id', function () {
+    $matchingDocument = Document::factory()->published()->create();
+    $otherDocument = Document::factory()->published()->create();
+
+    $matchingItem = Item::factory()
+        ->for($matchingDocument)
+        ->create();
+
+    Item::factory()
+        ->for($otherDocument)
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => ['document_id' => [$matchingDocument->id]],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
+});
+
 it('can filter items by belongsToMany property', function (string $propertyKey, string $relation, string $factoryClass, string $filterCol) {
     $matchingEntity = $factoryClass::factory()->create();
     $otherEntity = $factoryClass::factory()->create();

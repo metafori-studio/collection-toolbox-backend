@@ -18,6 +18,7 @@ use Metafori\Etno\Enums\AccrualMethod;
 use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
+use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Project;
 use Metafori\Etno\Models\ResearchCollection;
 
@@ -34,6 +35,7 @@ class FacetMetadata
     ];
 
     public const array MODEL_MAPPING = [
+        'document_id' => Document::class,
         'author.person_id' => Person::class,
         'country.id' => Country::class,
         'district.id' => District::class,
