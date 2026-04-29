@@ -25,7 +25,7 @@ on:
         default: 'main'
 
 permissions:
-  contents: read
+  contents: write
   packages: write
   pull-requests: write
 
@@ -104,6 +104,23 @@ jobs:
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
+
+      - name: Update release with container image
+        if: github.event_name == 'release' && steps.build.outcome == 'success' && steps.guard.outputs.skip != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const { data: release } = await github.rest.repos.getRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id,
+            });
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.id,
+              body: (release.body || '') + `\n\n**Container image:** \`ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}\`\nDigest: \`${{ steps.build.outputs.digest }}\``,
+            });
 
       - name: Report build status
         if: always() && steps.guard.outputs.skip != 'true'
