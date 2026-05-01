@@ -1,0 +1,36 @@
+name: Update GitHub Release with Container Image
+
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        required: true
+        type: string
+      digest:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  update_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update release with container image
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const { data: release } = await github.rest.repos.getRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: context.payload.release.id,
+            });
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.id,
+              body: (release.body || '') + `\n\n**Container image:** \`ghcr.io/metafori-studio/collection-toolbox:${{ inputs.image_tag }}\`\nDigest: \`${{ inputs.digest }}\``,
+            });

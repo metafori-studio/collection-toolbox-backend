@@ -25,7 +25,7 @@ on:
         default: 'main'
 
 permissions:
-  contents: write
+  contents: read
   packages: write
   pull-requests: write
 
@@ -37,7 +37,9 @@ jobs:
       fail-fast: false
       matrix:
         module: [archeo, etno]
-
+    outputs:
+      image_tag: ${{ steps.refs.outputs.image_tag }}
+      digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Check module relevance
         id: guard
@@ -105,32 +107,15 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
 
-      - name: Update release with container image
-        if: github.event_name == 'release' && steps.build.outcome == 'success' && steps.guard.outputs.skip != 'true'
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            const { data: release } = await github.rest.repos.getRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: context.payload.release.id,
-            });
-            await github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: release.id,
-              body: (release.body || '') + `\n\n**Container image:** \`ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}\`\nDigest: \`${{ steps.build.outputs.digest }}\``,
-            });
-
       - name: Report build status
         if: always() && steps.guard.outputs.skip != 'true'
         run: |
           outcome="${{ steps.build.outcome }}"
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
-          echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ${icon} Docker build \`${{ matrix.module }}\`: $outcome" >> "$GITHUB_STEP_SUMMARY"
           echo "Tag: \`${{ steps.refs.outputs.image_tag }}\`" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Post build status to pull request
+      - name: Post build status to PR
         if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
@@ -139,15 +124,13 @@ jobs:
             const outcome = '${{ steps.build.outcome }}';
             const icon = outcome === 'success' ? '✅' : '❌';
             const tag = '${{ steps.refs.outputs.image_tag }}';
-            const marker = `<!-- docker-build-status:${module} -->`;
-            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`)`;
-
+            const marker = `\u003c!-- docker-build-status:${module} --\u003e`;
+            const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`);`;
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-
             const existing = comments.find(c => c.body.includes(marker));
             if (existing) {
               await github.rest.issues.updateComment({
@@ -164,3 +147,11 @@ jobs:
                 body,
               });
             }
+
+  release:
+    needs: build
+    if: github.event_name == 'release' && needs.build.result == 'success'
+    uses: ./.github/workflows/update-release.yml
+    with:
+      image_tag: ${{ needs.build.outputs.image_tag }}
+      digest: ${{ needs.build.outputs.digest }}
