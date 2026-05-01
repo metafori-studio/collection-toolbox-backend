@@ -4,11 +4,11 @@ namespace Metafori\Etno\Filament\Concerns;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportFileUploads\FileUploadConfiguration;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Metafori\Etno\Enums\TranscriptFormat;
+use Metafori\Etno\Jobs\ProcessItemMediaUpload;
 use Metafori\Etno\Models\Item;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Metafori\Etno\Repositories\ItemRepository;
 
 trait HandlesMediaUploads
 {
@@ -87,14 +87,16 @@ trait HandlesMediaUploads
         return $items;
     }
 
-    protected function addItemMedia(Item $item, TemporaryUploadedFile $file, array $customProperties): Media
+    protected function addItemMedia(Item $item, TemporaryUploadedFile $file, array $customProperties): void
     {
-        $collection = Item::getMediaCollectionName($file->getMimeType()) ?? throw new \InvalidArgumentException("Unsupported mime type: {$file->getMimeType()}");
+        ProcessItemMediaUpload::dispatch(
+            $item,
+            $file->getClientOriginalPath(),
+            $file->getClientOriginalName(),
+            $file->getMimeType(),
+            $customProperties
+        );
 
-        return $item->addMediaFromDisk($file->getClientOriginalPath(), FileUploadConfiguration::disk())
-            ->usingName(File::name($file->getClientOriginalName()))
-            ->usingFileName($file->getClientOriginalName())
-            ->withCustomProperties($customProperties)
-            ->toMediaCollection($collection);
+        app(ItemRepository::class)->incrementProcessingMediaCount($item);
     }
 }

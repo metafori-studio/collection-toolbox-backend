@@ -260,4 +260,28 @@ class ItemRepository
             'lte' => \is_numeric($to) ? "{$to}||/y" : $to,
         ]);
     }
+
+    public function incrementProcessingMediaCount(Item $item): void
+    {
+        $key = $this->getProcessingMediaCacheKey($item);
+
+        if (! Cache::add($key, 1)) {
+            Cache::increment($key);
+        }
+    }
+
+    public function decrementProcessingMediaCount(Item $item): void
+    {
+        Cache::decrement($this->getProcessingMediaCacheKey($item));
+    }
+
+    public function getProcessingMediaCount(Item $item): int
+    {
+        return Cache::get($this->getProcessingMediaCacheKey($item), 0);
+    }
+
+    protected function getProcessingMediaCacheKey(Item $item): string
+    {
+        return "etno.item.{$item->id}.processing_media";
+    }
 }

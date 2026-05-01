@@ -1,0 +1,31 @@
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# PHP dependencies (installed inside the build)
+vendor/
+
+# JS dependencies and build output (built inside the build)
+node_modules/
+**/node_modules/
+public/build/
+
+# Version control
+.git/
+
+# Laravel runtime directories
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# CI / test artifacts
+.github/
+tests/
+coverage/
+*.log
+
+# Dev tooling
+.phpunit.result.cache
+.phpstan/

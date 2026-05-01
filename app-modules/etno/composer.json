@@ -2,10 +2,10 @@
 	"name": "metafori/etno",
 	"description": "",
 	"type": "library",
-	"version": "1.0",
+	"version": "1.3.0",
 	"license": "proprietary",
 	"require": {
-        "laravel/scout": "^10.24",
+		"laravel/scout": "^10.24",
 		"metafori/core": "*",
 		"tpetry/laravel-postgresql-enhanced": "^3.5"
 	},

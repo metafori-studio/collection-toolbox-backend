@@ -13,6 +13,10 @@ class AuthController extends Controller
 {
     public function login(Request $request): Response|JsonResponse
     {
+        if (! $request->hasSession()) {
+            abort(403);
+        }
+
         $credentials = $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],

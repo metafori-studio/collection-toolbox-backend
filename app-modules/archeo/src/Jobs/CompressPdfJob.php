@@ -66,6 +66,7 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
                 // using bicubic interpolation.
                 '-dDownsampleColorImages=true',
                 '-dDownsampleGrayImages=true',
+                '-dFastWebView=true',
                 '-dColorImageDownsampleType=/Bicubic',
                 '-dGrayImageDownsampleType=/Bicubic',
                 '-dColorImageResolution=150',
@@ -81,7 +82,9 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
             $originalSize = $media->size;
             $compressedSize = filesize($tempOutput);
 
-            if ($compressedSize >= $originalSize) {
+            // Treat a missing/empty output as a failure rather than overwriting
+            // the original with a corrupt file.
+            if ($compressedSize === false || $compressedSize === 0 || $compressedSize >= $originalSize) {
                 return;
             }
 
