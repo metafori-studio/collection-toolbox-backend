@@ -22,12 +22,13 @@ beforeEach(function () {
 it('dispatches WatermarkPdfJob for each PDF without a watermarked conversion on show', function () {
     $activity = Activity::factory()->create();
 
-    $pdfPath = sys_get_temp_dir().'/test_controller_wm.pdf';
+    $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_wm_');
     file_put_contents($pdfPath, '%PDF-1.4 content');
 
     $activity->addMedia($pdfPath)
         ->usingFileName('report.pdf')
         ->toMediaCollection('pdfs', 'public');
+    @unlink($pdfPath);
 
     $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
@@ -38,12 +39,13 @@ it('dispatches WatermarkPdfJob for each PDF without a watermarked conversion on 
 it('does not dispatch WatermarkPdfJob for PDFs that already have a watermarked conversion', function () {
     $activity = Activity::factory()->create();
 
-    $pdfPath = sys_get_temp_dir().'/test_controller_wm_skip.pdf';
+    $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_wm_skip_');
     file_put_contents($pdfPath, '%PDF-1.4 content');
 
     $activity->addMedia($pdfPath)
         ->usingFileName('report.pdf')
         ->toMediaCollection('pdfs', 'public');
+    @unlink($pdfPath);
 
     markAsWatermarked($activity->getMedia('pdfs')->first());
 
@@ -58,12 +60,13 @@ it('does not dispatch WatermarkPdfJob for PDFs that already have a watermarked c
 it('returns watermarked_url as null when conversion has not been generated', function () {
     $activity = Activity::factory()->create();
 
-    $pdfPath = sys_get_temp_dir().'/test_controller_url.pdf';
+    $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_');
     file_put_contents($pdfPath, '%PDF-1.4 content');
 
     $activity->addMedia($pdfPath)
         ->usingFileName('report.pdf')
         ->toMediaCollection('pdfs', 'public');
+    @unlink($pdfPath);
 
     $response = $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
@@ -74,12 +77,13 @@ it('returns watermarked_url as null when conversion has not been generated', fun
 it('returns watermarked_url when conversion has been generated', function () {
     $activity = Activity::factory()->create();
 
-    $pdfPath = sys_get_temp_dir().'/test_controller_url_set.pdf';
+    $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_set_');
     file_put_contents($pdfPath, '%PDF-1.4 content');
 
     $activity->addMedia($pdfPath)
         ->usingFileName('report.pdf')
         ->toMediaCollection('pdfs', 'public');
+    @unlink($pdfPath);
 
     markAsWatermarked($activity->getMedia('pdfs')->first());
 

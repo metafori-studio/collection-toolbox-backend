@@ -56,7 +56,7 @@ it('does nothing when the watermark image file does not exist on disk', function
 });
 
 it('writes the watermarked file to the conversion path and preserves the original', function () {
-    $watermarkPng = tempnam(sys_get_temp_dir(), 'wm_').'.png';
+    $watermarkPng = sys_get_temp_dir().'/'.uniqid('wm_', true).'.png';
     file_put_contents($watermarkPng, 'fake-png-data');
     Config::set('archeo.watermark_image', $watermarkPng);
 
@@ -98,13 +98,12 @@ it('writes the watermarked file to the conversion path and preserves the origina
     $media->refresh();
     expect($media->hasGeneratedConversion('watermarked'))->toBeTrue();
 
-    @unlink($watermarkPng);
-});
+})->after(fn () => isset($watermarkPng) && @unlink($watermarkPng));
 
 it('sends a notification to the user after successful watermarking', function () {
     Notification::fake();
 
-    $watermarkPng = tempnam(sys_get_temp_dir(), 'wm_').'.png';
+    $watermarkPng = sys_get_temp_dir().'/'.uniqid('wm_', true).'.png';
     file_put_contents($watermarkPng, 'fake-png-data');
     Config::set('archeo.watermark_image', $watermarkPng);
 
@@ -140,8 +139,7 @@ it('sends a notification to the user after successful watermarking', function ()
         fn ($notification) => $notification->data['title'] === __('archeo::activities.notifications.pdf_watermarked.title')
     );
 
-    @unlink($watermarkPng);
-});
+})->after(fn () => isset($watermarkPng) && @unlink($watermarkPng));
 
 it('does nothing when the media record no longer exists', function () {
     Process::fake();
