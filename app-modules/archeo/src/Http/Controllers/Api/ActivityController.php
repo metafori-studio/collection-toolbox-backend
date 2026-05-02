@@ -144,9 +144,11 @@ class ActivityController extends Controller
             ->with(['galleries.media', 'media'])
             ->firstOrFail();
 
-        $activity->getMedia('pdfs')
-            ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
-            ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id));
+        if (config('archeo.watermark_image') && file_exists(config('archeo.watermark_image'))) {
+            $activity->getMedia('pdfs')
+                ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
+                ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id));
+        }
 
         return new ActivityResource($activity);
     }

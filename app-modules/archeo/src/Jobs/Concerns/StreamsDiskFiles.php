@@ -39,9 +39,13 @@ trait StreamsDiskFiles
         }
 
         try {
-            Storage::disk($disk)->put($relativePath, $srcHandle);
+            $ok = Storage::disk($disk)->put($relativePath, $srcHandle);
         } finally {
             fclose($srcHandle);
+        }
+
+        if (! $ok) {
+            throw new RuntimeException("Failed to write file to disk '{$disk}' at '{$relativePath}'.");
         }
     }
 }
