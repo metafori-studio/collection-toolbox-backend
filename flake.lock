@@ -24,11 +24,11 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1777728585,
-        "narHash": "sha256-fJXykMifm9OgbzGkpeg6fGJBInpjGTmV0u6JbAyyJiU=",
+        "lastModified": 1777729401,
+        "narHash": "sha256-OU6+7ssxa5TIj8wB80zF01GPekqNrcsv2Bk38XkbZrA=",
         "ref": "refs/heads/main",
-        "rev": "420d79bb46d7aeb80a72e7a5fe568a7fa1de3b9b",
-        "revCount": 124,
+        "rev": "b05709c627b8c66c81449633c8b28bab33694ea7",
+        "revCount": 125,
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       },
