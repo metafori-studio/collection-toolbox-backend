@@ -9,22 +9,22 @@ run:
     @composer run dev
 
 start-storage:
-    @$INFRA_SCRIPTS/start/storage
+    @start-storage
 
 stop-storage:
-    @$INFRA_SCRIPTS/stop/storage
+    @stop-storage
 
 start-databases:
-    @$INFRA_SCRIPTS/start/databases
+    @start-databases
 
 stop-databases:
-    @$INFRA_SCRIPTS/stop/databases
+    @stop-databases
 
 start-monitoring:
-    @$INFRA_SCRIPTS/start/monitoring
+    @start-monitoring
 
 stop-monitoring:
-    @$INFRA_SCRIPTS/stop/monitoring
+    @stop-monitoring
 
 flake-update:
     nix flake update --extra-experimental-features "nix-command flakes"
@@ -33,5 +33,8 @@ nix-gc:
     nix-store --gc
     nix-collect-garbage -d
 
-all: start-storage start-databases start-monitoring
-die: stop-monitoring stop-databases stop-storage
+all:
+    @start-all
+
+die:
+    @stop-all
