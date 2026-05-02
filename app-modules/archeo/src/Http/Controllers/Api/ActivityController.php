@@ -11,6 +11,7 @@ use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
 use Metafori\Archeo\Http\Requests\Api\ActivityIndexRequest;
 use Metafori\Archeo\Http\Resources\ActivityMapPointResource;
 use Metafori\Archeo\Http\Resources\ActivityResource;
+use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Models\Activity;
 
 class ActivityController extends Controller
@@ -142,6 +143,10 @@ class ActivityController extends Controller
             ->where('activity_number', $activityNumber)
             ->with(['galleries.media', 'media'])
             ->firstOrFail();
+
+        $activity->getMedia('pdfs')
+            ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
+            ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id));
 
         return new ActivityResource($activity);
     }

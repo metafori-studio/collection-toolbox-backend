@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
 use Metafori\Archeo\Listeners\CompressPdfOnUploadListener;
-/* use Metafori\Archeo\Listeners\WatermarkPdfOnUploadListener; */
 use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Models\ActivityAssignment;
 use Metafori\Archeo\Observers\ActivityObserver;
@@ -45,6 +44,5 @@ class ArcheoServiceProvider extends ServiceProvider
         Activity::observe(ActivityObserver::class);
 
         Event::listen(MediaHasBeenAddedEvent::class, CompressPdfOnUploadListener::class);
-        /* Event::listen(MediaHasBeenAddedEvent::class, WatermarkPdfOnUploadListener::class); */
     }
 }

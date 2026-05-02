@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 
+# Ensure a writable HOME for PsySH inside Nix develop.
+export HOME="${HOME:-/tmp}"
+
+# Disable PsySH history file writes (fails in read‑only env)
+export PSYSH_DISABLE_FILE_HISTORY=1
+
 set -euo pipefail
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <email> <name>"
+if [ $# -ne 3 ]; then
+    echo "Usage: $0 <email> <name> <password>"
     exit 1
 fi
 
@@ -15,7 +21,7 @@ base64_nowrap() {
 
 EMAIL_B64=$(base64_nowrap "$1")
 NAME_B64=$(base64_nowrap "$2")
-PASS_B64=$(base64_nowrap "$(openssl rand -base64 12)")
+PASS_B64=$(base64_nowrap "$3")
 
 php artisan tinker --execute="
 \$e = base64_decode('$EMAIL_B64');
@@ -25,4 +31,4 @@ php artisan tinker --execute="
 \$u->assignRole(\Metafori\Core\Enums\Role::Admin);
 \$status = \$u->wasRecentlyCreated ? 'Created' : 'Already existed';
 \$pass = \$u->wasRecentlyCreated ? \$p : '(existing)';
-echo \"\nRESULT: {\$e} | {\$pass} | Status: {\$status}\n\";" | grep "RESULT:"
+echo \"\nRESULT: {\$e} | {\$pass} | Status: {\$status}\n\";"

@@ -10,7 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Process;
-use Illuminate\Support\Facades\Storage;
+use Metafori\Archeo\Jobs\Concerns\StreamsDiskFiles;
 use Metafori\Core\Models\User;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -18,7 +18,7 @@ use Throwable;
 
 class CompressPdfJob implements ShouldBeUnique, ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, StreamsDiskFiles;
 
     public int $timeout = 900; // 15 minutes
 
@@ -110,43 +110,5 @@ class CompressPdfJob implements ShouldBeUnique, ShouldQueue
     public function failed(Throwable $exception): void
     {
         // Compression failure is non-critical — the original file remains intact.
-    }
-
-    private function streamFromDisk(string $disk, string $relativePath, string $dest): void
-    {
-        $readStream = Storage::disk($disk)->readStream($relativePath);
-
-        if (! is_resource($readStream)) {
-            throw new RuntimeException("Could not read PDF from disk '{$disk}' at '{$relativePath}'.");
-        }
-
-        $destHandle = fopen($dest, 'wb');
-
-        if (! is_resource($destHandle)) {
-            fclose($readStream);
-            throw new RuntimeException("Could not open temp file for writing: '{$dest}'.");
-        }
-
-        try {
-            stream_copy_to_stream($readStream, $destHandle);
-        } finally {
-            fclose($destHandle);
-            fclose($readStream);
-        }
-    }
-
-    private function streamToDisk(string $disk, string $relativePath, string $src): void
-    {
-        $srcHandle = fopen($src, 'rb');
-
-        if (! is_resource($srcHandle)) {
-            throw new RuntimeException("Could not open compressed temp file for reading: '{$src}'.");
-        }
-
-        try {
-            Storage::disk($disk)->put($relativePath, $srcHandle);
-        } finally {
-            fclose($srcHandle);
-        }
     }
 }
