@@ -12,7 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(RecordHttpMetrics::class);
+        // Prepend RecordHttpMetrics so it wraps the entire middleware stack and
+        // captures the full request duration, including earlier global middleware.
+        $middleware->prepend(RecordHttpMetrics::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
