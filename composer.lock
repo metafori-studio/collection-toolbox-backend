@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "127beacbb7f4eaf5cb4a5ca7c357e436",
+    "content-hash": "34fa3753158afa638769dfb77e224c59",
     "packages": [
         {
             "name": "abdulmajeed-jamaan/filament-translatable-tabs",
@@ -5366,11 +5366,11 @@
         },
         {
             "name": "metafori/archeo",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/archeo",
-                "reference": "38a5085d761b38dee88652832f59f35c0243232b"
+                "reference": "5f996eade655dc4cae478e9aa018664fd752035d"
             },
             "require": {
                 "filament/filament": "^5.0"
@@ -5401,11 +5401,11 @@
         },
         {
             "name": "metafori/core",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/core",
-                "reference": "95f2d9bf5420e1ac15ec2d78f2542a39baaac285"
+                "reference": "1ce6f1e89b147f1d0f0aa02e3bc88f25eb6782dc"
             },
             "require": {
                 "abdulmajeed-jamaan/filament-translatable-tabs": "^5.0",
@@ -5445,11 +5445,11 @@
         },
         {
             "name": "metafori/etno",
-            "version": "1.0.0",
+            "version": "1.3.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/etno",
-                "reference": "129bd8a4b5b743db7b1f0d1abf3ad24d027c586f"
+                "reference": "8353ef6f11f4c89a195aa3357186c318c68c7d2c"
             },
             "require": {
                 "laravel/scout": "^10.24",
@@ -5482,11 +5482,11 @@
         },
         {
             "name": "metafori/opensearch",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "dist": {
                 "type": "path",
                 "url": "app-modules/opensearch",
-                "reference": "705a4e99b5b9839dba4907d8f33c17fce1386d82"
+                "reference": "97d87d4822b78a894ef2e68e6373f55d92cd2bf7"
             },
             "require": {
                 "laravel/scout": "^10.24",
@@ -6968,6 +6968,76 @@
                 "source": "https://github.com/proj4php/proj4php/tree/v2.0.19"
             },
             "time": "2025-09-11T16:36:16+00:00"
+        },
+        {
+            "name": "promphp/prometheus_client_php",
+            "version": "v2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PromPHP/prometheus_client_php.git",
+                "reference": "da86f1507b04dc44dc37ffb766d7d3a1d42c3050"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/da86f1507b04dc44dc37ffb766d7d3a1d42c3050",
+                "reference": "da86f1507b04dc44dc37ffb766d7d3a1d42c3050",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.2"
+            },
+            "replace": {
+                "endclothing/prometheus_client_php": "*",
+                "jimdo/prometheus_client_php": "*",
+                "lkaemmerling/prometheus_client_php": "*"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.3|^7.0",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^1.5.4",
+                "phpstan/phpstan-phpunit": "^1.1.0",
+                "phpstan/phpstan-strict-rules": "^1.1.0",
+                "phpunit/phpunit": "^9.4",
+                "predis/predis": "^2.3",
+                "squizlabs/php_codesniffer": "^3.6",
+                "symfony/polyfill-apcu": "^1.6"
+            },
+            "suggest": {
+                "ext-apc": "Required if using APCu.",
+                "ext-pdo": "Required if using PDO.",
+                "ext-redis": "Required if using Redis.",
+                "predis/predis": "Required if using Predis.",
+                "promphp/prometheus_push_gateway_php": "An easy client for using Prometheus PushGateway.",
+                "symfony/polyfill-apcu": "Required if you use APCu."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Prometheus\\": "src/Prometheus/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas Kämmerling",
+                    "email": "kontakt@lukas-kaemmerling.de"
+                }
+            ],
+            "description": "Prometheus instrumentation library for PHP applications.",
+            "support": {
+                "issues": "https://github.com/PromPHP/prometheus_client_php/issues",
+                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.15.0"
+            },
+            "time": "2026-03-24T22:44:50+00:00"
         },
         {
             "name": "psr/cache",
@@ -8553,6 +8623,82 @@
                 }
             ],
             "time": "2026-04-07T15:19:42+00:00"
+        },
+        {
+            "name": "spatie/laravel-prometheus",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-prometheus.git",
+                "reference": "3b8e8715c64fc7137a29916f360560cbeceb8bb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-prometheus/zipball/3b8e8715c64fc7137a29916f360560cbeceb8bb8",
+                "reference": "3b8e8715c64fc7137a29916f360560cbeceb8bb8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "^12.0|^13.0",
+                "illuminate/contracts": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
+                "php": "^8.4",
+                "promphp/prometheus_client_php": "^2.7.1",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "ext-redis": "*",
+                "larastan/larastan": "^3.0",
+                "laravel/horizon": "^5.28",
+                "laravel/pint": "^1.10",
+                "mockery/mockery": "^1.6",
+                "orchestra/testbench": "^10.0|^11.0",
+                "pestphp/pest": "^4.4",
+                "pestphp/pest-plugin-arch": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.1",
+                "spatie/laravel-ray": "^1.32.4",
+                "spatie/pest-plugin-snapshots": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Prometheus": "Spatie\\Prometheus\\Facades\\Prometheus"
+                    },
+                    "providers": [
+                        "Spatie\\Prometheus\\PrometheusServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Prometheus\\": "src/",
+                    "Spatie\\Prometheus\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Export Laravel metrics to Prometheus",
+            "homepage": "https://github.com/spatie/laravel-prometheus",
+            "keywords": [
+                "laravel",
+                "laravel-prometheus",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-prometheus/issues",
+                "source": "https://github.com/spatie/laravel-prometheus/tree/1.6.0"
+            },
+            "time": "2026-04-27T19:28:14+00:00"
         },
         {
             "name": "spatie/laravel-translatable",
