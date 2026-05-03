@@ -15,7 +15,8 @@ return [
      * Only these IPs will be allowed. Leave empty to allow all.
      * In production, restrict to your Prometheus scraper IP(s).
      */
-    'allowed_ips' => array_filter(explode(',', env('PROMETHEUS_ALLOWED_IPS', ''))),
+    // Trim each CSV entry and drop empty strings to avoid accidental '' entries.
+    'allowed_ips' => array_filter(array_map('trim', explode(',', env('PROMETHEUS_ALLOWED_IPS', '')))),
 
     'default_namespace' => env('PROMETHEUS_NAMESPACE', 'app'),
 
@@ -49,7 +50,8 @@ return [
     /*
      * Requests to these path prefixes are not recorded.
      */
-    'ignored_paths' => explode(',', env('PROMETHEUS_IGNORED_PATHS', '/metrics,/up,/telescope,/_debugbar,/horizon')),
+    // Normalize CSV list: trim whitespace and filter out empty values.
+    'ignored_paths' => array_filter(array_map('trim', explode(',', env('PROMETHEUS_IGNORED_PATHS', '/metrics,/up,/telescope,/_debugbar,/horizon')))),
 
     /*
      * DB queries slower than this (in seconds) are also tallied as slow queries.
