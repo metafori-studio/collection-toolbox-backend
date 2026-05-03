@@ -31,5 +31,6 @@
         <env name="APP_LOCALE" value="en"/>
         <env name="APP_LOCALES" value="en,sk"/>
         <env name="APP_FALLBACK_LOCALE" value="en"/>
+        <env name="PROMETHEUS_ENABLED" value="false"/>
     </php>
 </phpunit>
