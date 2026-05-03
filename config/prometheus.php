@@ -5,7 +5,7 @@ use Spatie\Prometheus\Http\Middleware\AllowIps;
 
 return [
 
-    'enabled' => env('PROMETHEUS_ENABLED', true),
+    'enabled' => env('PROMETHEUS_ENABLED', false),
 
     'urls' => [
         'default' => env('PROMETHEUS_ROUTE', 'metrics'),
