@@ -15,30 +15,47 @@ final class RecordHttpMetrics
             return $next($request);
         }
 
+        // Record start time before processing the request so we capture the full duration,
+        // even if an exception is thrown while handling the request.
         $start = hrtime(true);
 
-        /** @var Response $response */
-        $response = $next($request);
-
-        $duration = (hrtime(true) - $start) / 1e9;
-
+        /** @var Response|null $response */
+        $response = null;
+        $status = '500';
+        $caught = null;
         try {
-            $registry = app(CollectorRegistry::class);
-            $ns = config('prometheus.default_namespace', 'app');
-            $method = $request->method();
-            $route = $this->normalizeRoute($request);
+            /** @var Response $response */
+            $response = $next($request);
             $status = (string) $response->getStatusCode();
+        } catch (\Throwable $e) {
+            // Preserve the exception to re‑throw after metrics are recorded.
+            $caught = $e;
+        } finally {
+            $duration = (hrtime(true) - $start) / 1e9;
+            try {
+                $registry = app(CollectorRegistry::class);
+                $ns = config('prometheus.default_namespace', 'app');
+                $method = $request->method();
+                $route = $this->normalizeRoute($request);
 
-            $registry
-                ->getOrRegisterCounter($ns, 'http_requests_total', 'Total HTTP requests', ['method', 'route', 'status_code'])
-                ->inc([$method, $route, $status]);
+                $registry
+                    ->getOrRegisterCounter($ns, 'http_requests_total', 'Total HTTP requests', ['method', 'route', 'status_code'])
+                    ->inc([$method, $route, $status]);
 
-            $registry
-                ->getOrRegisterHistogram($ns, 'http_request_duration_seconds', 'HTTP request duration in seconds', ['method', 'route'], config('prometheus.buckets.http'))
-                ->observe($duration, [$method, $route]);
-        } catch (\Throwable) {
+                $registry
+                    ->getOrRegisterHistogram($ns, 'http_request_duration_seconds', 'HTTP request duration in seconds', ['method', 'route'], config('prometheus.buckets.http'))
+                    ->observe($duration, [$method, $route]);
+            } catch (\Throwable) {
+                // Swallow any metric collection errors to avoid interfering with request flow.
+            }
+
+            // Re‑throw the original exception if one was caught.
+            if ($caught !== null) {
+                throw $caught;
+            }
         }
 
+        // At this point $response is guaranteed to be a Response instance.
         return $response;
     }
 
