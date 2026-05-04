@@ -18,31 +18,33 @@
         "type": "github"
       }
     },
-    "metafori-infra": {
+    "infra": {
       "inputs": {
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1774901758,
-        "narHash": "sha256-UyWeoMoLP6l36TnwRyDHWx4n1IGZ/DqI2woZ5K5DepI=",
+        "dir": "nix",
+        "lastModified": 1777813820,
+        "narHash": "sha256-M+Vb7IvtStYiN9YK1aAa0ml3+KL4ZUDWLxe9yQSv25k=",
         "ref": "refs/heads/main",
-        "rev": "6f4efa93f43d855f4520d637b3101cc63a669839",
-        "revCount": 42,
+        "rev": "8c992ea0c1f43f688a1a5da1c829956c1ddb97c8",
+        "revCount": 127,
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       },
       "original": {
+        "dir": "nix",
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1774386573,
-        "narHash": "sha256-4hAV26quOxdC6iyG7kYaZcM3VOskcPUrdCQd/nx8obc=",
+        "lastModified": 1777268161,
+        "narHash": "sha256-bxrdOn8SCOv8tN4JbTF/TXq7kjo9ag4M+C8yzzIRYbE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "46db2e09e1d3f113a13c0d7b81e2f221c63b8ce9",
+        "rev": "1c3fe55ad329cbcb28471bb30f05c9827f724c76",
         "type": "github"
       },
       "original": {
@@ -54,11 +56,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1774709303,
-        "narHash": "sha256-D3Q07BbIA2KnTcSXIqqu9P586uWxN74zNoCH3h2ESHg=",
+        "lastModified": 1777578337,
+        "narHash": "sha256-Ad49moKWeXtKBJNy2ebiTQUEgdLyvGmTeykAQ9xM+Z4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "8110df5ad7abf5d4c0f6fb0f8f978390e77f9685",
+        "rev": "15f4ee454b1dce334612fa6843b3e05cf546efab",
         "type": "github"
       },
       "original": {
@@ -71,7 +73,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "metafori-infra": "metafori-infra",
+        "infra": "infra",
         "nixpkgs": "nixpkgs_2"
       }
     },
