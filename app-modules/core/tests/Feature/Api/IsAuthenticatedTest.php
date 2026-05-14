@@ -13,7 +13,7 @@ beforeEach(function () {
 it('does not add X-Is-Authenticated header for guests', function () {
     $response = get('/api/test-auth');
 
-    $response->assertStatus(200);
+    $response->assertOk();
     $response->assertHeaderMissing('X-Is-Authenticated');
 });
 
@@ -22,6 +22,15 @@ it('adds X-Is-Authenticated header for authenticated users', function () {
 
     $response = actingAs($user)->get('/api/test-auth');
 
-    $response->assertStatus(200);
+    $response->assertOk();
     $response->assertHeader('X-Is-Authenticated', 'true');
+});
+
+it('does not add X-Is-Authenticated header after logout', function () {
+    $user = User::factory()->create();
+
+    $response = actingAs($user)->post('/api/logout');
+
+    $response->assertNoContent();
+    $response->assertHeaderMissing('X-Is-Authenticated');
 });
