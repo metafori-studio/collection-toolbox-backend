@@ -238,35 +238,7 @@ class Item extends Model implements HasMedia, Inheritable
 
     public static function relations(): array
     {
-        return self::documentRelations([
-            'institution',
-            'project',
-            'authors',
-            'researchers',
-            'originators.person',
-            'keywords',
-            'researchCollections',
-            ...self::localityRelations(),
-        ]);
-    }
-
-    public static function localityRelations(): array
-    {
-        $morphWith = [
-            Region::class => ['country'],
-            District::class => ['region.country'],
-            Municipality::class => ['district.region.country'],
-            MunicipalityPart::class => ['municipality.district.region.country'],
-        ];
-
-        return [
-            'locality' => fn (MorphTo $morphTo) => $morphTo->morphWith([
-                ...$morphWith,
-                Location::class => [
-                    'parent' => fn (MorphTo $morphTo) => $morphTo->morphWith($morphWith),
-                ],
-            ]),
-        ];
+        return self::documentRelations(Document::relations());
     }
 
     public static function documentRelations(array $with, ?\Closure $callback = null): array
@@ -299,7 +271,7 @@ class Item extends Model implements HasMedia, Inheritable
             })->orWhere(function (Builder $q) {
                 $q->whereJsonDoesntContain('etno_items.document_overrides', 'access_rights')
                     ->whereHas('document', function (Builder $dq) {
-                        $dq->whereIn('etno_documents.access_rights', AccessRights::published());
+                        $dq->published();
                     });
             });
         });

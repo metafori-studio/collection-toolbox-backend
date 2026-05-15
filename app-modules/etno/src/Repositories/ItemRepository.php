@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
 use Metafori\Etno\Support\FacetMetadata;
 use OpenSearch\Client;
@@ -60,7 +61,7 @@ class ItemRepository
                     'authors',
                     'researchers',
                     'originators.person',
-                    ...Item::localityRelations(),
+                    ...Document::localityRelations(),
                 ]),
             ]);
         });
@@ -118,7 +119,7 @@ class ItemRepository
                     'authors',
                     'researchers',
                     'originators.person',
-                    ...Item::localityRelations(),
+                    ...Document::localityRelations(),
                 ]),
             ]);
         });
