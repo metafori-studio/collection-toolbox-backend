@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff4091304451a265de6dd5189885105f",
+    "content-hash": "55babf0beb4cd8020cc3416428f98ce3",
     "packages": [
         {
             "name": "abdulmajeed-jamaan/filament-translatable-tabs",

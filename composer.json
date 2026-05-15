@@ -26,7 +26,7 @@
         "phpoffice/phpspreadsheet": "^5.5",
         "proj4php/proj4php": "^2.0",
         "spatie/laravel-medialibrary": "^11.21",
-        "tpetry/laravel-postgresql-enhanced": "^3.5"
+        "tpetry/laravel-postgresql-enhanced": "^3.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
