@@ -31,4 +31,5 @@ return [
         'set_password' => '/setup-account',
     ],
 
+    'require_basic_auth' => (bool) env('FRONTEND_REQUIRE_BASIC_AUTH', false),
 ];
