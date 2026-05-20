@@ -18,8 +18,14 @@ trait HasFilterRules
 
         foreach (FacetMetadata::models() as $field) {
             $escapedField = str_replace('.', '\.', $field);
+            $model = FacetMetadata::MODEL_MAPPING[$field];
+            $keyType = (new $model)->getKeyType();
+
             $rules["filter.{$escapedField}"] = ['array', 'list'];
-            $rules["filter.{$escapedField}.*"] = ['integer'];
+            $rules["filter.{$escapedField}.*"] = match ($keyType) {
+                'string' => ['string'],
+                'int' => ['integer'],
+            };
         }
 
         $rules['filter.time_period_from'] = ['nullable', 'date_format:Y'];

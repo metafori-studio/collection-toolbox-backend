@@ -13,8 +13,9 @@ use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
+use Stringable;
 
-class Document extends Model
+class Document extends Model implements Stringable
 {
     use HasDocumentMetadata, HasFactory, SoftDeletes;
 
@@ -89,5 +90,10 @@ class Document extends Model
     public static function incrementSuffix(string $suffix): string
     {
         return str_increment($suffix);
+    }
+
+    public function __toString(): string
+    {
+        return $this->id;
     }
 }

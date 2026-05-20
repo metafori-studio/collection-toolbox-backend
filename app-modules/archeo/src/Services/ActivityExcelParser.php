@@ -51,49 +51,65 @@ class ActivityExcelParser
         }
 
         $sheet = $spreadsheet->getSheet(0);
-        $rows = $sheet->toArray(null, true, true, true);
+        $mapping = self::DEFAULT_IMPORT_MAPPING;
 
-        if (count($rows) <= 1) {
+        if ($sheet->getHighestDataRow() <= 1) {
+            $spreadsheet->disconnectWorksheets();
             throw InvalidFileFormatException::empty();
         }
 
-        // Use the default mapping configuration
-        $mapping = self::DEFAULT_IMPORT_MAPPING;
-
-        // Validate header columns
-        $headerRow = $rows[1]; // First row is the header
+        // Validate header via direct cell access
         $missingColumns = [];
-
-        foreach ($mapping as $fieldName => $expectedColumn) {
-            $headerValue = $headerRow[$expectedColumn] ?? null;
-            if (empty(trim($headerValue ?? ''))) {
-                $missingColumns[] = "{$fieldName} (Column {$expectedColumn})";
+        foreach ($mapping as $fieldName => $col) {
+            $value = $sheet->getCell($col.'1')->getValue();
+            if (empty(trim((string) ($value ?? '')))) {
+                $missingColumns[] = "{$fieldName} (Column {$col})";
             }
         }
 
         if (! empty($missingColumns)) {
+            $spreadsheet->disconnectWorksheets();
             throw InvalidFileFormatException::invalidHeader($missingColumns);
         }
 
-        // Keep track of original row indices (starting from 1)
-        // Header is row 1, data starts at row 2
-        $dataRows = array_slice($rows, 1, null, true);
         $createdCount = 0;
         $updatedCount = 0;
         $errors = [];
         $processedActivityNumbers = [];
+        $transformer = new CoordinateTransformer;
 
-        DB::transaction(function () use ($dataRows, $importId, &$createdCount, &$updatedCount, &$errors, &$processedActivityNumbers, $mapping) {
-            $transformer = new CoordinateTransformer;
+        // Use an explicit transaction rather than a closure to avoid copying
+        // the row data into a new scope.
+        DB::beginTransaction();
+        try {
+            foreach ($sheet->getRowIterator(2) as $rowObj) {
+                $rowIndex = $rowObj->getRowIndex();
 
-            foreach ($dataRows as $rowIndex => $row) {
+                $cellIterator = $rowObj->getCellIterator('A', 'V');
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $row = [];
+                foreach ($cellIterator as $cell) {
+                    $row[$cell->getColumn()] = $cell->getValue();
+                }
+
                 $result = $this->processRow($row, $rowIndex, $importId, $processedActivityNumbers, $transformer, $mapping);
 
                 $createdCount += $result['created'];
                 $updatedCount += $result['updated'];
-                $errors = array_merge($errors, $result['errors']);
+                foreach ($result['errors'] as $error) {
+                    $errors[] = $error;
+                }
             }
-        });
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            $spreadsheet->disconnectWorksheets();
+            throw $e;
+        }
+
+        $spreadsheet->disconnectWorksheets();
 
         return [
             'created' => $createdCount,
@@ -135,7 +151,7 @@ class ActivityExcelParser
             }
 
             // Check if we already processed this activity number in current import
-            if (in_array($activityNumber, $processedActivityNumbers)) {
+            if (isset($processedActivityNumbers[$activityNumber])) {
                 throw ExcelRowValidationException::duplicateActivityNumber($rowIndex);
             }
 
@@ -194,7 +210,7 @@ class ActivityExcelParser
                 $updated = 1;
             }
 
-            $processedActivityNumbers[] = $activityNumber;
+            $processedActivityNumbers[$activityNumber] = true;
         } catch (Exception $e) {
             $id = $activityNumber ?? 'Unknown';
             $rowErrors[] = "Row {$rowIndex} (Activity: {$id}): ".$e->getMessage();

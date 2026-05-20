@@ -282,3 +282,24 @@ it('does not include unpublished items in aggregations', function () {
 
     expect(collect($typeData)->firstWhere('value', ItemType::Map->value))->toBeNull();
 });
+
+it('resolves model labels for document id aggregations', function () {
+    $document = Document::factory()
+        ->hasItems(1)
+        ->published()
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.aggregations'));
+
+    $response->assertStatus(200);
+
+    $data = $response->json('data');
+    $docData = $data['document_id'] ?? [];
+
+    $docAgg = collect($docData)->firstWhere('value', $document->id);
+
+    expect($docAgg['label'])->toBe((string) $document->id)
+        ->and($docAgg['count'])->toBe(1);
+});
