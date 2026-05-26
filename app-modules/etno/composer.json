@@ -7,7 +7,7 @@
 	"require": {
 		"laravel/scout": "^10.24",
 		"metafori/core": "*",
-		"tpetry/laravel-postgresql-enhanced": "^3.5"
+		"tpetry/laravel-postgresql-enhanced": "^3.7"
 	},
 	"autoload": {
 		"psr-4": {
