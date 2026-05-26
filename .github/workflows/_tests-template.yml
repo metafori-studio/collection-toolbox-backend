@@ -69,7 +69,6 @@ jobs:
       run: composer run setup
 
     - name: Run prek on all files (PHPStan, Laravel Pint, etc.)
-      working-directory: apps/${{ inputs.app }}
       uses: j178/prek-action@0bb87d7f00b0c99306c8bcb8b8beba1eb581c037 # v1.1.1
       with:
         prek-version: '0.3.4'
