@@ -1,0 +1,34 @@
+set shell := ["bash", "-c"]
+
+default:
+    @just --list
+
+image_name := "ghcr.io/metafori-studio/collection-toolbox"
+
+# Build the etno image
+build frontend_ref="main" vite_remote_url="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if [ -z "${VITE_MAPBOX_TOKEN_ETNO:-}" ]; then
+        echo "Error: VITE_MAPBOX_TOKEN_ETNO is not set"
+        exit 1
+    fi
+
+    podman build \
+        --format docker \
+        --build-arg=FRONTEND_REF={{frontend_ref}} \
+        --build-arg=VITE_REMOTE_URL={{vite_remote_url}} \
+        --secret id=mapbox_token,env=VITE_MAPBOX_TOKEN_ETNO \
+        -f {{justfile_dir()}}/Containerfile \
+        -t {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||') \
+        {{justfile_dir()}}/../../
+
+# Push the etno image
+push frontend_ref="main":
+    podman push {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||')
+
+# Build and push etno
+deploy frontend_ref="main" vite_remote_url="":
+    @just build {{frontend_ref}} {{vite_remote_url}}
+    @just push {{frontend_ref}}
