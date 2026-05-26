@@ -18,6 +18,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Locale;
 use Metafori\Core\Auth\Passwords\PasswordBrokerManager;
+use Metafori\Core\Console\Commands\MakeUserCommand;
 use Metafori\Core\CorePlugin;
 use Metafori\Core\Facades\Frontend as FrontendFacade;
 use Metafori\Core\Faker\Providers\OrcidProvider;
@@ -117,5 +118,14 @@ class CoreServiceProvider extends ServiceProvider
             'municipality_part' => MunicipalityPart::class,
             'location' => Location::class,
         ]);
+
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MakeUserCommand::class,
+            ]);
+        }
     }
 }

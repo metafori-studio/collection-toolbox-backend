@@ -10,6 +10,7 @@ use Metafori\Core\Models\Location;
 use Metafori\Core\Models\Municipality;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
+use Metafori\Etno\Console\Commands\CreateItemSearchIndexCommand;
 use Metafori\Etno\EtnoPlugin;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
@@ -48,6 +49,15 @@ class EtnoServiceProvider extends ServiceProvider
 
         foreach ($localityModels as $model) {
             $model::observe(LocalityObserver::class);
+        }
+
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CreateItemSearchIndexCommand::class,
+            ]);
         }
     }
 }
