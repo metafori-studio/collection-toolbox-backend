@@ -10,22 +10,25 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
+        "abdulmajeed-jamaan/filament-translatable-tabs": "^5.0",
+        "codewithdennis/filament-select-tree": "4.x",
         "dedoc/scramble": "^0.13.14",
         "filament/filament": "^5.0",
         "filament/spatie-laravel-media-library-plugin": "^5.3",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.13",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.24",
         "laravel/tinker": "^3.0",
         "league/flysystem": "^3.32",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "metafori/archeo": "*",
-        "metafori/etno": "*",
-        "metafori/opensearch": "*",
+        "opensearch-project/opensearch-php": "^2.5",
         "phpoffice/phpspreadsheet": "^5.5",
         "proj4php/proj4php": "^2.0",
         "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-medialibrary": "^11.21",
+        "spatie/laravel-permission": "^7.2",
+        "spatie/laravel-translatable": "^6.12",
         "tpetry/laravel-postgresql-enhanced": "^3.7"
     },
     "require-dev": {
@@ -45,15 +48,44 @@
     },
     "autoload": {
         "psr-4": {
+            "App\\": "apps/archeo/app/",
+            "Database\\Factories\\": "apps/archeo/database/factories/",
+            "Database\\Seeders\\": "apps/archeo/database/seeders/",
+            "Metafori\\Archeo\\": "app-modules/archeo/src/",
+            "Metafori\\Archeo\\Database\\Factories\\": "app-modules/archeo/database/factories/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "app-modules/archeo/database/seeders/",
+            "Metafori\\Archeo\\Tests\\": "app-modules/archeo/tests/",
+            "Metafori\\Core\\": "app-modules/core/src/",
+            "Metafori\\Core\\Database\\Factories\\": "app-modules/core/database/factories/",
+            "Metafori\\Core\\Database\\Seeders\\": "app-modules/core/database/seeders/",
+            "Metafori\\Core\\Tests\\": "app-modules/core/tests/",
+            "Metafori\\Etno\\": "app-modules/etno/src/",
+            "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
+            "Metafori\\Etno\\Database\\Seeders\\": "app-modules/etno/database/seeders/",
+            "Metafori\\Etno\\Tests\\": "app-modules/etno/tests/",
+            "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
+            "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
+            "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/",
+            "Metafori\\Opensearch\\Tests\\": "app-modules/opensearch/tests/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "Tests\\": [
+                "apps/archeo/tests/",
+                "apps/etno/tests/"
+            ]
         }
     },
-    "scripts": {
-    },
     "extra": {
+        "laravel": {
+            "providers": [
+                "Metafori\\Archeo\\Providers\\ArcheoServiceProvider",
+                "Metafori\\Core\\Providers\\CoreServiceProvider",
+                "Metafori\\Etno\\Providers\\EtnoServiceProvider",
+                "Metafori\\Opensearch\\Providers\\OpensearchServiceProvider"
+            ]
+        }
     },
     "config": {
         "optimize-autoloader": true,
@@ -72,18 +104,26 @@
     "prefer-stable": true,
     "repositories": [
         {
-            "type": "path",
-            "url": "app-modules/*",
             "options": {
                 "symlink": true
-            }
+            },
+            "type": "path",
+            "url": "app-modules/*"
         },
         {
-            "type": "path",
-            "url": "apps/*",
             "options": {
                 "symlink": true
-            }
+            },
+            "type": "path",
+            "url": "apps/*"
         }
-    ]
+    ],
+    "replace": {
+        "metafori/archeo": "self.version",
+        "metafori/archeomap": "self.version",
+        "metafori/core": "self.version",
+        "metafori/etno": "self.version",
+        "metafori/etnoskop": "self.version",
+        "metafori/opensearch": "self.version"
+    }
 }
