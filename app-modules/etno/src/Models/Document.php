@@ -12,12 +12,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Metafori\Core\Models\Keyword;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
+use Metafori\Etno\Database\Factories\DocumentFactory;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
 use Stringable;
 
 class Document extends Model implements Stringable
 {
     use HasDocumentMetadata, HasFactory, SoftDeletes;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): DocumentFactory
+    {
+        return DocumentFactory::new();
+    }
 
     protected $table = 'etno_documents';
 

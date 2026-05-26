@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Metafori\Archeo\Database\Factories\ActivityFactory;
 use Metafori\Archeo\Services\CoordinateTransformer;
 use Metafori\Core\Models\User;
 use Spatie\MediaLibrary\HasMedia;
@@ -15,6 +16,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Activity extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ActivityFactory
+    {
+        return ActivityFactory::new();
+    }
 
     public const string MAP_POINTS_CACHE_KEY = 'archeo.activity.map-points';
 

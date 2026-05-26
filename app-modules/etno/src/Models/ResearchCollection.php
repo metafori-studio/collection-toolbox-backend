@@ -6,12 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Metafori\Etno\Database\Factories\ResearchCollectionFactory;
 use Spatie\Translatable\HasTranslations;
 use Stringable;
 
 class ResearchCollection extends Model implements Stringable
 {
     use HasFactory, HasTranslations, SoftDeletes;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ResearchCollectionFactory
+    {
+        return ResearchCollectionFactory::new();
+    }
 
     protected $table = 'etno_research_collections';
 
