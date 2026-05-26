@@ -1,4 +1,4 @@
-exclude: '^public/'
+exclude: '^apps/[^/]+/public/'
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
