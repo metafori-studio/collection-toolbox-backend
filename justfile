@@ -2,12 +2,6 @@ set shell := ["bash", "-c"]
 
 export PROJ_ROOT := env_var_or_default("PROJ_ROOT", `pwd`)
 
-setup:
-    @composer run setup
-
-run:
-    @composer run dev
-
 start-storage:
     @start-storage
 
