@@ -18,7 +18,7 @@ class MediaResource extends JsonResource
      *
      * @return array{
      *     name: string,
-     *     url: string,
+     *     url: string|null,
      *     thumb: string|null,
      *     watermarked_url: string|null,
      *     size: string,
@@ -27,11 +27,14 @@ class MediaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isPdf = $this->mime_type === 'application/pdf';
+        $hasWatermark = $this->hasGeneratedConversion('watermarked');
+
         return [
             'name' => $this->file_name,
-            'url' => $this->getUrl(),
+            'url' => (! $isPdf || ! $hasWatermark) ? $this->getUrl() : null,
             'thumb' => $this->hasGeneratedConversion('thumb') ? $this->getUrl('thumb') : null,
-            'watermarked_url' => $this->hasGeneratedConversion('watermarked') ? $this->watermarkedUrl() : null,
+            'watermarked_url' => $hasWatermark ? $this->watermarkedUrl() : null,
             'size' => $this->human_readable_size,
             'mime_type' => $this->mime_type,
         ];
