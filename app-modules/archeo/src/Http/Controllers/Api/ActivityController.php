@@ -5,6 +5,7 @@ namespace Metafori\Archeo\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
@@ -137,7 +138,7 @@ class ActivityController extends Controller
     /**
      * Display the specified activity by its activity number.
      */
-    public function show(string $activityNumber): ActivityResource
+    public function show(Request $request, string $activityNumber): ActivityResource
     {
         $activity = Activity::query()
             ->where('activity_number', $activityNumber)
@@ -147,7 +148,7 @@ class ActivityController extends Controller
         if (config('archeo.watermark_image') && file_exists(config('archeo.watermark_image'))) {
             $activity->getMedia('pdfs')
                 ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
-                ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id));
+                ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id, $request->user()));
         }
 
         return new ActivityResource($activity);
