@@ -40,14 +40,9 @@ class MediaResource extends JsonResource
         ];
     }
 
-    private function watermarkedUrl(): ?string
+    private function watermarkedUrl(): string
     {
         $path = WatermarkedPdfPath::forMedia($this->resource);
-
-        if (! Storage::disk($this->disk)->exists($path)) {
-            return null;
-        }
-
         $disk = Storage::disk($this->disk);
 
         try {

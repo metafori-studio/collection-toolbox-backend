@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Jobs\WatermarkPdfJob;
@@ -17,6 +18,7 @@ function markAsWatermarked(Media $media): void
 beforeEach(function () {
     Storage::fake('public');
     Queue::fake();
+    Config::set('archeo.watermark_image', __DIR__.'/../../Fixtures/dummy-watermark.png');
 });
 
 it('dispatches WatermarkPdfJob for each PDF without a watermarked conversion on show', function () {
