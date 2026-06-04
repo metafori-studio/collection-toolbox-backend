@@ -7,7 +7,7 @@ on:
 
 jobs:
   run-tests:
-    uses: ./.github/workflows/_tests-template.yml
+    uses: ./.github/workflows/templates/run-tests.yml
     with:
       app: etno
       opensearch: true
