@@ -24,23 +24,16 @@ repos:
         language: system
         files: \.nix$
 
-      # - id: pint
-      #   name: Laravel Pint
-      #   entry: bash -c "if [ -f ./vendor/bin/pint ]; then ./vendor/bin/pint \"\$@\"; elif [ -f apps/archeo/vendor/bin/pint ]; then ./apps/archeo/vendor/bin/pint \"\$@\"; elif [ -f apps/etno/vendor/bin/pint ]; then ./apps/etno/vendor/bin/pint \"\$@\"; else echo 'Laravel Pint skipped (dependencies not installed)'; fi" --
-      #   language: system
-      #   files: \.php$
-      #   pass_filenames: true
+      - id: pint
+        name: Laravel Pint
+        entry: ./vendor/bin/pint
+        language: system
+        files: \.php$
+        pass_filenames: true
 
-      # - id: phpstan-archeo
-      #   name: PHPStan Archeo
-      #   entry: bash -c "if [ -f apps/archeo/vendor/bin/phpstan ]; then cd apps/archeo && ./vendor/bin/phpstan analyse --memory-limit=2G; else echo 'Archeo PHPStan skipped (dependencies not installed)'; fi"
-      #   language: system
-      #   files: \.php$
-      #   pass_filenames: false
-
-      # - id: phpstan-etno
-      #   name: PHPStan Etno
-      #   entry: bash -c "if [ -f apps/etno/vendor/bin/phpstan ]; then cd apps/etno && ./vendor/bin/phpstan analyse --memory-limit=2G; else echo 'Etno PHPStan skipped (dependencies not installed)'; fi"
-      #   language: system
-      #   files: \.php$
-      #   pass_filenames: false
+      - id: phpstan
+        name: PHPStan
+        entry: ./vendor/bin/phpstan analyse --memory-limit=2G
+        language: system
+        files: \.php$
+        pass_filenames: false
