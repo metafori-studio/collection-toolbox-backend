@@ -5,8 +5,15 @@ includes:
 
 parameters:
 
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
     paths:
-        - app/
+        - apps/
+
+    configDirectories:
+        - apps/archeo/config
+        - apps/etno/config
 
     # Level 10 is the highest level
     level: 5
