@@ -4,16 +4,11 @@ includes:
     - vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
 
 parameters:
-
+    level: 5
     bootstrapFiles:
         - phpstan-bootstrap.php
-
     paths:
         - apps/
-
     configDirectories:
         - apps/archeo/config
         - apps/etno/config
-
-    # Level 10 is the highest level
-    level: 5
