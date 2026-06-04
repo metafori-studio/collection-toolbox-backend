@@ -19,9 +19,8 @@ RUN --mount=type=cache,id=npm,target=/root/.npm \
 FROM docker.io/composer:2.9.5 AS vendor-builder
 
 WORKDIR /app
-COPY composer.json composer.lock ./
-COPY app-modules app-modules/
-COPY apps/archeo apps/archeo/
+COPY app-modules /app-modules
+COPY apps/archeo .
 RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
     composer install \
     --no-interaction \
@@ -61,14 +60,12 @@ RUN --mount=type=cache,id=php-ext,target=/tmp/docker-php-extension-installer \
 
 WORKDIR /app
 
-COPY app-modules app-modules/
-COPY apps/archeo apps/archeo/
+COPY app-modules /app-modules
+COPY apps/archeo .
 
-RUN rm -rf apps/archeo/bootstrap/cache/*.php
+RUN rm -rf bootstrap/cache/*.php
 
 COPY --from=vendor-builder /app/vendor/ vendor/
-
-WORKDIR /app/apps/archeo
 
 RUN php artisan package:discover --ansi
 

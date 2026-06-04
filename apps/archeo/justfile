@@ -7,14 +7,6 @@ image_name := "ghcr.io/metafori-studio/collection-toolbox"
 
 # Build the archeo image
 build frontend_ref="main" vite_remote_url="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    if [ -z "${VITE_MAPBOX_TOKEN_ARCHEO:-}" ]; then
-        echo "Error: VITE_MAPBOX_TOKEN_ARCHEO is not set"
-        exit 1
-    fi
-
     podman build \
         --format docker \
         --build-arg=FRONTEND_REF={{frontend_ref}} \
