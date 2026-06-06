@@ -7,6 +7,6 @@ on:
 
 jobs:
   run-tests:
-    uses: ./.github/workflows/templates/run-tests.yml
+    uses: ./.github/workflows/_tests-template.yml
     with:
       app: archeo
