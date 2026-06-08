@@ -38,13 +38,13 @@
     "autoload": {
         "psr-4": {
             "Metafori\\Archeo\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Metafori\\Archeo\\Database\\Factories\\": "database/factories/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Metafori\\Archeo\\Tests\\": "tests/"
         }
     },
     "scripts": {

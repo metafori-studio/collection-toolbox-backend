@@ -4509,7 +4509,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../app-modules/archeo",
-                "reference": "5f996eade655dc4cae478e9aa018664fd752035d"
+                "reference": "6a4544e5e29ef7bf02ff1caa8aa597daf5756e50"
             },
             "require": {
                 "filament/filament": "^5.0"
@@ -4525,9 +4525,13 @@
             "autoload": {
                 "psr-4": {
                     "Metafori\\Archeo\\": "src/",
-                    "Metafori\\Archeo\\Tests\\": "tests/",
                     "Metafori\\Archeo\\Database\\Factories\\": "database/factories/",
                     "Metafori\\Archeo\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Metafori\\Archeo\\Tests\\": "tests/"
                 }
             },
             "license": [

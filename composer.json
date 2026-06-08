@@ -48,44 +48,38 @@
     },
     "autoload": {
         "psr-4": {
-            "Database\\Factories\\": [
-                "apps/archeo/database/factories/",
-                "apps/etno/database/factories/"
-            ],
-            "Database\\Seeders\\": [
-                "apps/archeo/database/seeders/",
-                "apps/etno/database/seeders/"
-            ],
             "Metafori\\Archeo\\": [
-                "apps/archeo/app/",
-                "app-modules/archeo/src/"
+                "app-modules/archeo/src/",
+                "apps/archeo/app/"
             ],
             "Metafori\\Archeo\\Database\\Factories\\": "app-modules/archeo/database/factories/",
             "Metafori\\Archeo\\Database\\Seeders\\": "app-modules/archeo/database/seeders/",
-            "Metafori\\Archeo\\Tests\\": "app-modules/archeo/tests/",
             "Metafori\\Core\\": "app-modules/core/src/",
             "Metafori\\Core\\Database\\Factories\\": "app-modules/core/database/factories/",
             "Metafori\\Core\\Database\\Seeders\\": "app-modules/core/database/seeders/",
             "Metafori\\Core\\Tests\\": "app-modules/core/tests/",
             "Metafori\\Etno\\": [
-                "apps/etno/app/",
-                "app-modules/etno/src/"
+                "app-modules/etno/src/",
+                "apps/etno/app/"
             ],
             "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
             "Metafori\\Etno\\Database\\Seeders\\": "app-modules/etno/database/seeders/",
-            "Metafori\\Etno\\Tests\\": "app-modules/etno/tests/",
             "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
             "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
-            "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/",
-            "Metafori\\Opensearch\\Tests\\": "app-modules/opensearch/tests/"
+            "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": [
-                "apps/archeo/tests/",
+            "Metafori\\Archeo\\Tests\\": [
+                "app-modules/archeo/tests/",
+                "apps/archeo/tests/"
+            ],
+            "Metafori\\Etno\\Tests\\": [
+                "app-modules/etno/tests/",
                 "apps/etno/tests/"
-            ]
+            ],
+            "Metafori\\Opensearch\\Tests\\": "app-modules/opensearch/tests/"
         }
     },
     "extra": {

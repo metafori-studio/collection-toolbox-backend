@@ -39,13 +39,13 @@
     "autoload": {
         "psr-4": {
             "Metafori\\Etno\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Metafori\\Etno\\Database\\Factories\\": "database/factories/",
+            "Metafori\\Etno\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Metafori\\Etno\\Tests\\": "tests/"
         }
     },
     "scripts": {

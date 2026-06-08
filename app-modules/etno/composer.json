@@ -12,11 +12,15 @@
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Etno\\": "src/",
-			"Metafori\\Etno\\Tests\\": "tests/",
 			"Metafori\\Etno\\Database\\Factories\\": "database/factories/",
 			"Metafori\\Etno\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
+    "autoload-dev": {
+        "psr-4": {
+			"Metafori\\Etno\\Tests\\": "tests/"
+        }
+    },
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {

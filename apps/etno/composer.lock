@@ -4744,7 +4744,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../app-modules/etno",
-                "reference": "57b1fed8c1fa547bc1deec76c3876058d6aac378"
+                "reference": "3a9e5e996f547c55a776e059f15ee8a391007b49"
             },
             "require": {
                 "laravel/scout": "^10.24",
@@ -4762,9 +4762,13 @@
             "autoload": {
                 "psr-4": {
                     "Metafori\\Etno\\": "src/",
-                    "Metafori\\Etno\\Tests\\": "tests/",
                     "Metafori\\Etno\\Database\\Factories\\": "database/factories/",
                     "Metafori\\Etno\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Metafori\\Etno\\Tests\\": "tests/"
                 }
             },
             "license": [
@@ -4781,7 +4785,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../app-modules/opensearch",
-                "reference": "97d87d4822b78a894ef2e68e6373f55d92cd2bf7"
+                "reference": "1258d9fbb79305ce7ba46eb5c45532555f77e1fb"
             },
             "require": {
                 "laravel/scout": "^10.24",
@@ -4798,9 +4802,13 @@
             "autoload": {
                 "psr-4": {
                     "Metafori\\Opensearch\\": "src/",
-                    "Metafori\\Opensearch\\Tests\\": "tests/",
                     "Metafori\\Opensearch\\Database\\Factories\\": "database/factories/",
                     "Metafori\\Opensearch\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Metafori\\Opensearch\\Tests\\": "tests/"
                 }
             },
             "license": [

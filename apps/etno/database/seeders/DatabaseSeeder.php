@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Metafori\Etno\Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

@@ -4,6 +4,7 @@ namespace Metafori\Etno\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Metafori\Etno\Database\Seeders\DatabaseSeeder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }
+
+        $this->app->bind('DatabaseSeeder', DatabaseSeeder::class);
     }
 
     /**

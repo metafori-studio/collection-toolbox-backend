@@ -1,6 +1,6 @@
 <?php
 
-use Tests\TestCase;
+use Metafori\Archeo\Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------

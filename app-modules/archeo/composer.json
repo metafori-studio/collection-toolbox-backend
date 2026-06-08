@@ -10,11 +10,15 @@
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Archeo\\": "src/",
-			"Metafori\\Archeo\\Tests\\": "tests/",
 			"Metafori\\Archeo\\Database\\Factories\\": "database/factories/",
 			"Metafori\\Archeo\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
+    "autoload-dev": {
+        "psr-4": {
+			"Metafori\\Archeo\\Tests\\": "tests/"
+        }
+    },
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {
