@@ -9,6 +9,7 @@ parameters:
     bootstrapFiles:
         - phpstan-bootstrap.php
         - apps/archeo/bootstrap/app.php
+        - apps/art/bootstrap/app.php
         - apps/etno/bootstrap/app.php
     paths:
         - apps/
@@ -16,4 +17,5 @@ parameters:
         - */vendor/*
     configDirectories:
         - apps/archeo/config
+        - apps/art/config
         - apps/etno/config
