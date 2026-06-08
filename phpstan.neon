@@ -13,7 +13,6 @@ parameters:
     excludePaths:
         - */vendor/*
         - */Providers/TelescopeServiceProvider.php
-        - */config/media-library.php
     configDirectories:
         - apps/archeo/config
         - apps/etno/config
