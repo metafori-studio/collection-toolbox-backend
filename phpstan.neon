@@ -2,6 +2,7 @@ includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
     - vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
+    - vendor/pestphp/pest/phpstan-pest-extension.neon
 
 parameters:
     level: 5
@@ -11,6 +12,8 @@ parameters:
         - apps/
     excludePaths:
         - */vendor/*
+        - */Providers/TelescopeServiceProvider.php
+        - */config/media-library.php
     configDirectories:
         - apps/archeo/config
         - apps/etno/config
