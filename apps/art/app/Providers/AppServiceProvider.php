@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace Metafori\Art\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

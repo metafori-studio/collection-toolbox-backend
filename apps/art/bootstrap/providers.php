@@ -1,6 +1,6 @@
 <?php
 
-use App\Providers\AppServiceProvider;
+use Metafori\Art\Providers\AppServiceProvider;
 
 return [
     AppServiceProvider::class,

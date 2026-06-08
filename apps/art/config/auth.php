@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use Metafori\Core\Models\User;
 
 return [
 
