@@ -8,11 +8,12 @@ parameters:
     level: 5
     bootstrapFiles:
         - phpstan-bootstrap.php
+        - apps/archeo/bootstrap/app.php
+        - apps/etno/bootstrap/app.php
     paths:
         - apps/
     excludePaths:
         - */vendor/*
-        - */Providers/TelescopeServiceProvider.php
     configDirectories:
         - apps/archeo/config
         - apps/etno/config
