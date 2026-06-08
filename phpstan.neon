@@ -9,6 +9,8 @@ parameters:
         - phpstan-bootstrap.php
     paths:
         - apps/
+    excludePaths:
+        - */vendor/*
     configDirectories:
         - apps/archeo/config
         - apps/etno/config
