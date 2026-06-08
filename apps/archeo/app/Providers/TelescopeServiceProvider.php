@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace Metafori\Archeo\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;

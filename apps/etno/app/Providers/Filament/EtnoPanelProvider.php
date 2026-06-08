@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers\Filament;
+namespace Metafori\Etno\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;

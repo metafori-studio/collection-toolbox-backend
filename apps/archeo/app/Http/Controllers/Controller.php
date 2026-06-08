@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Metafori\Archeo\Http\Controllers;
 
 abstract class Controller
 {

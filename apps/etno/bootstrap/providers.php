@@ -1,7 +1,7 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use App\Providers\Filament\EtnoPanelProvider;
+use Metafori\Etno\Providers\AppServiceProvider;
+use Metafori\Etno\Providers\Filament\EtnoPanelProvider;
 
 return [
     AppServiceProvider::class,

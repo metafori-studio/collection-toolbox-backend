@@ -1,7 +1,7 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use App\Providers\Filament\ArcheoPanelProvider;
+use Metafori\Archeo\Providers\AppServiceProvider;
+use Metafori\Archeo\Providers\Filament\ArcheoPanelProvider;
 
 return [
     AppServiceProvider::class,

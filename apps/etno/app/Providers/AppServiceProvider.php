@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace Metafori\Etno\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;

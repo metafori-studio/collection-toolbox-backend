@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace Metafori\Archeo\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
