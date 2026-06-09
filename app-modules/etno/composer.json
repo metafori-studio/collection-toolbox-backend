@@ -7,16 +7,20 @@
 	"require": {
 		"laravel/scout": "^10.24",
 		"metafori/core": "*",
-		"tpetry/laravel-postgresql-enhanced": "^3.5"
+		"tpetry/laravel-postgresql-enhanced": "^3.7"
 	},
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Etno\\": "src/",
-			"Metafori\\Etno\\Tests\\": "tests/",
 			"Metafori\\Etno\\Database\\Factories\\": "database/factories/",
 			"Metafori\\Etno\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
+    "autoload-dev": {
+        "psr-4": {
+			"Metafori\\Etno\\Tests\\": "tests/"
+        }
+    },
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {

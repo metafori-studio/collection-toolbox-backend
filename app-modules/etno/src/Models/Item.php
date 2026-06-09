@@ -21,6 +21,7 @@ use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Organization;
 use Metafori\Core\Models\Person;
 use Metafori\Core\Models\Region;
+use Metafori\Etno\Database\Factories\ItemFactory;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
@@ -34,6 +35,14 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Item extends Model implements HasMedia, Inheritable
 {
     use HasDocumentMetadata, HasFactory, InteractsWithMedia, Searchable, SoftDeletes;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ItemFactory
+    {
+        return ItemFactory::new();
+    }
 
     protected $table = 'etno_items';
 

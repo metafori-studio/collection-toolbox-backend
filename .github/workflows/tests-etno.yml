@@ -1,0 +1,13 @@
+name: Etno Tests and Linters
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/_tests-template.yml
+    with:
+      app: etno
+      opensearch: true
