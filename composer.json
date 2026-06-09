@@ -55,7 +55,7 @@
                 "apps/archeo/app/"
             ],
             "Metafori\\Archeo\\Database\\Factories\\": "app-modules/archeo/database/factories/",
-            "Metafori\\Archeo\\Database\\Seeders\\": "app-modules/archeo/database/seeders/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "apps/archeo/database/seeders/",
             "Metafori\\Art\\": "apps/art/app/",
             "Metafori\\Art\\Database\\Factories\\": "apps/art/database/factories/",
             "Metafori\\Art\\Database\\Seeders\\": "apps/art/database/seeders/",
@@ -68,7 +68,7 @@
                 "apps/etno/app/"
             ],
             "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
-            "Metafori\\Etno\\Database\\Seeders\\": "app-modules/etno/database/seeders/",
+            "Metafori\\Etno\\Database\\Seeders\\": "apps/etno/database/seeders/",
             "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
             "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
             "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/"
