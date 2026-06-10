@@ -11,7 +11,7 @@ class ItemObserver
 
     public function created(Item $item): void
     {
-        if ($item->locality_id !== null) {
+        if ($item->resolveInheritableAttribute('locality') !== null) {
             $this->repository->invalidateMapPointsCache();
         }
     }
@@ -25,14 +25,14 @@ class ItemObserver
 
     public function deleted(Item $item): void
     {
-        if ($item->locality_id !== null) {
+        if ($item->resolveInheritableAttribute('locality') !== null) {
             $this->repository->invalidateMapPointsCache();
         }
     }
 
     public function restored(Item $item): void
     {
-        if ($item->locality_id !== null) {
+        if ($item->resolveInheritableAttribute('locality') !== null) {
             $this->repository->invalidateMapPointsCache();
         }
     }

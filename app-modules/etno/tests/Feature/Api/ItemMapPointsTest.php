@@ -21,6 +21,24 @@ it('includes newly created item with locality in map points', function () {
         ->assertJsonFragment(['id' => $item->identifier]);
 });
 
+it('invalidates cache when item is created inheriting document locality', function () {
+    $localityWithCoordinates = Location::factory()->withCoordinates()->create();
+    $document = Document::factory()->published()->for($localityWithCoordinates, 'locality');
+
+    getJson(route('api.etno.items.map-points'))
+        ->assertStatus(200);
+
+    $item = Item::factory()->for($document, 'document')->create([
+        'locality_id' => null,
+        'locality_type' => null,
+        'document_overrides' => [],
+    ]);
+
+    getJson(route('api.etno.items.map-points'))
+        ->assertStatus(200)
+        ->assertJsonFragment(['id' => $item->identifier]);
+});
+
 it('does not include item without locality in map points', function () {
     $document = Document::factory()->published()->withoutLocality();
     $item = Item::factory()->for($document, 'document')->create();
