@@ -43,27 +43,28 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1779536930,
-        "narHash": "sha256-P/H+bGVMYv4Oa5uNbrP5PC6BARhwU5lG/Xtj7e/aTu4=",
-        "ref": "refs/heads/main",
-        "rev": "7edac7d4631307b85a89ed9e52fd85af51f4c44f",
-        "revCount": 136,
+        "lastModified": 1781129808,
+        "narHash": "sha256-M7xAcqKDtEdnwWKVmuAAsYVQIxC6itShz/BZLC4hJuM=",
+        "ref": "nix-split-modules",
+        "rev": "5cbddcf54beb2857ea591075d755a0b27842539b",
+        "revCount": 141,
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       },
       "original": {
         "dir": "nix",
+        "ref": "nix-split-modules",
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1777954456,
-        "narHash": "sha256-hGdgeU2Nk87RAuZyYjyDjFL6LK7dAZN5RE9+hrDTkDU=",
+        "lastModified": 1780749050,
+        "narHash": "sha256-3av0pIjlOWQ6rDbNOmpUSvbNnJkGORQKKjb4LtCZsIY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "549bd84d6279f9852cae6225e372cc67fb91a4c1",
+        "rev": "a799d3e3886da994fa307f817a6bc705ae538eeb",
         "type": "github"
       },
       "original": {
@@ -75,11 +76,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1780243769,
-        "narHash": "sha256-x5UQuRsH3MqI0U9afaXSNqzTPSeZlRLvFAav2Ux1pNw=",
+        "lastModified": 1780749050,
+        "narHash": "sha256-3av0pIjlOWQ6rDbNOmpUSvbNnJkGORQKKjb4LtCZsIY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "331800de5053fcebacf6813adb5db9c9dca22a0c",
+        "rev": "a799d3e3886da994fa307f817a6bc705ae538eeb",
         "type": "github"
       },
       "original": {

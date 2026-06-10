@@ -8,11 +8,23 @@ start-storage:
 stop-storage:
     @stop-storage
 
-start-databases:
-    @start-databases
+start-postgres:
+    @start-postgres
 
-stop-databases:
-    @stop-databases
+stop-postgres:
+    @stop-postgres
+
+start-valkey:
+    @start-valkey
+
+stop-valkey:
+    @stop-valkey
+
+start-opensearch:
+    @start-opensearch
+
+stop-opensearch:
+    @stop-opensearch
 
 start-monitoring:
     @start-monitoring
