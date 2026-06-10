@@ -36,12 +36,14 @@
         "larastan/larastan": "^3.0",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.2",
+        "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "laravel/telescope": "^5.18",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.3",
+        "pestphp/pest-plugin-drift": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0",
         "pestphp/pest-plugin-livewire": "^4.1",
         "symplify/monorepo-builder": "*"
@@ -53,7 +55,10 @@
                 "apps/archeo/app/"
             ],
             "Metafori\\Archeo\\Database\\Factories\\": "app-modules/archeo/database/factories/",
-            "Metafori\\Archeo\\Database\\Seeders\\": "app-modules/archeo/database/seeders/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "apps/archeo/database/seeders/",
+            "Metafori\\Art\\": "apps/art/app/",
+            "Metafori\\Art\\Database\\Factories\\": "apps/art/database/factories/",
+            "Metafori\\Art\\Database\\Seeders\\": "apps/art/database/seeders/",
             "Metafori\\Core\\": "app-modules/core/src/",
             "Metafori\\Core\\Database\\Factories\\": "app-modules/core/database/factories/",
             "Metafori\\Core\\Database\\Seeders\\": "app-modules/core/database/seeders/",
@@ -63,7 +68,7 @@
                 "apps/etno/app/"
             ],
             "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
-            "Metafori\\Etno\\Database\\Seeders\\": "app-modules/etno/database/seeders/",
+            "Metafori\\Etno\\Database\\Seeders\\": "apps/etno/database/seeders/",
             "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
             "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
             "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/"
@@ -75,6 +80,7 @@
                 "app-modules/archeo/tests/",
                 "apps/archeo/tests/"
             ],
+            "Metafori\\Art\\Tests\\": "apps/art/tests/",
             "Metafori\\Etno\\Tests\\": [
                 "app-modules/etno/tests/",
                 "apps/etno/tests/"
@@ -129,6 +135,7 @@
         "metafori/core": "self.version",
         "metafori/etno": "self.version",
         "metafori/etnoskop": "self.version",
-        "metafori/opensearch": "self.version"
+        "metafori/opensearch": "self.version",
+        "metafori/art": "self.version"
     }
 }
