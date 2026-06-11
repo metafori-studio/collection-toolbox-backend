@@ -2,6 +2,9 @@ set shell := ["bash", "-c"]
 
 export PROJ_ROOT := env_var_or_default("PROJ_ROOT", `pwd`)
 
+default:
+    @just --list
+
 start-storage:
     @start-storage
 
