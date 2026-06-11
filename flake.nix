@@ -14,7 +14,8 @@
       in {
         devShells.default = pkgs.mkShell (metafori.devshell {
           inherit pkgs metafori;
-          enablePostgres = true;
+          enablePhp = false;
+          enablePostgres = false;
           enableValkey = false;
           enableOpensearch = false;
           enableMonitoring = false;
