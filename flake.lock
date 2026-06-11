@@ -43,17 +43,16 @@
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1781179547,
-        "narHash": "sha256-b0p9BanfXa3J0IxZevEkDVDtkrHUiFm0wcWU7+/u7Ko=",
-        "ref": "nix-split-modules",
-        "rev": "79c43da4caeaf0e030829063a8bbfb080d586d7f",
-        "revCount": 143,
+        "lastModified": 1781182886,
+        "narHash": "sha256-Z/5cBz1QnVIPSl+DGtznd48R+7WqeebfR44pdE8WiqU=",
+        "ref": "refs/heads/main",
+        "rev": "d6b52b719c7acdafc33f9d621302bb9a30be4526",
+        "revCount": 144,
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       },
       "original": {
         "dir": "nix",
-        "ref": "nix-split-modules",
         "type": "git",
         "url": "ssh://git@github.com/metafori-studio/infra.git"
       }

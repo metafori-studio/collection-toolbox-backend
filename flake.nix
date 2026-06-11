@@ -3,7 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     infra.url =
-      "git+ssh://git@github.com/metafori-studio/infra.git?dir=nix&ref=nix-split-modules";
+      "git+ssh://git@github.com/metafori-studio/infra.git?dir=nix";
   };
 
   outputs = { nixpkgs, flake-utils, infra, ... }:
@@ -14,12 +14,12 @@
       in {
         devShells.default = pkgs.mkShell (metafori.devshell {
           inherit pkgs metafori;
-          enablePhp = false;
-          enablePostgres = false;
+          enablePhp = true;
+          enablePostgres = true;
           enableValkey = false;
           enableOpensearch = false;
           enableMonitoring = false;
-          enableStorage = false;
+          enableStorage = true;
           enableXdebug = false;
           configOverrides = {
             projectName = "collection-toolbox-backend";
