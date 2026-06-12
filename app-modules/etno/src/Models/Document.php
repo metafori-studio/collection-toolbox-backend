@@ -3,6 +3,7 @@
 namespace Metafori\Etno\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ use Metafori\Core\Models\Region;
 use Metafori\Etno\Database\Factories\DocumentFactory;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
+use Metafori\Etno\Support\CitationFormatter;
 use Stringable;
 
 class Document extends Model implements Stringable
@@ -144,6 +146,22 @@ class Document extends Model implements Stringable
                 ],
             ]),
         ];
+    }
+
+    public function howToCite(): Attribute
+    {
+        return Attribute::get(fn () => CitationFormatter::format(
+            title: $this->title,
+            subtitle: $this->subtitle,
+            authors: $this->authors->pluck('display_name')->filter(),
+            originators: $this->originators->pluck('person.display_name')->filter(),
+            publicationDate: $this->publication_date_start,
+            institutionName: $this->institution?->name,
+            type: $this->type,
+            timePeriodStart: $this->time_period_start,
+            timePeriodEnd: $this->time_period_end,
+            doi: $this->doi
+        ));
     }
 
     public function __toString(): string

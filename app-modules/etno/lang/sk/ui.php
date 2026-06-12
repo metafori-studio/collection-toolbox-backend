@@ -117,4 +117,8 @@ return [
             ],
         ],
     ],
+    'citations' => [
+        'originator' => 'pôvodca',
+        'time_period' => 'Rok realizácie',
+    ],
 ];
