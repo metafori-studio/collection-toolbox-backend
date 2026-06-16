@@ -10,95 +10,91 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
+        "abdulmajeed-jamaan/filament-translatable-tabs": "^5.0",
+        "codewithdennis/filament-select-tree": "4.x",
         "dedoc/scramble": "^0.13.14",
         "filament/filament": "^5.0",
         "filament/spatie-laravel-media-library-plugin": "^5.3",
-        "internachi/modular": "^3.0",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.13",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.24",
         "laravel/tinker": "^3.0",
         "league/flysystem": "^3.32",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "metafori/archeo": "*",
-        "metafori/etno": "*",
-        "metafori/opensearch": "*",
+        "opensearch-project/opensearch-php": "^2.5",
         "phpoffice/phpspreadsheet": "^5.5",
         "proj4php/proj4php": "^2.0",
+        "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-medialibrary": "^11.21",
-        "spatie/laravel-prometheus": "^1.6",
-        "tpetry/laravel-postgresql-enhanced": "^3.5"
+        "spatie/laravel-permission": "^7.2",
+        "spatie/laravel-translatable": "^6.12",
+        "tpetry/laravel-postgresql-enhanced": "^3.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.2",
+        "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "laravel/telescope": "^5.18",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^4.3",
+        "pestphp/pest-plugin-drift": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.1"
+        "pestphp/pest-plugin-livewire": "^4.1",
+        "symplify/monorepo-builder": "*"
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Metafori\\Archeo\\": [
+                "app-modules/archeo/src/",
+                "apps/archeo/app/"
+            ],
+            "Metafori\\Archeo\\Database\\Factories\\": "app-modules/archeo/database/factories/",
+            "Metafori\\Archeo\\Database\\Seeders\\": "apps/archeo/database/seeders/",
+            "Metafori\\Art\\": "apps/art/app/",
+            "Metafori\\Art\\Database\\Factories\\": "apps/art/database/factories/",
+            "Metafori\\Art\\Database\\Seeders\\": "apps/art/database/seeders/",
+            "Metafori\\Core\\": "app-modules/core/src/",
+            "Metafori\\Core\\Database\\Factories\\": "app-modules/core/database/factories/",
+            "Metafori\\Core\\Database\\Seeders\\": "app-modules/core/database/seeders/",
+            "Metafori\\Core\\Tests\\": "app-modules/core/tests/",
+            "Metafori\\Etno\\": [
+                "app-modules/etno/src/",
+                "apps/etno/app/"
+            ],
+            "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
+            "Metafori\\Etno\\Database\\Seeders\\": "apps/etno/database/seeders/",
+            "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
+            "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
+            "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Metafori\\Archeo\\Tests\\": [
+                "app-modules/archeo/tests/",
+                "apps/archeo/tests/"
+            ],
+            "Metafori\\Art\\Tests\\": "apps/art/tests/",
+            "Metafori\\Etno\\Tests\\": [
+                "app-modules/etno/tests/",
+                "apps/etno/tests/"
+            ],
+            "Metafori\\Opensearch\\Tests\\": "app-modules/opensearch/tests/"
         }
-    },
-    "scripts": {
-        "setup": [
-            "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
-            "npm install",
-            "npm run build"
-        ],
-        "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite --kill-others"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@php artisan etno:items-index --force",
-            "@php artisan test"
-        ],
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
-            "@php artisan filament:upgrade",
-            "@php artisan modules:sync"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan boost:update --ansi"
-        ],
-        "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
-        "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
-        ],
-        "pre-package-uninstall": [
-            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-                "laravel/telescope"
+            "providers": [
+                "Metafori\\Archeo\\Providers\\ArcheoServiceProvider",
+                "Metafori\\Core\\Providers\\CoreServiceProvider",
+                "Metafori\\Etno\\Providers\\EtnoServiceProvider",
+                "Metafori\\Opensearch\\Providers\\OpensearchServiceProvider"
             ]
         }
     },
@@ -119,11 +115,27 @@
     "prefer-stable": true,
     "repositories": [
         {
-            "type": "path",
-            "url": "app-modules/*",
             "options": {
                 "symlink": true
-            }
+            },
+            "type": "path",
+            "url": "app-modules/*"
+        },
+        {
+            "options": {
+                "symlink": true
+            },
+            "type": "path",
+            "url": "apps/*"
         }
-    ]
+    ],
+    "replace": {
+        "metafori/archeo": "self.version",
+        "metafori/archeomap": "self.version",
+        "metafori/core": "self.version",
+        "metafori/etno": "self.version",
+        "metafori/etnoskop": "self.version",
+        "metafori/opensearch": "self.version",
+        "metafori/art": "self.version"
+    }
 }

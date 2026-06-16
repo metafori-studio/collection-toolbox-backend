@@ -22,12 +22,17 @@
         devShells.default = pkgs.mkShell (
           metafori.devshell {
             inherit pkgs metafori;
-            enableDatabases = true;
-            enableMonitoring = true;
+            enablePhp = true;
+            enablePostgres = true;
+            enableValkey = false;
+            enableOpensearch = false;
+            enableMonitoring = false;
             enableStorage = true;
             enableXdebug = false;
             configOverrides = {
-              postgresDb = "collection_toolbox_backend";
+              projectName = "collection-toolbox-backend";
+              postgres.db = "collection_toolbox_backend";
+              s3Bucket = "collection-toolbox-assets";
             };
           }
         );

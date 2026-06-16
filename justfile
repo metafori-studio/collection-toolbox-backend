@@ -2,11 +2,8 @@ set shell := ["bash", "-c"]
 
 export PROJ_ROOT := env_var_or_default("PROJ_ROOT", `pwd`)
 
-setup:
-    @composer run setup
-
-run:
-    @composer run dev
+default:
+    @just --list
 
 start-storage:
     @start-storage
@@ -14,11 +11,23 @@ start-storage:
 stop-storage:
     @stop-storage
 
-start-databases:
-    @start-databases
+start-postgres:
+    @start-postgres
 
-stop-databases:
-    @stop-databases
+stop-postgres:
+    @stop-postgres
+
+start-valkey:
+    @start-valkey
+
+stop-valkey:
+    @stop-valkey
+
+start-opensearch:
+    @start-opensearch
+
+stop-opensearch:
+    @stop-opensearch
 
 start-monitoring:
     @start-monitoring

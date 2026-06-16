@@ -4,6 +4,7 @@ namespace Metafori\Core\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class IsAuthenticated
@@ -17,7 +18,7 @@ class IsAuthenticated
     {
         $response = $next($request);
 
-        if (auth()->check()) {
+        if (Auth::guard('web')->check()) {
             $response->headers->set('X-Is-Authenticated', 'true');
         }
 
