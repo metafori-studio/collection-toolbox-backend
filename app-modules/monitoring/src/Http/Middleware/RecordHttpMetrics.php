@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Prometheus\CollectorRegistry;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 final class RecordHttpMetrics
 {
@@ -30,6 +31,12 @@ final class RecordHttpMetrics
         } catch (\Throwable $e) {
             // Preserve the exception to re‑throw after metrics are recorded.
             $caught = $e;
+
+            // HTTP exceptions (e.g. 4xx) carry their real status code; record it
+            // instead of defaulting to 500 so they aren't mislabeled as server errors.
+            if ($e instanceof HttpExceptionInterface) {
+                $status = (string) $e->getStatusCode();
+            }
         } finally {
             $duration = (hrtime(true) - $start) / 1e9;
             try {
@@ -80,17 +87,38 @@ final class RecordHttpMetrics
     }
 
     /**
-     * Collapse numeric path segments (e.g. IDs) to ':id', so '/activities/12345'
-     * becomes '/activities/:id' instead of one time series per ID.
+     * Collapse high-cardinality path segments to placeholders so the unmatched
+     * fallback route doesn't spawn one time series per identifier. For example
+     * '/activities/12345' becomes '/activities/:id' and
+     * '/users/550e8400-e29b-41d4-a716-446655440000' becomes '/users/:uuid'.
      */
     private function normalizeFallbackPath(string $path): string
     {
         $segments = array_map(
-            fn (string $segment): string => ctype_digit($segment) ? ':id' : $segment,
+            $this->normalizeSegment(...),
             explode('/', trim($path, '/'))
         );
 
         return '/'.implode('/', $segments);
+    }
+
+    private function normalizeSegment(string $segment): string
+    {
+        if (ctype_digit($segment)) {
+            return ':id';
+        }
+
+        // RFC 4122 UUIDs.
+        if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $segment) === 1) {
+            return ':uuid';
+        }
+
+        // Long hex strings (e.g. hashes, tokens, ObjectIds).
+        if (strlen($segment) >= 16 && ctype_xdigit($segment)) {
+            return ':hex';
+        }
+
+        return $segment;
     }
 
     private function shouldRecord(Request $request): bool
@@ -102,7 +130,11 @@ final class RecordHttpMetrics
         $path = '/'.ltrim($request->path(), '/');
 
         foreach (config('prometheus.ignored_paths', []) as $prefix) {
-            if (str_starts_with($path, rtrim($prefix, '/'))) {
+            $prefix = rtrim($prefix, '/');
+
+            // Match on route boundaries so '/up' ignores '/up' and '/up/*' but
+            // not '/upload'.
+            if ($path === $prefix || str_starts_with($path, $prefix.'/')) {
                 return false;
             }
         }

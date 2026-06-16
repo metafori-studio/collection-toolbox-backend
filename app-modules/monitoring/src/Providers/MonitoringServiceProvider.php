@@ -71,7 +71,7 @@ class MonitoringServiceProvider extends ServiceProvider
         }
 
         $this->app->scoped(CollectorRegistry::class, fn (): CollectorRegistry => new CollectorRegistry(
-            new CacheAdapter(Cache::resolve($store)),
+            new CacheAdapter(Cache::store($store)),
             false,
         ));
     }
