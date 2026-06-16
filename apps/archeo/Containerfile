@@ -2,7 +2,6 @@
 FROM docker.io/node:24-alpine AS frontend-builder
 
 ARG FRONTEND_REF=main
-ARG VITE_REMOTE_URL
 
 WORKDIR /frontend
 # hadolint ignore=DL3019
@@ -13,7 +12,7 @@ RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-stu
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     --mount=type=secret,id=mapbox_token \
     npm ci && \
-    VITE_REMOTE_URL=${VITE_REMOTE_URL} VITE_MAPBOX_TOKEN=$(cat /run/secrets/mapbox_token) npm run build --workspace=apps/archeo
+    VITE_MAPBOX_TOKEN=$(cat /run/secrets/mapbox_token) npm run build --workspace=apps/archeo
 
 
 FROM docker.io/composer:2.9.5 AS vendor-builder
