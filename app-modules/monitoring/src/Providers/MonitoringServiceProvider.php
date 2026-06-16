@@ -7,10 +7,12 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Events\WorkerStarting;
 use Metafori\Monitoring\Http\Middleware\RecordHttpMetrics;
+use Metafori\Monitoring\Storage\CacheAdapter;
 use Prometheus\CollectorRegistry;
 use Spatie\Prometheus\Facades\Prometheus;
 
@@ -48,10 +50,30 @@ class MonitoringServiceProvider extends ServiceProvider
             return;
         }
 
+        $this->registerStorage();
         $this->bootRuntimeGauges();
         $this->bootDatabaseCollector();
         $this->bootQueueCollector();
         $this->bootOctaneCollector();
+    }
+
+    /**
+     * Rebind the registry onto our fixed cache adapter so scrapes actually render
+     * the persisted samples (spatie's stock LaravelCacheAdapter::collect() does not).
+     * When no cache store is configured, leave spatie's in-memory default in place.
+     */
+    private function registerStorage(): void
+    {
+        $store = config('prometheus.cache');
+
+        if ($store === null) {
+            return;
+        }
+
+        $this->app->scoped(CollectorRegistry::class, fn (): CollectorRegistry => new CollectorRegistry(
+            new CacheAdapter(Cache::resolve($store)),
+            false,
+        ));
     }
 
     private function bootRuntimeGauges(): void

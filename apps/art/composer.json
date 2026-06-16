@@ -8,7 +8,8 @@
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
         "metafori/core": "*",
-        "metafori/monitoring": "*"
+        "metafori/monitoring": "*",
+        "predis/predis": "^3.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

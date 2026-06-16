@@ -67,8 +67,30 @@ final class RecordHttpMetrics
             return 'unmatched';
         }
 
+        // The catch-all fallback route exposes a useless '{fallbackPlaceholder}' URI
+        // pattern, collapsing every unmatched path into a single label. Use the real
+        // request path so the route is meaningful, with numeric segments collapsed to
+        // ':id' to keep label cardinality bounded.
+        if ($route->isFallback) {
+            return $this->normalizeFallbackPath($request->path());
+        }
+
         // Use the URI pattern to avoid high-cardinality labels from real parameter values.
         return '/'.ltrim($route->uri(), '/');
+    }
+
+    /**
+     * Collapse numeric path segments (e.g. IDs) to ':id', so '/activities/12345'
+     * becomes '/activities/:id' instead of one time series per ID.
+     */
+    private function normalizeFallbackPath(string $path): string
+    {
+        $segments = array_map(
+            fn (string $segment): string => ctype_digit($segment) ? ':id' : $segment,
+            explode('/', trim($path, '/'))
+        );
+
+        return '/'.implode('/', $segments);
     }
 
     private function shouldRecord(Request $request): bool

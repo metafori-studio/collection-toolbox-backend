@@ -24,9 +24,9 @@
             inherit pkgs metafori;
             enablePhp = true;
             enablePostgres = true;
-            enableValkey = false;
+            enableValkey = true;
             enableOpensearch = false;
-            enableMonitoring = false;
+            enableMonitoring = true;
             enableStorage = true;
             enableXdebug = false;
             configOverrides = {

@@ -33,10 +33,10 @@ return [
     /*
      * Storage backend for metrics data:
      *   null       → in-memory only (data lost between requests; useful for local dev without any cache)
-     *   'database' → Laravel DB cache (works out of the box, no extra deps)
-     *   'redis'    → Redis cache (recommended for production — better throughput)
+     *   'database' → Laravel DB cache (no extra deps, but slow and clobbers under concurrency)
+     *   'redis'    → Redis cache (recommended; required for multi-worker setups like Octane/FrankenPHP)
      */
-    'cache' => env('PROMETHEUS_CACHE_STORE', 'database'),
+    'cache' => env('PROMETHEUS_CACHE_STORE', 'redis'),
 
     /*
      * Histogram bucket boundaries per collector type.
