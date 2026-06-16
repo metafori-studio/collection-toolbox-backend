@@ -70,10 +70,8 @@ jobs:
         if: steps.guard.outputs.skip != 'true'
         env:
           MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
-          VITE_REMOTE_URL: ${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
         run: |
           test -n "$MAPBOX_TOKEN" || { echo "Missing VITE_MAPBOX_TOKEN_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
-          test -n "$VITE_REMOTE_URL" || { echo "Missing VITE_REMOTE_URL_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
 
       - name: Set up Docker Buildx
         if: steps.guard.outputs.skip != 'true'
@@ -97,7 +95,6 @@ jobs:
           push: true
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
-            VITE_REMOTE_URL=${{ secrets[matrix.module == 'archeo' && 'VITE_REMOTE_URL_ARCHEO' || 'VITE_REMOTE_URL_ETNO'] }}
           secrets: |
             mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
