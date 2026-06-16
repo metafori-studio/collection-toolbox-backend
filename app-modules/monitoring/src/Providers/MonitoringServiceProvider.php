@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Providers;
+namespace Metafori\Monitoring\Providers;
 
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Octane\Events\WorkerStarting;
+use Metafori\Monitoring\Http\Middleware\RecordHttpMetrics;
 use Prometheus\CollectorRegistry;
 use Spatie\Prometheus\Facades\Prometheus;
 
-class MetricsServiceProvider extends ServiceProvider
+class MonitoringServiceProvider extends ServiceProvider
 {
     /** @var array<string, int> hrtime() start per job ID, kept in worker memory */
     private static array $jobStartTimes = [];
@@ -26,8 +29,21 @@ class MetricsServiceProvider extends ServiceProvider
      */
     private static bool $recordingDbMetric = false;
 
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../../config/prometheus.php', 'prometheus');
+    }
+
     public function boot(): void
     {
+        // Prepend RecordHttpMetrics so it wraps the entire middleware stack and
+        // captures the full request duration, including earlier global middleware.
+        // The middleware self-disables when monitoring is off, so it is always safe to register.
+        $kernel = $this->app->make(Kernel::class);
+        if ($kernel instanceof HttpKernel) {
+            $kernel->prependMiddleware(RecordHttpMetrics::class);
+        }
+
         if (! config('prometheus.enabled')) {
             return;
         }

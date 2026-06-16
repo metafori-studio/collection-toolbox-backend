@@ -28,6 +28,7 @@
         "sentry/sentry-laravel": "^4.25",
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-permission": "^7.2",
+        "spatie/laravel-prometheus": "^1.6",
         "spatie/laravel-translatable": "^6.12",
         "tpetry/laravel-postgresql-enhanced": "^3.7"
     },
@@ -69,6 +70,7 @@
             ],
             "Metafori\\Etno\\Database\\Factories\\": "app-modules/etno/database/factories/",
             "Metafori\\Etno\\Database\\Seeders\\": "apps/etno/database/seeders/",
+            "Metafori\\Monitoring\\": "app-modules/monitoring/src/",
             "Metafori\\Opensearch\\": "app-modules/opensearch/src/",
             "Metafori\\Opensearch\\Database\\Factories\\": "app-modules/opensearch/database/factories/",
             "Metafori\\Opensearch\\Database\\Seeders\\": "app-modules/opensearch/database/seeders/"
@@ -94,6 +96,7 @@
                 "Metafori\\Archeo\\Providers\\ArcheoServiceProvider",
                 "Metafori\\Core\\Providers\\CoreServiceProvider",
                 "Metafori\\Etno\\Providers\\EtnoServiceProvider",
+                "Metafori\\Monitoring\\Providers\\MonitoringServiceProvider",
                 "Metafori\\Opensearch\\Providers\\OpensearchServiceProvider"
             ]
         }
@@ -135,6 +138,7 @@
         "metafori/core": "self.version",
         "metafori/etno": "self.version",
         "metafori/etnoskop": "self.version",
+        "metafori/monitoring": "self.version",
         "metafori/opensearch": "self.version",
         "metafori/art": "self.version"
     }
