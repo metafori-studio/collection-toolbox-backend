@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.3.0...v2.4.0) (2026-06-17)
+
+
+### Features
+
+* **etno:** multilingual ui ([6ee95bd](https://github.com/metafori-studio/collection-toolbox-backend/commit/6ee95bd3007d3f87f3c9226aa2cb086b6756bb02))
+
 ## [2.3.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.2.0...v2.3.0) (2026-06-16)
 
 
