@@ -38,3 +38,7 @@ Thumbs.db
 /boost.json
 /opencode.json
 /.crush
+
+**/caddy
+frankenphp
+frankenphp-worker.php
