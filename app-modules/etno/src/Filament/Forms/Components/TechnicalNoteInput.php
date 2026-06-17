@@ -13,6 +13,6 @@ class TechnicalNoteInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Technical Note');
+        $this->label(__('etno::ui.fields.technical_note'));
     }
 }

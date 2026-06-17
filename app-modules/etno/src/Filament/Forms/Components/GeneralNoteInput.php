@@ -13,6 +13,6 @@ class GeneralNoteInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('General Note');
+        $this->label(__('etno::ui.fields.general_note'));
     }
 }

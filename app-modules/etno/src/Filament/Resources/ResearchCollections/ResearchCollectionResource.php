@@ -22,6 +22,21 @@ class ResearchCollectionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    public static function getModelLabel(): string
+    {
+        return __('etno::ui.resources.research_collection.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('etno::ui.resources.research_collection.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('etno::ui.resources.research_collection.navigation_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ResearchCollectionForm::configure($schema);

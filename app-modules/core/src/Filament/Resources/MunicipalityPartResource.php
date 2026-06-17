@@ -20,20 +20,40 @@ class MunicipalityPartResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedHomeModern;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Localities';
-
     protected static ?int $navigationSort = 5;
+
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.municipality_part.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.municipality_part.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.municipality_part.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('core::ui.navigation_groups.localities');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Select::make('municipality_id')
+                    ->label(__('core::ui.fields.municipality'))
                     ->relationship('municipality', 'name')
                     ->searchable()
                     ->required()
                     ->preload(),
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
@@ -45,9 +65,11 @@ class MunicipalityPartResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('municipality.name')
+                    ->label(__('core::ui.fields.municipality'))
                     ->searchable()
                     ->sortable(),
             ])

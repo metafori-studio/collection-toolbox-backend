@@ -20,7 +20,7 @@ class DescriptiveInformationSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Descriptive Information')
+        $this->heading(__('etno::ui.sections.descriptive_information'))
             ->schema(fn () => [
                 TranslatableTabs::make()
                     ->schema([

@@ -13,6 +13,6 @@ class TitleInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Title');
+        $this->label(__('etno::ui.fields.title'));
     }
 }

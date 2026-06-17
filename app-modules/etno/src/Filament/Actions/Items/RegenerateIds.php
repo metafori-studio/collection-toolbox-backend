@@ -15,7 +15,7 @@ class RegenerateIds extends Action
     {
         parent::setUp();
 
-        $this->label('Regenerate IDs')
+        $this->label(__('etno::ui.actions.regenerate_ids'))
             ->icon(Heroicon::ArrowPath)
             ->visible(fn (Get $get) => ! empty($get->array('items')))
             ->action($this->regenerateIds(...));

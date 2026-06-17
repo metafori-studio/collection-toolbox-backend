@@ -15,15 +15,17 @@ class ItemsTable
         return $table
             ->columns([
                 TextColumn::make('identifier')
-                    ->label('Composite ID')
+                    ->label(__('etno::ui.fields.composite_id'))
                     ->fontFamily(FontFamily::Mono)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('title')
+                    ->label(__('etno::ui.fields.title'))
                     ->searchable()
                     ->sortable()
                     ->limit(50),
                 TextColumn::make('type')
+                    ->label(__('etno::ui.fields.type'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')

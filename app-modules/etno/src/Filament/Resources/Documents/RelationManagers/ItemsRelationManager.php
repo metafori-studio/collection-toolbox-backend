@@ -27,7 +27,7 @@ class ItemsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make(),
                 Action::make('create_from_files')
-                    ->label('Create from files')
+                    ->label(__('etno::ui.actions.create_from_files'))
                     ->icon(Heroicon::OutlinedDocumentArrowUp)
                     ->url(fn (RelationManager $livewire): string => ItemResource::getUrl(
                         'create-from-files',

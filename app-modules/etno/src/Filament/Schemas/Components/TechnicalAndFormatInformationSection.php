@@ -16,7 +16,7 @@ class TechnicalAndFormatInformationSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Technical and Format Information')
+        $this->heading(__('etno::ui.sections.technical_and_format_information'))
             ->schema(fn () => [
                 ExtentsRepeater::make('extents')
                     ->inheritable($this->inheritable)

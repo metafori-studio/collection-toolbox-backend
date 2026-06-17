@@ -13,6 +13,6 @@ class TermsOfUseInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Terms of Use');
+        $this->label(__('etno::ui.fields.terms_of_use'));
     }
 }

@@ -14,7 +14,7 @@ class AdditionalNotesSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Additional Notes')
+        $this->heading(__('etno::ui.sections.additional_notes'))
             ->schema(fn () => [
                 GeneralNoteInput::make('general_note')
                     ->inheritable($this->inheritable)

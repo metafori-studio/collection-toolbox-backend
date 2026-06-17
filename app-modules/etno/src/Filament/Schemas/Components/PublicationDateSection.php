@@ -7,7 +7,7 @@ class PublicationDateSection extends PrecisionDateSection
     protected function setUp(): void
     {
         $this->name('publication_date')
-            ->heading('Publication');
+            ->heading(__('etno::ui.sections.publication'));
 
         parent::setUp();
     }

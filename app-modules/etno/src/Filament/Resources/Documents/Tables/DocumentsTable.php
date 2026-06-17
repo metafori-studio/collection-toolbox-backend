@@ -15,15 +15,17 @@ class DocumentsTable
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID')
+                    ->label(__('etno::ui.fields.id'))
                     ->fontFamily(FontFamily::Mono)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('title')
+                    ->label(__('etno::ui.fields.title'))
                     ->searchable()
                     ->sortable()
                     ->limit(50),
                 TextColumn::make('type')
+                    ->label(__('etno::ui.fields.type'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')

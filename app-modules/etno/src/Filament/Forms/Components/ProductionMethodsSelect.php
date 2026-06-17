@@ -14,7 +14,7 @@ class ProductionMethodsSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Production Methods')
+        $this->label(__('etno::ui.fields.production_methods'))
             ->options(ProductionMethod::class)
             ->sortedOptions()
             ->multiple()

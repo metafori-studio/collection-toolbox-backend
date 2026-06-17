@@ -21,7 +21,7 @@ class MediaRepeater extends Repeater
         $transcriptActions = collect(TranscriptFormat::cases())
             ->map(
                 fn (TranscriptFormat $format) => Action::make("has_{$format->value}")
-                    ->tooltip("{$format->getLabel()} Transcript Attached")
+                    ->tooltip(__('etno::ui.tooltips.transcript_attached', ['format' => $format->getLabel()]))
                     ->icon(Heroicon::CheckCircle)
                     ->color('primary')
                     ->disabled(true)
@@ -31,7 +31,7 @@ class MediaRepeater extends Repeater
         $this->extraItemActions([
             ...$transcriptActions,
             Action::make('toggle_details')
-                ->label('Transcript')
+                ->label(__('etno::ui.fields.transcript'))
                 ->icon(Heroicon::PencilSquare)
                 ->link()
                 ->color('gray')
@@ -45,7 +45,7 @@ class MediaRepeater extends Repeater
                     ->unique();
 
                 if ($mediaTypes->count() > 1) {
-                    $fail('The media type of the file must match the other media files.');
+                    $fail(__('etno::ui.validation.mixed_media_types'));
                 }
             })
             ->schema([

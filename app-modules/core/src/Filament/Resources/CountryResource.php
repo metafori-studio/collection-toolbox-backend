@@ -19,15 +19,34 @@ class CountryResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedGlobeEuropeAfrica;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Localities';
-
     protected static ?int $navigationSort = 1;
+
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.country.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.country.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.country.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('core::ui.navigation_groups.localities');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
@@ -39,6 +58,7 @@ class CountryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
             ])

@@ -13,9 +13,10 @@ class OrganizationTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ror_id')
-                    ->label('ROR ID')
+                    ->label(__('core::ui.fields.ror_id'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

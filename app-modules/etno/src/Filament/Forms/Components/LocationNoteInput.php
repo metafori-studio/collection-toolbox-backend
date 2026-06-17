@@ -13,6 +13,6 @@ class LocationNoteInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Location Note');
+        $this->label(__('etno::ui.fields.location_note'));
     }
 }

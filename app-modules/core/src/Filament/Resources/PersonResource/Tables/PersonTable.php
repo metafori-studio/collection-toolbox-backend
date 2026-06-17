@@ -13,13 +13,15 @@ class PersonTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('family_name')
+                    ->label(__('core::ui.fields.family_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('given_name')
+                    ->label(__('core::ui.fields.given_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('orcid')
-                    ->label('ORCID')
+                    ->label(__('core::ui.fields.orcid'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')

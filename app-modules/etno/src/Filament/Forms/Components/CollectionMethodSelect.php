@@ -14,7 +14,7 @@ class CollectionMethodSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Collection Method')
+        $this->label(__('etno::ui.fields.collection_method'))
             ->options(CollectionMethod::class)
             ->sortedOptions()
             ->searchable();

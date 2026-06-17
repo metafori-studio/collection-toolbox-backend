@@ -15,7 +15,7 @@ class ResearchCollectionSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Research Collections')
+        $this->label(__('etno::ui.fields.research_collections'))
             ->relationship('researchCollections', 'title')
             ->multiple()
             ->searchable()

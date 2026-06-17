@@ -13,6 +13,6 @@ class ContentNoteInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Content Note');
+        $this->label(__('etno::ui.fields.content_note'));
     }
 }

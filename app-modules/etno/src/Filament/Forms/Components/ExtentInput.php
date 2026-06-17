@@ -10,7 +10,7 @@ class ExtentInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Extent')
+        $this->label(__('etno::ui.fields.extent'))
             ->maxLength(255);
     }
 }

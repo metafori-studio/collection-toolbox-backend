@@ -13,7 +13,7 @@ class DoiInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('DOI')
+        $this->label(__('etno::ui.fields.doi'))
             ->placeholder('10.xxxx/xxxx')
             ->maxLength(255);
     }

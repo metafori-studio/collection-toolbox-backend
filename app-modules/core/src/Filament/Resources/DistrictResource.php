@@ -20,20 +20,40 @@ class DistrictResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedMap;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Localities';
-
     protected static ?int $navigationSort = 3;
+
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.district.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.district.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.district.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('core::ui.navigation_groups.localities');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Select::make('region_id')
+                    ->label(__('core::ui.fields.region'))
                     ->relationship('region', 'name')
                     ->searchable()
                     ->required()
                     ->preload(),
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
@@ -45,9 +65,11 @@ class DistrictResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('region.name')
+                    ->label(__('core::ui.fields.region'))
                     ->searchable()
                     ->sortable(),
             ])

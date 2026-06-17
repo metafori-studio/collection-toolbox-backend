@@ -10,7 +10,7 @@ class IdInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('ID')
+        $this->label(__('etno::ui.fields.id'))
             ->required()
             ->maxLength(255)
             ->disabled(fn ($record) => $record !== null);
