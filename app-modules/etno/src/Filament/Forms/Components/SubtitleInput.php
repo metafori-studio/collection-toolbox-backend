@@ -13,6 +13,6 @@ class SubtitleInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Subtitle');
+        $this->label(__('etno::ui.fields.subtitle'));
     }
 }

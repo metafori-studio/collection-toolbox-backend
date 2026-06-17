@@ -23,7 +23,7 @@ class UploadMediaAction extends Action
     {
         parent::setUp();
 
-        $this->label('Upload Media')
+        $this->label(__('etno::ui.actions.upload_media'))
             ->icon(Heroicon::OutlinedArrowUpTray)
             ->form([
                 FileUpload::make('files')
@@ -56,7 +56,7 @@ class UploadMediaAction extends Action
                             ->all();
 
                         if ($mediaFiles->isEmpty() && $transcripts->isNotEmpty()) {
-                            $fail('Cannot upload transcripts without corresponding media files.');
+                            $fail(__('etno::ui.validation.transcripts_without_media'));
                         }
                     }),
 
@@ -72,7 +72,7 @@ class UploadMediaAction extends Action
                             ->unique();
 
                         if ($mediaTypes->count() > 1) {
-                            $fail("The media type of the file must match the other item's media files.");
+                            $fail(__('etno::ui.validation.mixed_media_types_item'));
                         }
                     }),
             ])

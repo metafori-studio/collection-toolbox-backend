@@ -15,7 +15,7 @@ class GeographicInformationSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Geographic Information')
+        $this->heading(__('etno::ui.sections.geographic_information'))
             ->schema(fn () => [
                 LocalitySelect::make('locality')
                     ->inheritable($this->inheritable),

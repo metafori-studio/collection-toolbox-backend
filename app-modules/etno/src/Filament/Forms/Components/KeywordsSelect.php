@@ -15,7 +15,7 @@ class KeywordsSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Keywords')
+        $this->label(__('etno::ui.fields.keywords'))
             ->relationship('keywords', 'name')
             ->multiple()
             ->searchable()

@@ -14,12 +14,15 @@ class UserTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.user_name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
+                    ->label(__('core::ui.fields.email'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('roles.enum')
+                    ->label(__('core::ui.fields.roles'))
                     ->badge(),
                 TextColumn::make('created_at')
                     ->dateTime()

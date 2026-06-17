@@ -16,7 +16,7 @@ class OriginatorsRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->label('Originators')
+        $this->label(__('etno::ui.fields.originators'))
             ->relationship('originators')
             ->schema([
                 PersonSelect::make('person_id')
@@ -27,11 +27,12 @@ class OriginatorsRepeater extends Repeater
                     ->live()
                     ->withOptionForm()
                     ->disabled(fn (Get $get) => collect($get('label'))->filter()->isNotEmpty())
-                    ->helperText('Selecting a person will disable the manual label field.')
+                    ->helperText(__('etno::ui.helpers.originators.person_helper'))
                     ->required(fn (Get $get) => collect($get('label'))->filter()->isEmpty()),
                 TextInput::make('label')
+                    ->label(__('etno::ui.fields.originators_label'))
                     ->maxLength(255)
-                    ->helperText('Entering a manual label will disable the person selection.')
+                    ->helperText(__('etno::ui.helpers.originators.label_helper'))
                     ->translatableTabs()
                     ->live()
                     ->disabled(fn (Get $get) => filled($get('person_id')))

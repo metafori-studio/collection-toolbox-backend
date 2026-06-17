@@ -23,7 +23,7 @@ class ToggleInheritanceAction extends Action
     {
         parent::setUp();
 
-        $this->label('Toggle inheritance')
+        $this->label(__('etno::ui.actions.toggle_inheritance'))
             ->iconButton()
             ->color($this->toggleColor(...))
             ->icon($this->toggleIcon(...))
@@ -43,7 +43,7 @@ class ToggleInheritanceAction extends Action
 
     public function toggleTooltip(): string
     {
-        return $this->isInherited() ? 'Override' : 'Inherit';
+        return $this->isInherited() ? __('etno::ui.tooltips.override') : __('etno::ui.tooltips.inherit');
     }
 
     public function isInherited(): bool

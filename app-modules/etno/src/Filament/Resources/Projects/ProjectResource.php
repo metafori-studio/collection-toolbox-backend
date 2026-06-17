@@ -22,6 +22,21 @@ class ProjectResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
+    public static function getModelLabel(): string
+    {
+        return __('etno::ui.resources.project.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('etno::ui.resources.project.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('etno::ui.resources.project.navigation_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ProjectForm::configure($schema);

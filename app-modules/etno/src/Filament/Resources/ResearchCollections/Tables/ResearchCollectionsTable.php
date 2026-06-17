@@ -13,6 +13,7 @@ class ResearchCollectionsTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('etno::ui.fields.title'))
                     ->searchable()
                     ->sortable(),
             ])

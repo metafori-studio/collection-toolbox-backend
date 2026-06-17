@@ -16,7 +16,7 @@ class RightsAndAccessSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Rights and Access')
+        $this->heading(__('etno::ui.sections.rights_and_access'))
             ->schema(fn () => [
                 AccessRightsSelect::make('access_rights')
                     ->inheritable($this->inheritable),

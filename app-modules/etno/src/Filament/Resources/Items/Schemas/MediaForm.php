@@ -25,8 +25,8 @@ class MediaForm
         return collect(TranscriptFormat::cases())
             ->map(
                 fn (TranscriptFormat $format) => TranscriptTextarea::make("custom_properties.transcripts.{$format->value}")
-                    ->label("Transcript ({$format->getLabel()})")
-                    ->placeholder("You can drag & drop a {$format->getLabel()} file here...")
+                    ->label(__('etno::ui.fields.transcript_label', ['format' => $format->getLabel()]))
+                    ->placeholder(__('etno::ui.fields.transcript_placeholder', ['format' => $format->getLabel()]))
             );
     }
 }

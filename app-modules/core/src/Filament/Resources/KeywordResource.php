@@ -20,6 +20,21 @@ class KeywordResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedTag;
 
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.keyword.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.keyword.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.keyword.navigation_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return KeywordForm::configure($schema);

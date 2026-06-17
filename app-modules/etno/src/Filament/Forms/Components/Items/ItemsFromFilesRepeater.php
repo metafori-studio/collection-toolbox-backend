@@ -21,7 +21,7 @@ class ItemsFromFilesRepeater extends Repeater
 
         $transcriptActions = array_map(
             fn (TranscriptFormat $format) => Action::make("has_{$format->value}")
-                ->tooltip("{$format->getLabel()} Transcript Attached")
+                ->tooltip(__('etno::ui.tooltips.transcript_attached', ['format' => $format->getLabel()]))
                 ->icon(Heroicon::CheckCircle)
                 ->color('primary')
                 ->disabled()
@@ -32,9 +32,9 @@ class ItemsFromFilesRepeater extends Repeater
         $this
             ->extraItemActions($transcriptActions)
             ->table([
-                TableColumn::make('New Item ID')
+                TableColumn::make(__('etno::ui.fields.new_item_id'))
                     ->markAsRequired(),
-                TableColumn::make('Media Files')
+                TableColumn::make(__('etno::ui.fields.media_files'))
                     ->width('80%'),
             ])
             ->compact()

@@ -19,6 +19,21 @@ class PersonResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-user-group';
 
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.person.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.person.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.person.navigation_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PersonForm::configure($schema);

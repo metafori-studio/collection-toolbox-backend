@@ -13,7 +13,7 @@ class LocalitySelect extends CoreLocalitySelect
     {
         parent::setUp();
 
-        $this->label('Locality')
+        $this->label(__('etno::ui.fields.locality'))
             ->searchable()
             ->preload();
     }

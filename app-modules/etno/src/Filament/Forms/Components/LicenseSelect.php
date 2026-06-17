@@ -14,7 +14,7 @@ class LicenseSelect extends Select
     {
         parent::setUp();
 
-        $this->label('License')
+        $this->label(__('etno::ui.fields.license'))
             ->options(License::class)
             ->searchable();
     }

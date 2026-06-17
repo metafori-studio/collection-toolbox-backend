@@ -34,7 +34,15 @@ class CreateItemsFromFiles extends Page implements HasDocument, HasForms
 
     protected static string $resource = ItemResource::class;
 
-    protected static ?string $breadcrumb = 'Create From Files';
+    public function getBreadcrumb(): string
+    {
+        return __('etno::ui.pages.create_items_from_files.breadcrumb');
+    }
+
+    public function getTitle(): string
+    {
+        return __('etno::ui.pages.create_items_from_files.breadcrumb');
+    }
 
     public ?array $data = [];
 
@@ -43,7 +51,7 @@ class CreateItemsFromFiles extends Page implements HasDocument, HasForms
         return $form
             ->components([
                 Wizard::make([
-                    Step::make('Upload Files')
+                    Step::make(__('etno::ui.pages.create_items_from_files.steps.upload_files'))
                         ->schema([
                             FileUpload::make('files')
                                 ->acceptedFileTypes([
@@ -67,7 +75,7 @@ class CreateItemsFromFiles extends Page implements HasDocument, HasForms
 
                             $set('items', $items);
                         }),
-                    Step::make('Review & Rearrange')
+                    Step::make(__('etno::ui.pages.create_items_from_files.steps.review_rearrange'))
                         ->schema([
                             RegenerateIds::make('regenerate_ids'),
                             ItemsFromFilesRepeater::make('items'),
@@ -77,7 +85,7 @@ class CreateItemsFromFiles extends Page implements HasDocument, HasForms
                 ])
                     ->submitAction(
                         Action::make('create')
-                            ->label('Create Items')
+                            ->label(__('etno::ui.actions.create_items'))
                             ->submit('createFromFiles')
                     ),
             ])

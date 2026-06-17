@@ -14,7 +14,7 @@ class AccrualMethodSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Accrual Method')
+        $this->label(__('etno::ui.fields.accrual_method'))
             ->options(AccrualMethod::class)
             ->sortedOptions()
             ->searchable();

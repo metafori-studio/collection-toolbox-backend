@@ -14,7 +14,7 @@ class LanguageSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Language')
+        $this->label(__('etno::ui.fields.language'))
             ->options(Language::class)
             ->sortedOptions()
             ->searchable();

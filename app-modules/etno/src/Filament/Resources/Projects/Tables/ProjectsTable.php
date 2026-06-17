@@ -13,10 +13,11 @@ class ProjectsTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->label(__('etno::ui.fields.title'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('doi')
-                    ->label('DOI')
+                    ->label(__('etno::ui.fields.doi'))
                     ->searchable()
                     ->sortable(),
             ])

@@ -13,7 +13,7 @@ class AbstractInput extends Textarea
     {
         parent::setUp();
 
-        $this->label('Abstract')
+        $this->label(__('etno::ui.fields.abstract'))
             ->rows(5);
     }
 }

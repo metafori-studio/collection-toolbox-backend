@@ -35,7 +35,7 @@ class MediaRelationManager extends RelationManager
                 $count = $itemRepository->getProcessingMediaCount($livewire->getOwnerRecord());
 
                 return $count > 0
-                    ? trans_choice(':count media file is currently being processed in the background.|:count media files are currently being processed in the background.', $count)
+                    ? trans_choice('etno::ui.notifications.processing_media', $count)
                     : null;
             })
             ->columns([
@@ -45,12 +45,12 @@ class MediaRelationManager extends RelationManager
                 TextColumn::make('mime_type')
                     ->limit(16)
                     ->tooltip(fn (Media $record): string => $record->mime_type)
-                    ->label('Type')
+                    ->label(__('etno::ui.fields.type'))
                     ->badge(),
                 TextColumn::make('human_readable_size')
-                    ->label('Size'),
+                    ->label(__('etno::ui.fields.size')),
                 TextColumn::make('custom_properties.transcripts')
-                    ->label('Transcripts')
+                    ->label(__('etno::ui.fields.transcripts'))
                     ->getStateUsing(fn (Media $record) => collect(TranscriptFormat::cases())
                         ->filter(fn (TranscriptFormat $format) => $record->getCustomProperty("transcripts.{$format->value}") !== null)
                     )

@@ -14,7 +14,7 @@ class ExtentsRepeater extends Repeater
     {
         parent::setUp();
 
-        $this->label('Extents')
+        $this->label(__('etno::ui.fields.extents'))
             ->reorderableWithButtons()
             ->defaultItems(0)
             ->schema([
