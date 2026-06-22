@@ -80,7 +80,7 @@ jobs:
       - name: Check module relevance
         id: guard
         env:
-          CHANGED: ${{ matrix.module == 'archeo' && needs.changes.outputs.archeo || needs.changes.outputs.etno }}
+          CHANGED: ${{ needs.changes.outputs[matrix.module] }}
         run: |
           if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
@@ -111,9 +111,9 @@ jobs:
       - name: Validate required secrets
         if: steps.guard.outputs.skip != 'true'
         env:
-          MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
+          MAPBOX_TOKEN: ${{ secrets[steps.guard.outputs.mapbox_secret] }}
         run: |
-          test -n "$MAPBOX_TOKEN" || { echo "Missing VITE_MAPBOX_TOKEN_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
+          test -n "$MAPBOX_TOKEN" || { echo "Missing ${{ steps.guard.outputs.mapbox_secret }}"; exit 1; }
 
       - name: Set up Docker Buildx
         if: steps.guard.outputs.skip != 'true'
@@ -138,7 +138,7 @@ jobs:
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
           secrets: |
-            mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
+            mapbox_token=${{ secrets[steps.guard.outputs.mapbox_secret] }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
