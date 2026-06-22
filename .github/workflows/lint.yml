@@ -1,0 +1,49 @@
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+    - name: Install nixfmt
+      run: |
+        curl -L https://github.com/NixOS/nixfmt/releases/download/v1.2.0/nixfmt \
+          -o /usr/local/bin/nixfmt
+        echo "aa43e06e2e98d07f9393a8dc73978e0df79bad15d7f84fcd838e15557eb056ee  /usr/local/bin/nixfmt" \
+          | sha256sum --check
+        chmod +x /usr/local/bin/nixfmt
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+      with:
+        php-version: '8.5'
+        extensions: ctype, curl, dom, fileinfo, filter, hash, mbstring, openssl, pcre, pdo, pdo_pgsql, session, tokenizer, xml
+        coverage: none
+
+    - name: Install root composer packages (for PHPStan, Pint, monorepo-builder)
+      run: composer install
+
+    - name: Install per-app composer packages (PHPStan analyses every app)
+      run: |
+        for app in archeo art etno; do
+          composer install --working-dir="apps/$app"
+        done
+
+    - name: Run prek on all files (PHPStan, Laravel Pint, nixfmt, monorepo-builder)
+      uses: j178/prek-action@0bb87d7f00b0c99306c8bcb8b8beba1eb581c037 # v1.1.1
+      with:
+        prek-version: '0.3.4'
