@@ -39,8 +39,8 @@ jobs:
 
     - name: Install per-app composer packages (PHPStan analyses every app)
       run: |
-        for app in archeo art etno; do
-          composer install --working-dir="apps/$app"
+        for dir in apps/*/; do
+          composer install --working-dir="$dir" --no-interaction --no-progress
         done
 
     - name: Run prek on all files (PHPStan, Laravel Pint, nixfmt, monorepo-builder)
