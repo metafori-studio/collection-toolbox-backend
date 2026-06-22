@@ -1,5 +1,44 @@
 # Changelog
 
+## [2.4.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.3.0...v2.4.0) (2026-06-17)
+
+
+### Features
+
+* **etno:** multilingual ui ([6ee95bd](https://github.com/metafori-studio/collection-toolbox-backend/commit/6ee95bd3007d3f87f3c9226aa2cb086b6756bb02))
+
+## [2.3.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.2.0...v2.3.0) (2026-06-16)
+
+
+### Features
+
+* add initial feature tests for archeo and etno applications ([30698b6](https://github.com/metafori-studio/collection-toolbox-backend/commit/30698b6cd353868bf8074cd4fa4c7bc9219f43e1))
+* **art:** install filament ([db27e69](https://github.com/metafori-studio/collection-toolbox-backend/commit/db27e69507ae6d795dd7cf9186058105b54f8994))
+* **core:** add optional basic authentication middleware to the frontend fallback route ([c554692](https://github.com/metafori-studio/collection-toolbox-backend/commit/c5546928cf47901420b28a07518e20b7e3c95d0a))
+* **etno:** add document show api ([750700d](https://github.com/metafori-studio/collection-toolbox-backend/commit/750700d5f2c0a97b30e59bce57fb173838c26ead))
+* **etno:** api filter items by document ([458deb4](https://github.com/metafori-studio/collection-toolbox-backend/commit/458deb40c650b213d29fe9ba348f428de2f3dbb9))
+* **etno:** api filter items by document ([7c77202](https://github.com/metafori-studio/collection-toolbox-backend/commit/7c77202168ad1a69d749502ccecc85036284d574))
+* lookup for autoload, cleanup justfiles ([1379731](https://github.com/metafori-studio/collection-toolbox-backend/commit/1379731f4168fbd24ee4058e27e3f9cb569ca47c))
+* move npm packages, clean composer scripts ([a45aa4e](https://github.com/metafori-studio/collection-toolbox-backend/commit/a45aa4ea014470cacf5a8d4d48b71d81eca3aa95))
+* **nix:** split modules ([#167](https://github.com/metafori-studio/collection-toolbox-backend/issues/167)) ([d9056b8](https://github.com/metafori-studio/collection-toolbox-backend/commit/d9056b8dfdf20db51b53e22096fdaaaebb492010))
+* update release-please to match structure ([634ebce](https://github.com/metafori-studio/collection-toolbox-backend/commit/634ebcecda0dbf6dbb69db806d3d170fbe221be7))
+
+
+### Bug Fixes
+
+* **archeo:** stop storing the whole xls sheet in a single array ([#148](https://github.com/metafori-studio/collection-toolbox-backend/issues/148)) ([d3d795c](https://github.com/metafori-studio/collection-toolbox-backend/commit/d3d795c4ff62f1acb9e33c5603fb778520adfa15))
+* **ci:** missing mapbox_token in container ([#132](https://github.com/metafori-studio/collection-toolbox-backend/issues/132)) ([a93a919](https://github.com/metafori-studio/collection-toolbox-backend/commit/a93a9198788f07cf24c170fb5c8a7b6813a048f5))
+* **ci:** phpstan config and bootstrap ([0c31986](https://github.com/metafori-studio/collection-toolbox-backend/commit/0c3198655874076139d54b8ed57388f02b8b057d))
+* **core:** change set password route ([d4f13e0](https://github.com/metafori-studio/collection-toolbox-backend/commit/d4f13e069a5bec17db973d138a73c7c8db8a62fe))
+* **core:** change set password route ([fd516f6](https://github.com/metafori-studio/collection-toolbox-backend/commit/fd516f6ce7e9c36decfadd265bdcfa2fe03908e1))
+* **core:** login 403 error response when request is not stateful ([8b6c049](https://github.com/metafori-studio/collection-toolbox-backend/commit/8b6c0495fa417205983cdb0c72967200f0af57c8))
+* **core:** login 403 error response when request is not stateful ([91b0b12](https://github.com/metafori-studio/collection-toolbox-backend/commit/91b0b1231589b9c45c88f075f8daa59df4309c53))
+* **core:** use web guard for auth check ([6212ea5](https://github.com/metafori-studio/collection-toolbox-backend/commit/6212ea534d6114a4aebe93edb19e8c458d380abd))
+* **etno:** init processing media count ([78bde8e](https://github.com/metafori-studio/collection-toolbox-backend/commit/78bde8e1891345f8ec758082e6353c8ea466ab8d))
+* **etno:** invalidate map points cache when locality is inherited ([b129a20](https://github.com/metafori-studio/collection-toolbox-backend/commit/b129a20f7ccf69f888af9d3218d99fd56047d204))
+* **nix:** aarch64 go build is a gift that keeps on giving ([#168](https://github.com/metafori-studio/collection-toolbox-backend/issues/168)) ([855f0a4](https://github.com/metafori-studio/collection-toolbox-backend/commit/855f0a458ff5a43c9ed0499da6c95a68bb565638))
+* remove VITE_REMOTE_URL from builds ([#171](https://github.com/metafori-studio/collection-toolbox-backend/issues/171)) ([a375ea0](https://github.com/metafori-studio/collection-toolbox-backend/commit/a375ea0d662498e808d4a4384294af80751ba5d4))
+
 ## [2.2.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.1.0...v2.2.0) (2026-04-26)
 
 

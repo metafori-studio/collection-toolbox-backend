@@ -19,7 +19,7 @@ class BasicInformationSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Basic Information')
+        $this->heading(__('etno::ui.sections.basic_information'))
             ->schema(fn (Component $livewire) => [
                 $livewire->parentRecord
                     ? SuffixInput::make('suffix')

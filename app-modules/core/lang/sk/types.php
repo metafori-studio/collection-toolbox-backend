@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Country' => 'Krajina',
+    'Country' => 'Štát',
     'Region' => 'Kraj',
     'District' => 'Okres',
     'Municipality' => 'Obec',

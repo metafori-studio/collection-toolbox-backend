@@ -2,12 +2,12 @@
 
 namespace Metafori\Archeo\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
+use Metafori\Archeo\Http\Controllers\Controller;
 use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
 use Metafori\Archeo\Http\Requests\Api\ActivityIndexRequest;
 use Metafori\Archeo\Http\Resources\ActivityMapPointResource;

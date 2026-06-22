@@ -7,7 +7,7 @@ class SubmissionDateSection extends PrecisionDateSection
     protected function setUp(): void
     {
         $this->name('submission_date')
-            ->heading('Submission');
+            ->heading(__('etno::ui.sections.submission'));
 
         parent::setUp();
     }

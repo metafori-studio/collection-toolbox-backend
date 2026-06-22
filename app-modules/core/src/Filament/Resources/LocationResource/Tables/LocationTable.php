@@ -14,15 +14,18 @@ class LocationTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('parent.name')
-                    ->label('Parent')
-                    ->placeholder('None')
+                    ->label(__('core::ui.fields.parent'))
+                    ->placeholder(__('core::ui.placeholders.none'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('latitude'),
-                TextColumn::make('longitude'),
+                TextColumn::make('latitude')
+                    ->label(__('core::ui.fields.latitude')),
+                TextColumn::make('longitude')
+                    ->label(__('core::ui.fields.longitude')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

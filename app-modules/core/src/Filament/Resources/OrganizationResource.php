@@ -19,6 +19,21 @@ class OrganizationResource extends Resource
 
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-building-office-2';
 
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.organization.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.organization.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.organization.navigation_label');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return OrganizationForm::configure($schema);

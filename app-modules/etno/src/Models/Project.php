@@ -5,12 +5,21 @@ namespace Metafori\Etno\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Metafori\Etno\Database\Factories\ProjectFactory;
 use Spatie\Translatable\HasTranslations;
 use Stringable;
 
 class Project extends Model implements Stringable
 {
     use HasFactory, HasTranslations, SoftDeletes;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): ProjectFactory
+    {
+        return ProjectFactory::new();
+    }
 
     protected $table = 'etno_projects';
 

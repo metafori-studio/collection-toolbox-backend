@@ -49,6 +49,7 @@ class PrecisionDateSection extends Section
     protected function createPrecisionComponent(): Component
     {
         return Select::make($this->getPrecisionPath())
+            ->label(__('core::ui.fields.precision'))
             ->options(DatePrecision::class)
             ->default(DatePrecision::Day)
             ->selectablePlaceholder(false)
@@ -59,7 +60,7 @@ class PrecisionDateSection extends Section
     protected function createIsRangeComponent(): Component
     {
         return Toggle::make($this->getIsRangePath())
-            ->label('Date range')
+            ->label(__('core::ui.fields.date_range'))
             ->live()
             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                 if (! $state) {
@@ -73,7 +74,7 @@ class PrecisionDateSection extends Section
     protected function createStartComponent(): Component
     {
         return PrecisionDateStartField::make($this->startFieldName())
-            ->label(fn (Get $get) => ($this->isRangeable() && $get($this->getIsRangePath())) ? 'Start' : 'Date')
+            ->label(fn (Get $get) => ($this->isRangeable() && $get($this->getIsRangePath())) ? __('core::ui.fields.start') : __('core::ui.fields.date'))
             ->settingsField($this->settingsFieldName())
             ->precisionField($this->getPrecisionPath())
             ->afterStateUpdated(function ($state, Set $set, Get $get) {
@@ -86,7 +87,7 @@ class PrecisionDateSection extends Section
     protected function createEndComponent(): Component
     {
         return PrecisionDateEndField::make($this->endFieldName())
-            ->label('End')
+            ->label(__('core::ui.fields.end'))
             ->settingsField($this->settingsFieldName())
             ->precisionField($this->getPrecisionPath())
             ->hidden(fn (Get $get) => ! ($this->isRangeable() && $get($this->getIsRangePath())));

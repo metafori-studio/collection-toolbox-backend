@@ -11,11 +11,15 @@
 	"autoload": {
 		"psr-4": {
 			"Metafori\\Opensearch\\": "src/",
-			"Metafori\\Opensearch\\Tests\\": "tests/",
 			"Metafori\\Opensearch\\Database\\Factories\\": "database/factories/",
 			"Metafori\\Opensearch\\Database\\Seeders\\": "database/seeders/"
 		}
 	},
+    "autoload-dev": {
+        "psr-4": {
+			"Metafori\\Opensearch\\Tests\\": "tests/"
+        }
+    },
 	"minimum-stability": "stable",
 	"extra": {
 		"laravel": {

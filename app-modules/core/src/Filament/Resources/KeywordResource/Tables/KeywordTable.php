@@ -13,6 +13,7 @@ class KeywordTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
             ])

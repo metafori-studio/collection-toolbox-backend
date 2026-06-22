@@ -11,7 +11,7 @@ class ExtentUnitSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Extent Unit')
+        $this->label(__('etno::ui.fields.extent_unit'))
             ->options(ExtentUnit::class)
             ->sortedOptions()
             ->searchable();

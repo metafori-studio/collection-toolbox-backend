@@ -2,11 +2,20 @@ includes:
     - vendor/larastan/larastan/extension.neon
     - vendor/nesbot/carbon/extension.neon
     - vendor/tpetry/laravel-postgresql-enhanced/phpstan-extension.neon
+    - vendor/pestphp/pest/phpstan-pest-extension.neon
 
 parameters:
-
-    paths:
-        - app/
-
-    # Level 10 is the highest level
     level: 5
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+        - apps/archeo/bootstrap/app.php
+        - apps/art/bootstrap/app.php
+        - apps/etno/bootstrap/app.php
+    paths:
+        - apps/
+    excludePaths:
+        - */vendor/*
+    configDirectories:
+        - apps/archeo/config
+        - apps/art/config
+        - apps/etno/config

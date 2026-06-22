@@ -30,6 +30,14 @@ class User extends Authenticatable implements FilamentUser
     use HasFactory, HasRoles, Notifiable;
 
     /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>

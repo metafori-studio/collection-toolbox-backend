@@ -12,6 +12,7 @@ class KeywordForm
         return $schema
             ->schema([
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale(),
             ])

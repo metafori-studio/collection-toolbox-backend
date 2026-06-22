@@ -15,7 +15,7 @@ class ProjectSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Project')
+        $this->label(__('etno::ui.fields.project'))
             ->relationship('project', 'title')
             ->searchable()
             ->preload()

@@ -16,7 +16,7 @@ class AuthorsAndCreatorsSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Authors and Creators')
+        $this->heading(__('etno::ui.sections.authors_and_creators'))
             ->schema(fn () => [
                 AuthorsSelect::make('authors')
                     ->inheritable($this->inheritable)

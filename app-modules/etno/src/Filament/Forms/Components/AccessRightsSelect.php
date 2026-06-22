@@ -14,7 +14,7 @@ class AccessRightsSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Access Rights')
+        $this->label(__('etno::ui.fields.access_rights'))
             ->options(AccessRights::class)
             ->searchable();
     }

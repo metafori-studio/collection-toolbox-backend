@@ -14,7 +14,7 @@ class TypeSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Type')
+        $this->label(__('etno::ui.fields.type'))
             ->options(ItemType::class)
             ->sortedOptions()
             ->searchable();

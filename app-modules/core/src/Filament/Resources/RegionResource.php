@@ -20,20 +20,40 @@ class RegionResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedMap;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'Localities';
-
     protected static ?int $navigationSort = 2;
+
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.region.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.region.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.region.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('core::ui.navigation_groups.localities');
+    }
 
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->schema([
                 Select::make('country_id')
+                    ->label(__('core::ui.fields.country'))
                     ->relationship('country', 'name')
                     ->searchable()
                     ->required()
                     ->preload(),
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
@@ -45,9 +65,11 @@ class RegionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('country.name')
+                    ->label(__('core::ui.fields.country'))
                     ->searchable()
                     ->sortable(),
             ])

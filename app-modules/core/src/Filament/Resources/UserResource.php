@@ -17,7 +17,25 @@ class UserResource extends Resource
 
     protected static \BackedEnum|string|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static \UnitEnum|string|null $navigationGroup = 'System';
+    public static function getModelLabel(): string
+    {
+        return __('core::ui.resources.user.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('core::ui.resources.user.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('core::ui.resources.user.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('core::ui.navigation_groups.system');
+    }
 
     protected static ?int $navigationSort = 10;
 

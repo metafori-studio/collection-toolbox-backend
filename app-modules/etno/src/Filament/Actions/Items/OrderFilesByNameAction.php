@@ -15,7 +15,7 @@ class OrderFilesByNameAction extends Action
     {
         parent::setUp();
 
-        $this->label('Order by Name')
+        $this->label(__('etno::ui.actions.order_by_name'))
             ->icon(Heroicon::BarsArrowDown)
             ->hidden(fn (?array $state): bool => \count($state ?? []) < 2)
             ->action(function (Repeater $component) {

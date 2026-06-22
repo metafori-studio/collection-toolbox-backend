@@ -17,7 +17,7 @@ class ProvenanceAndResearchContextSection extends Section
     {
         parent::setUp();
 
-        $this->heading('Provenance and Research Context')
+        $this->heading(__('etno::ui.sections.provenance_and_research_context'))
             ->schema(fn () => [
                 InstitutionSelect::make('institution_id')
                     ->inheritable($this->inheritable)
@@ -29,13 +29,13 @@ class ProvenanceAndResearchContextSection extends Section
                     ->inheritable($this->inheritable),
                 AccrualMethodSelect::make('accrual_method')
                     ->inheritable($this->inheritable),
+                TimePeriodSection::make()
+                    ->inheritable($this->inheritable)
+                    ->columnSpanFull(),
                 SubmissionDateSection::make()
                     ->inheritable($this->inheritable),
                 PublicationDateSection::make()
                     ->inheritable($this->inheritable),
-                TimePeriodSection::make()
-                    ->inheritable($this->inheritable)
-                    ->columnSpanFull(),
             ])
             ->collapsible()
             ->columns(2);

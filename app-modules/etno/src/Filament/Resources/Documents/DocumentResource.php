@@ -22,6 +22,21 @@ class DocumentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
+    public static function getModelLabel(): string
+    {
+        return __('etno::ui.resources.document.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('etno::ui.resources.document.plural_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('etno::ui.resources.document.navigation_label');
+    }
+
     protected static ?string $recordTitleAttribute = 'id';
 
     public static function form(Schema $schema): Schema

@@ -13,7 +13,7 @@ class AuthorsSelect extends PersonSelect
     {
         parent::setUp();
 
-        $this->label('Authors')
+        $this->label(__('etno::ui.fields.authors'))
             ->relationship('authors')
             ->multiple()
             ->searchable()

@@ -13,17 +13,20 @@ class LocationForm
         return $schema
             ->schema([
                 LocalitySelect::make('parent')
-                    ->label('Parent')
+                    ->label(__('core::ui.fields.parent'))
                     ->searchable()
                     ->preload(),
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
                 TextInput::make('latitude')
+                    ->label(__('core::ui.fields.latitude'))
                     ->requiredWith('longitude')
                     ->numeric(),
                 TextInput::make('longitude')
+                    ->label(__('core::ui.fields.longitude'))
                     ->requiredWith('latitude')
                     ->numeric(),
             ]);

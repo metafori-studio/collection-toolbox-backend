@@ -7,11 +7,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Metafori\Core\Database\Factories\PersonFactory;
 use Stringable;
 
 class Person extends Model implements Stringable
 {
     use HasFactory, SoftDeletes;
+
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): PersonFactory
+    {
+        return PersonFactory::new();
+    }
 
     protected $fillable = [
         'given_name',

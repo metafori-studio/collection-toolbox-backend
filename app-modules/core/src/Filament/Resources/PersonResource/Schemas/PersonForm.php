@@ -13,11 +13,13 @@ class PersonForm
             ->columns(2)
             ->schema([
                 TextInput::make('given_name')
+                    ->label(__('core::ui.fields.given_name'))
                     ->required(),
                 TextInput::make('family_name')
+                    ->label(__('core::ui.fields.family_name'))
                     ->required(),
                 TextInput::make('orcid')
-                    ->label('ORCID')
+                    ->label(__('core::ui.fields.orcid'))
                     ->maxLength(19)
                     ->unique(ignoreRecord: true)
                     ->columnSpanFull(),

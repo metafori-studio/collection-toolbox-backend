@@ -12,7 +12,7 @@ class SuffixInput extends TextInput
     {
         parent::setUp();
 
-        $this->label('Composite ID')
+        $this->label(__('etno::ui.fields.composite_id'))
             ->prefix(fn (HasDocument $livewire) => $livewire->getDocument()->id)
             ->required()
             ->unique(

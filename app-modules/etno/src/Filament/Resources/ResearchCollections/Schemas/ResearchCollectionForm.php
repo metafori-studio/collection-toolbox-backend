@@ -12,6 +12,7 @@ class ResearchCollectionForm
         return $schema
             ->schema([
                 TextInput::make('title')
+                    ->label(__('etno::ui.fields.title'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale(),
             ])

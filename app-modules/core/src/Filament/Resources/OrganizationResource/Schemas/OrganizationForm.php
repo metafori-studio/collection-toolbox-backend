@@ -12,11 +12,12 @@ class OrganizationForm
         return $schema
             ->schema([
                 TextInput::make('name')
+                    ->label(__('core::ui.fields.name'))
                     ->translatableTabs()
                     ->requiredOnFallbackLocale()
                     ->columnSpanFull(),
                 TextInput::make('ror_id')
-                    ->label('ROR ID')
+                    ->label(__('core::ui.fields.ror_id'))
                     ->maxLength(9)
                     ->unique(ignoreRecord: true)
                     ->columnSpanFull(),

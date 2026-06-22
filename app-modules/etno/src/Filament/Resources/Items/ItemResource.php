@@ -17,6 +17,16 @@ class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
 
+    public static function getModelLabel(): string
+    {
+        return __('etno::ui.resources.item.label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('etno::ui.resources.item.plural_label');
+    }
+
     protected static ?string $recordTitleAttribute = 'identifier';
 
     public static function getEloquentQuery(): Builder

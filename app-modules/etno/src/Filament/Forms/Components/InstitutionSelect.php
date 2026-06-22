@@ -15,7 +15,7 @@ class InstitutionSelect extends Select
     {
         parent::setUp();
 
-        $this->label('Institution')
+        $this->label(__('etno::ui.fields.institution'))
             ->relationship('institution', 'name')
             ->searchable()
             ->preload()
