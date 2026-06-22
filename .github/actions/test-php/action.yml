@@ -41,7 +41,7 @@ runs:
         docker run -d --name opensearch -p 9200:9200 -e "discovery.type=single-node" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:3.5.0
         echo "Waiting for OpenSearch to start..."
         attempts=0
-        until curl -s http://localhost:9200/_cluster/health | grep -q -E '"status":"(green|yellow)"'; do
+        until curl -sf --connect-timeout 5 --max-time 10 http://localhost:9200/_cluster/health | grep -q -E '"status":"(green|yellow)"'; do
           attempts=$((attempts + 1))
           if [ "$attempts" -ge 30 ]; then
             echo "OpenSearch failed to start"
