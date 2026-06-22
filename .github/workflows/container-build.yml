@@ -15,6 +15,7 @@ on:
         options:
           - archeo
           - etno
+          - art
       backend_ref:
         description: 'Backend branch or tag'
         required: true
@@ -43,6 +44,7 @@ jobs:
     outputs:
       archeo: ${{ steps.filter.outputs.archeo }}
       etno: ${{ steps.filter.outputs.etno }}
+      art: ${{ steps.filter.outputs.art }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -66,8 +68,12 @@ jobs:
               - 'apps/etno/**'
               - 'app-modules/etno/**'
               - 'app-modules/opensearch/**'
+            art:
+              - *shared
+              - 'apps/art/**'
 
   build:
+    name: build (${{ matrix.module }})
     needs: changes
     # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
@@ -76,7 +82,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        module: [archeo, etno]
+        include:
+          - module: archeo
+            mapbox_secret: VITE_MAPBOX_TOKEN_ARCHEO
+          - module: etno
+            mapbox_secret: VITE_MAPBOX_TOKEN_ETNO
+          - module: art
+            mapbox_secret: ''
 
     steps:
       - name: Check module relevance
@@ -84,7 +96,6 @@ jobs:
         env:
           CHANGED: ${{ needs.changes.outputs[matrix.module] }}
         run: |
-          echo "mapbox_secret=VITE_MAPBOX_TOKEN_$(echo '${{ matrix.module }}' | tr '[:lower:]' '[:upper:]')" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then
@@ -113,11 +124,11 @@ jobs:
           fi
 
       - name: Validate required secrets
-        if: steps.guard.outputs.skip != 'true'
+        if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''
         env:
-          MAPBOX_TOKEN: ${{ secrets[steps.guard.outputs.mapbox_secret] }}
+          MAPBOX_TOKEN: ${{ secrets[matrix.mapbox_secret] }}
         run: |
-          test -n "$MAPBOX_TOKEN" || { echo "Missing ${{ steps.guard.outputs.mapbox_secret }}"; exit 1; }
+          test -n "$MAPBOX_TOKEN" || { echo "Missing ${{ matrix.mapbox_secret }}"; exit 1; }
 
       - name: Set up Docker Buildx
         if: steps.guard.outputs.skip != 'true'
@@ -142,7 +153,7 @@ jobs:
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
           secrets: |
-            mapbox_token=${{ secrets[steps.guard.outputs.mapbox_secret] }}
+            mapbox_token=${{ secrets[matrix.mapbox_secret] }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
