@@ -82,6 +82,7 @@ jobs:
         env:
           CHANGED: ${{ needs.changes.outputs[matrix.module] }}
         run: |
+          echo "mapbox_secret=VITE_MAPBOX_TOKEN_$(echo '${{ matrix.module }}' | tr '[:lower:]' '[:upper:]')" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then

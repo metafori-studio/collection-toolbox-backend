@@ -31,7 +31,8 @@ jobs:
               - 'app-modules/monitoring/**'
               - 'composer.json'
               - 'composer.lock'
-              - '.github/workflows/_tests-template.yml'
+              - '.github/actions/test-php/**'
+              - '.github/actions/setup-php/**'
               - '.github/workflows/tests.yml'
             archeo:
               - *shared
@@ -49,24 +50,36 @@ jobs:
   archeo:
     needs: changes
     if: needs.changes.outputs.archeo == 'true'
-    uses: ./.github/workflows/_tests-template.yml
-    with:
-      app: archeo
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: ./.github/actions/test-php
+        with:
+          app: archeo
 
   art:
     needs: changes
     if: needs.changes.outputs.art == 'true'
-    uses: ./.github/workflows/_tests-template.yml
-    with:
-      app: art
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: ./.github/actions/test-php
+        with:
+          app: art
 
   etno:
     needs: changes
     if: needs.changes.outputs.etno == 'true'
-    uses: ./.github/workflows/_tests-template.yml
-    with:
-      app: etno
-      opensearch: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: ./.github/actions/test-php
+        with:
+          app: etno
+          opensearch: 'true'
 
   tests-complete:
     needs: [changes, archeo, art, etno]

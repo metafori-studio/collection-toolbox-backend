@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 15
 
     steps:
@@ -31,8 +31,17 @@ jobs:
     - name: Setup PHP
       uses: ./.github/actions/setup-php
 
+    - name: Cache composer downloads
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-composer-lint-${{ hashFiles('composer.lock', 'apps/*/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-lint-
+          ${{ runner.os }}-composer-
+
     - name: Install root composer packages (for PHPStan, Pint, monorepo-builder)
-      run: composer install
+      run: composer install --no-interaction --no-progress
 
     - name: Install per-app composer packages (PHPStan analyses every app)
       run: |
