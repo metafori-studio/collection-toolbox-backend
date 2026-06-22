@@ -105,6 +105,10 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
 
             $this->streamToDisk($media->disk, WatermarkedPdfPath::forMedia($media), $tempOutput);
 
+            // Re-read before the read-modify-write: watermarking can take minutes,
+            // so refresh to avoid clobbering concurrent updates to generated_conversions.
+            $media->refresh();
+
             $generatedConversions = $media->generated_conversions ?? [];
             $generatedConversions['watermarked'] = true;
             $media->generated_conversions = $generatedConversions;
