@@ -14,6 +14,7 @@ use Metafori\Archeo\Http\Resources\ActivityMapPointResource;
 use Metafori\Archeo\Http\Resources\ActivityResource;
 use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Archeo\Support\WatermarkImage;
 
 class ActivityController extends Controller
 {
@@ -145,7 +146,7 @@ class ActivityController extends Controller
             ->with(['galleries.media', 'media'])
             ->firstOrFail();
 
-        if (config('archeo.watermark_image') && file_exists(config('archeo.watermark_image'))) {
+        if (WatermarkImage::isUsable(config('archeo.watermark_image'))) {
             $activity->getMedia('pdfs')
                 ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
                 ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id, $request->user()));

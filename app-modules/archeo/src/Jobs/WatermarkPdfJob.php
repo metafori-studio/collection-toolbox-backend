@@ -12,6 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Process;
 use Metafori\Archeo\Jobs\Concerns\StreamsDiskFiles;
 use Metafori\Archeo\Support\WatermarkedPdfPath;
+use Metafori\Archeo\Support\WatermarkImage;
 use Metafori\Core\Models\User;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -47,7 +48,7 @@ class WatermarkPdfJob implements ShouldBeUnique, ShouldQueue
 
         $watermarkImage = config('archeo.watermark_image');
 
-        if (! $watermarkImage || ! file_exists($watermarkImage)) {
+        if (! WatermarkImage::isUsable($watermarkImage)) {
             return;
         }
 

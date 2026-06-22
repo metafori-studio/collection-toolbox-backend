@@ -11,6 +11,6 @@ return [
 
     'qpdf_binary' => env('ARCHEO_QPDF_BINARY', 'qpdf'),
 
-    // Absolute path to the watermark PNG. Leave null to disable watermarking.
+    // Absolute path or HTTPS URL to the watermark image. Leave null to disable watermarking.
     'watermark_image' => env('ARCHEO_WATERMARK_IMAGE'),
 ];

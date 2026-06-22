@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Bus;
 use Metafori\Archeo\Jobs\CompressPdfJob;
 use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Archeo\Support\WatermarkImage;
 use Metafori\Core\Models\User;
 use Spatie\MediaLibrary\MediaCollections\Events\MediaHasBeenAddedEvent;
 
@@ -30,9 +31,7 @@ class CompressPdfOnUploadListener
         $jobs = [new CompressPdfJob($media->id, $user)];
 
         // Watermark the compressed PDF once compression finishes.
-        $watermarkImage = config('archeo.watermark_image');
-
-        if ($watermarkImage && file_exists($watermarkImage)) {
+        if (WatermarkImage::isUsable(config('archeo.watermark_image'))) {
             $jobs[] = new WatermarkPdfJob($media->id, $user);
         }
 
