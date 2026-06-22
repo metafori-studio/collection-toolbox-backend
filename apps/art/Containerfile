@@ -3,15 +3,15 @@ FROM docker.io/node:24-alpine AS frontend-builder
 
 ARG FRONTEND_REF=main
 
-WORKDIR /frontend
-# hadolint ignore=DL3019
-RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
-    apk add git=~2
-RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
-
-RUN --mount=type=cache,id=npm,target=/root/.npm \
-    npm ci && \
-    npm run build --workspace=apps/art
+# WORKDIR /frontend
+# # hadolint ignore=DL3019
+# RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
+#     apk add git=~2
+# RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
+#
+# RUN --mount=type=cache,id=npm,target=/root/.npm \
+#     npm ci && \
+#     npm run build --workspace=apps/art
 
 
 FROM docker.io/composer:2.9.5 AS vendor-builder
@@ -67,7 +67,7 @@ COPY --from=vendor-builder /app/vendor/ vendor/
 
 RUN php artisan package:discover --ansi
 
-COPY --from=frontend-builder /frontend/apps/art/dist/ public/
+# COPY --from=frontend-builder /frontend/apps/art/dist/ public/
 
 RUN php artisan octane:install --server=frankenphp
 
