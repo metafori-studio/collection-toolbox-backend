@@ -15,6 +15,7 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       archeo: ${{ steps.filter.outputs.archeo }}
       art: ${{ steps.filter.outputs.art }}
@@ -71,6 +72,7 @@ jobs:
     needs: [changes, archeo, art, etno]
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Verify no upstream job failed
         run: |

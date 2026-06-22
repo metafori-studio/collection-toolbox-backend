@@ -36,7 +36,10 @@ concurrency:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     outputs:
       archeo: ${{ steps.filter.outputs.archeo }}
       etno: ${{ steps.filter.outputs.etno }}
@@ -67,6 +70,7 @@ jobs:
     # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
