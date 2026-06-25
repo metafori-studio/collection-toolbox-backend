@@ -58,7 +58,13 @@ class CitationFormatter
             $parts[] = "https://doi.org/{$doi}";
         }
 
-        return $parts ? \implode(' ', $parts) : null;
+        if (! $parts) {
+            return null;
+        }
+
+        $formatted = \implode(' ', $parts);
+
+        return Str::ucfirst($formatted);
     }
 
     private static function formatNames(Collection $authors, Collection $originators): string

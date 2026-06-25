@@ -167,3 +167,20 @@ it('can generate a complete citation with all fields in English', function () {
     $expected = 'Milan Kováč, originator: Jozef Mrkvička (2026): Terénny výskum v obci Hriňová: Analýza rodinných väzieb. Ústav etnológie a sociálnej antropológie SAV, v. v. i. (Research report). (Time Period: 1953–1955). https://doi.org/10.1234/abcd.123';
     expect($result)->toBe($expected);
 });
+
+it('capitalizes the first letter of the citation when originator starts with a lowercase letter', function () {
+    $result = CitationFormatter::format(
+        title: 'Názov',
+        subtitle: null,
+        authors: collect([]),
+        originators: collect(['učitelia základných škôl']),
+        publicationDate: Carbon::parse('2026-03-15'),
+        institutionName: null,
+        type: null,
+        timePeriodStart: null,
+        timePeriodEnd: null,
+        doi: null
+    );
+
+    expect($result)->toBe('Učitelia základných škôl (2026): Názov.');
+});
