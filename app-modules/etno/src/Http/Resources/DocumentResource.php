@@ -78,6 +78,8 @@ class DocumentResource extends JsonResource
             'originators' => OriginatorResource::collection($this->whenLoaded('originators')),
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
+            /** @var string|null */
+            'how_to_cite' => $this->how_to_cite,
         ];
     }
 }

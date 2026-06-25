@@ -117,4 +117,8 @@ return [
             ],
         ],
     ],
+    'citations' => [
+        'originator' => 'originator',
+        'time_period' => 'Time Period',
+    ],
 ];
