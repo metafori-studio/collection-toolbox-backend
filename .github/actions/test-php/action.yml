@@ -70,11 +70,6 @@ runs:
       working-directory: apps/${{ inputs.app }}
       run: composer install --no-interaction --no-progress
 
-    - name: Install npm packages
-      shell: bash
-      working-directory: apps/${{ inputs.app }}
-      run: npm ci
-
     - name: Run setup (create .env, generate app key, run migrations, build frontend)
       shell: bash
       working-directory: apps/${{ inputs.app }}
