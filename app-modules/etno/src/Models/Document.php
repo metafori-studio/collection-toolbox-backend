@@ -115,6 +115,14 @@ class Document extends Model implements Stringable
         $query->whereIn('access_rights', AccessRights::published());
     }
 
+    public function isPublished(): bool
+    {
+        return \in_array(
+            $this->access_rights,
+            AccessRights::published()
+        );
+    }
+
     public static function relations(): array
     {
         return [
