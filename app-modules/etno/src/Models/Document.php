@@ -160,7 +160,6 @@ class Document extends Model implements Stringable
             type: $this->type,
             timePeriodStart: $this->time_period_start,
             timePeriodEnd: $this->time_period_end,
-            doi: $this->doi
         ));
     }
 
