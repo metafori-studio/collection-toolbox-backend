@@ -22,9 +22,15 @@ return [
         'work-made-for-hire' => 'zamestnanecké dielo',
     ],
     'CollectionMethod' => [
+        'acquisition-of-collections-and-fonds' => 'akvizícia zbierok a fondov',
+        'archival-and-documentary-research' => 'archívny a dokumentačný výskum',
+        'content-and-media-analysis' => 'obsahová a mediálna analýza',
+        'digital-ethnography' => 'digitálna etnografia',
         'field-research' => 'terénny výskum',
-        'survey' => 'dotazníková akcia',
-        'archival-research' => 'archívny výskum',
+        'photographic-and-audiovisual-documentation' => 'fotografická a audiovizuálna dokumentácia',
+        'questionnaire-and-survey-research' => 'dotazníkový a anketový výskum',
+        'reproduction-transcription-and-excerption' => 'reprodukcia, prepis a excerpovanie',
+        'translation-and-linguistic-processing' => 'preklad a jazykové spracovanie',
     ],
     'ExtentUnit' => [
         'drawing' => 'kresba',
