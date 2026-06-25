@@ -1,0 +1,59 @@
+# syntax=docker/dockerfile:1
+FROM docker.io/composer:2.9.5 AS vendor-builder
+
+WORKDIR /app
+COPY app-modules /app-modules
+COPY apps/art .
+RUN --mount=type=cache,id=composer,target=/root/.composer/cache \
+    composer install \
+    --no-interaction \
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts \
+    --ignore-platform-req=php \
+    --ignore-platform-req=ext-intl \
+    --ignore-platform-req=ext-gd \
+    --ignore-platform-req=ext-exif \
+    --ignore-platform-req=ext-pgsql \
+    --ignore-platform-req=ext-redis \
+    --ignore-platform-req=ext-imagick
+
+
+FROM docker.io/dunglas/frankenphp:1.12.1-php8.5
+
+RUN --mount=type=cache,id=apt,sharing=locked,target=/var/cache/apt \
+    --mount=type=cache,id=apt-lib,sharing=locked,target=/var/lib/apt \
+    apt-get update && apt-get install -y --no-install-recommends \
+        git \
+        ghostscript \
+        imagemagick
+
+RUN --mount=type=cache,id=php-ext,target=/tmp/docker-php-extension-installer \
+    install-php-extensions \
+    pdo_pgsql \
+    pgsql \
+    redis \
+    imagick \
+    pcntl \
+    intl \
+    zip \
+    opcache \
+    curl
+
+WORKDIR /app
+
+COPY app-modules /app-modules
+COPY apps/art .
+
+RUN rm -rf bootstrap/cache/*.php
+
+COPY --from=vendor-builder /app/vendor/ vendor/
+
+RUN php artisan package:discover --ansi
+
+RUN php artisan octane:install --server=frankenphp
+
+ENV OCTANE_SERVER=frankenphp
+
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
