@@ -18,7 +18,6 @@ class CitationFormatter
         ?ItemType $type,
         ?\DateTimeInterface $timePeriodStart,
         ?\DateTimeInterface $timePeriodEnd,
-        ?string $doi,
     ): ?string {
         $namesAndYear = self::formatNamesAndYear($authors, $originators, $publicationDate);
         $instName = self::formatInstitution($institutionName);
@@ -54,11 +53,13 @@ class CitationFormatter
             $parts[] = '('.__('etno::ui.citations.time_period').": {$timePeriod}).";
         }
 
-        if ($doi) {
-            $parts[] = "https://doi.org/{$doi}";
+        if (! $parts) {
+            return null;
         }
 
-        return $parts ? \implode(' ', $parts) : null;
+        $formatted = \implode(' ', $parts);
+
+        return Str::ucfirst($formatted);
     }
 
     private static function formatNames(Collection $authors, Collection $originators): string
