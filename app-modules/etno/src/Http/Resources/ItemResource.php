@@ -81,6 +81,12 @@ class ItemResource extends JsonResource
             'originators' => OriginatorResource::collection($this->whenLoaded('originators')),
             'keywords' => KeywordResource::collection($this->whenLoaded('keywords')),
             'research_collections' => ResearchCollectionResource::collection($this->whenLoaded('researchCollections')),
+            'how_to_cite' => $this->when(
+                $this->document->relationLoaded('institution')
+                    && $this->document->relationLoaded('authors')
+                    && $this->document->relationLoaded('originators'),
+                fn () => $this->document->how_to_cite
+            ),
             'document_id' => $this->document_id,
             /** @var MediaType|null */
             'media_type' => $this->whenLoaded('firstMedia', fn () => $this->firstMedia ? MediaType::tryFrom($this->firstMedia->collection_name) : null),
