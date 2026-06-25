@@ -9,7 +9,13 @@ enum CollectionMethod: string implements HasLabel
 {
     use HasTranslatedLabel;
 
-    case ArchivalResearch = 'archival-research';
+    case AcquisitionOfCollectionsAndFonds = 'acquisition-of-collections-and-fonds';
+    case ArchivalAndDocumentaryResearch = 'archival-and-documentary-research';
+    case ContentAndMediaAnalysis = 'content-and-media-analysis';
+    case DigitalEthnography = 'digital-ethnography';
     case FieldResearch = 'field-research';
-    case Survey = 'survey';
+    case PhotographicAndAudiovisualDocumentation = 'photographic-and-audiovisual-documentation';
+    case QuestionnaireAndSurveyResearch = 'questionnaire-and-survey-research';
+    case ReproductionTranscriptionAndExcerption = 'reproduction-transcription-and-excerption';
+    case TranslationAndLinguisticProcessing = 'translation-and-linguistic-processing';
 }
