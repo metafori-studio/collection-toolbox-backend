@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.4.0...v2.5.0) (2026-06-25)
+
+
+### Features
+
+* **ci:** split workflows, add gates by path ([#179](https://github.com/metafori-studio/collection-toolbox-backend/issues/179)) ([ec8f8f4](https://github.com/metafori-studio/collection-toolbox-backend/commit/ec8f8f4e713d02f381ad243c5c18cd43f1e840b0))
+* **etno:** add how to cite document attribute ([f8d3756](https://github.com/metafori-studio/collection-toolbox-backend/commit/f8d375600196d50ea02d63b8c9624399b121d59f))
+* **etno:** add how_to_cite field to ItemResource response ([dd8d35c](https://github.com/metafori-studio/collection-toolbox-backend/commit/dd8d35c368069fe514286c8703e5f99ed09d741f))
+* **etno:** add how_to_cite field to ItemResource response ([92e2dde](https://github.com/metafori-studio/collection-toolbox-backend/commit/92e2ddeab0c8c89c44e567488d93cd85522c92c0))
+* **etno:** expand CollectionMethod enum with additional values ([d8683b7](https://github.com/metafori-studio/collection-toolbox-backend/commit/d8683b700ff86b559fd70ae69cc932ce912ded19))
+* **etno:** expand CollectionMethod enum with additional values and update corresponding UI labels ([ca27eb6](https://github.com/metafori-studio/collection-toolbox-backend/commit/ca27eb65ef9e6ce3649d41094ce9c18ae487116c))
+* **etno:** include originator label in document citation when person is not linked ([be0a11a](https://github.com/metafori-studio/collection-toolbox-backend/commit/be0a11a7a403c0a6fb9f7094ea2aff0daa108c70))
+
+
+### Bug Fixes
+
+* **ci:** remove npm ci ([a8cbab6](https://github.com/metafori-studio/collection-toolbox-backend/commit/a8cbab61071bbd69baca11c99f7a41482241190b))
+* **etno:** move originator casing logic to CitationFormatter ([e1ad0a6](https://github.com/metafori-studio/collection-toolbox-backend/commit/e1ad0a66f0b4592050c4e1f140fa82d54dcf03e8))
+
 ## [2.4.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.3.0...v2.4.0) (2026-06-17)
 
 
