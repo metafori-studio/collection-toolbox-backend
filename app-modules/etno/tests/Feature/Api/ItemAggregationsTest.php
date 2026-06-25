@@ -220,7 +220,7 @@ it('can filter aggregations by all filterables at once', function () {
         ->hasItems(1)
         ->create([
             'type' => ItemType::AudioRecording,
-            'language' => Language::Slovak,
+            'languages' => [Language::Slovak],
             'accrual_method' => AccrualMethod::Purchase,
             'collection_method' => CollectionMethod::FieldResearch,
             'access_rights' => AccessRights::OpenAccess,
@@ -237,7 +237,7 @@ it('can filter aggregations by all filterables at once', function () {
     $response = getJson(route('api.etno.items.aggregations', [
         'filter' => [
             'type' => [ItemType::AudioRecording->value],
-            'language' => [Language::Slovak->value],
+            'languages' => [Language::Slovak->value],
             'accrual_method' => [AccrualMethod::Purchase->value],
             'collection_method' => [CollectionMethod::FieldResearch->value],
             'access_rights' => [AccessRights::OpenAccess->value],

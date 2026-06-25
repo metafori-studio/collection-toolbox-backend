@@ -7,7 +7,7 @@ use Filament\Schemas\Components\Section;
 use Metafori\Etno\Filament\Forms\Components\AbstractInput;
 use Metafori\Etno\Filament\Forms\Components\ContentNoteInput;
 use Metafori\Etno\Filament\Forms\Components\KeywordsSelect;
-use Metafori\Etno\Filament\Forms\Components\LanguageSelect;
+use Metafori\Etno\Filament\Forms\Components\LanguagesSelect;
 use Metafori\Etno\Filament\Forms\Components\SubtitleInput;
 use Metafori\Etno\Filament\Forms\Components\TitleInput;
 use Metafori\Etno\Filament\Schemas\Components\Concerns\HasInheritable;
@@ -35,7 +35,7 @@ class DescriptiveInformationSection extends Section
                     ]),
                 KeywordsSelect::make('keywords')
                     ->inheritable($this->inheritable),
-                LanguageSelect::make('language')
+                LanguagesSelect::make('languages')
                     ->inheritable($this->inheritable),
             ])
             ->collapsible()

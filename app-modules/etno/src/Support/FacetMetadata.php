@@ -28,7 +28,7 @@ class FacetMetadata
         'access_rights' => AccessRights::class,
         'accrual_method' => AccrualMethod::class,
         'collection_method' => CollectionMethod::class,
-        'language' => Language::class,
+        'languages' => Language::class,
         'license' => License::class,
         'production_methods' => ProductionMethod::class,
         'type' => ItemType::class,

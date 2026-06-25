@@ -261,7 +261,7 @@ dataset('inheritable_inputs_translatable', [
 ]);
 
 dataset('inheritable_inputs_primitive', [
-    'language' => ['language', Language::Afar, Language::English],
+    'languages' => ['languages', [Language::Afar], [Language::English]],
     'collection_method' => ['collection_method', CollectionMethod::ArchivalAndDocumentaryResearch, CollectionMethod::FieldResearch],
     'accrual_method' => ['accrual_method', AccrualMethod::Deposit, AccrualMethod::Donation],
     'type' => ['type', ItemType::AudioRecording, ItemType::BachelorsThesis],

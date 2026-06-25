@@ -67,7 +67,7 @@ return [
         'research_collections' => 'Research Collections',
         'subtitle' => 'Subtitle',
         'terms_of_use' => 'Terms of Use',
-        'language' => 'Language',
+        'languages' => 'Languages',
         'location_note' => 'Location Note',
         'size' => 'Size',
         'transcripts' => 'Transcripts',

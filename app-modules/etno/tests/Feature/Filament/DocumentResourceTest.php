@@ -96,7 +96,7 @@ dataset('document_inputs_translatable', [
 ]);
 
 dataset('document_inputs_primitive', [
-    'language' => ['language', Language::English],
+    'languages' => ['languages', [Language::English]],
     'collection_method' => ['collection_method', CollectionMethod::FieldResearch],
     'accrual_method' => ['accrual_method', AccrualMethod::Donation],
     'type' => ['type', ItemType::BachelorsThesis],

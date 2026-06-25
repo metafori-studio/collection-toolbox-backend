@@ -116,7 +116,6 @@ it('can filter items by simple property', function (string $property, string $en
         ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'type' => ['type', ItemType::class],
-    'language' => ['language', Language::class],
     'accrual_method' => ['accrual_method', AccrualMethod::class],
     'collection_method' => ['collection_method', CollectionMethod::class],
     'license' => ['license', License::class],
@@ -153,35 +152,66 @@ it('can filter items by simple property inherited', function (string $property, 
         ->assertJsonPath('data.0.id', $matchingItem->identifier);
 })->with([
     'type' => ['type', ItemType::class],
-    'language' => ['language', Language::class],
     'accrual_method' => ['accrual_method', AccrualMethod::class],
     'collection_method' => ['collection_method', CollectionMethod::class],
     'license' => ['license', License::class],
 ]);
 
-it('can filter items by array property', function () {
+it('can filter items by array property', function (string $property, array $matchingValue, array $otherValue, array $filterValue) {
     $matchingItem = Item::factory()
         ->for(Document::factory()->published()->create([
-            'production_methods' => [ProductionMethod::Drawing],
+            $property => $matchingValue,
         ]))
         ->create();
 
     Item::factory()
         ->for(Document::factory()->published()->create([
-            'production_methods' => [ProductionMethod::Painting],
+            $property => $otherValue,
         ]))
         ->create();
 
     app(ItemRepository::class)->refreshIndex();
 
     $response = getJson(route('api.etno.items.index', [
-        'filter' => ['production_methods' => [ProductionMethod::Drawing->value]],
+        'filter' => [$property => $filterValue],
     ]));
 
     $response->assertStatus(200)
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', $matchingItem->identifier);
-});
+})->with([
+    'languages' => ['languages', [Language::Slovak], [Language::Romany], [Language::Slovak->value]],
+    'production_methods' => ['production_methods', [ProductionMethod::Drawing], [ProductionMethod::Painting], [ProductionMethod::Drawing->value]],
+]);
+
+it('can filter items by array property inherited', function (string $property, array $matchingValue, array $otherValue, array $filterValue) {
+    $otherDocument = Document::factory()
+        ->published()
+        ->create([$property => $otherValue]);
+    $otherItem = Item::factory()
+        ->for($otherDocument)
+        ->create();
+
+    $matchingDocument = Document::factory()
+        ->published()
+        ->create([$property => $matchingValue]);
+    $matchingItem = Item::factory()
+        ->for($matchingDocument)
+        ->create();
+
+    app(ItemRepository::class)->refreshIndex();
+
+    $response = getJson(route('api.etno.items.index', [
+        'filter' => [$property => $filterValue],
+    ]));
+
+    $response->assertStatus(200)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $matchingItem->identifier);
+})->with([
+    'languages' => ['languages', [Language::Slovak], [Language::Romany], [Language::Slovak->value]],
+    'production_methods' => ['production_methods', [ProductionMethod::Drawing], [ProductionMethod::Painting], [ProductionMethod::Drawing->value]],
+]);
 
 it('can sort items', function () {
     $items = [
@@ -489,7 +519,7 @@ it('can filter items by all filterables at once', function () {
         ->hasAttached($researchCollection, [], 'researchCollections')
         ->create([
             'type' => ItemType::AudioRecording,
-            'language' => Language::Slovak,
+            'languages' => [Language::Slovak],
             'accrual_method' => AccrualMethod::Purchase,
             'collection_method' => CollectionMethod::FieldResearch,
             'access_rights' => AccessRights::OpenAccess,
@@ -512,7 +542,7 @@ it('can filter items by all filterables at once', function () {
     $response = getJson(route('api.etno.items.index', [
         'filter' => [
             'type' => [ItemType::AudioRecording->value],
-            'language' => [Language::Slovak->value],
+            'languages' => [Language::Slovak->value],
             'accrual_method' => [AccrualMethod::Purchase->value],
             'collection_method' => [CollectionMethod::FieldResearch->value],
             'access_rights' => [AccessRights::OpenAccess->value],
