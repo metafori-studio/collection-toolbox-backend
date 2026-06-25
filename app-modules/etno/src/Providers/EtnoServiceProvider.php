@@ -33,6 +33,11 @@ class EtnoServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        config([
+            'frontend.routes.document' => '/{locale}/documents/{id}',
+            'frontend.routes.item' => '/{locale}/items/{id}',
+        ]);
+
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'etno');
 
         Item::observe(ItemObserver::class);

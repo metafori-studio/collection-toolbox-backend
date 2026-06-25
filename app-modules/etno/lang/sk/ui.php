@@ -88,6 +88,8 @@ return [
         'upload_media' => 'Nahrať médiá',
         'create_from_files' => 'Vytvoriť zo súborov',
         'create_items' => 'Vytvoriť položky',
+        'view_frontend' => 'Zobraziť na webe',
+        'unpublished' => 'Nepublikované',
     ],
     'tooltips' => [
         'transcript_attached' => 'Prepis vo formáte :format priložený',
