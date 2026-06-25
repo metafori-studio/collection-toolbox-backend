@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.2.0...archeo-v1.2.1) (2026-06-25)
+
+
+### Miscellaneous Chores
+
+* **archeo:** remove node.js dependencies ([22fc382](https://github.com/metafori-studio/collection-toolbox-backend/commit/22fc3825d449842ed5e3cf4bce27b4fbb35d8cc9))
+* remove dependency on node.js ([bc68743](https://github.com/metafori-studio/collection-toolbox-backend/commit/bc68743dea930713fab2ae7f9bca635254ce7d0a))
+
 ## [1.2.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.1.0...archeo-v1.2.0) (2026-06-16)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.0...etno-v1.4.1) (2026-06-25)
+
+
+### Miscellaneous Chores
+
+* **etno:** remove node.js dependencies ([d14f5c9](https://github.com/metafori-studio/collection-toolbox-backend/commit/d14f5c9da18c80442f518e608dc107fef83b8ebf))
+* remove dependency on node.js ([bc68743](https://github.com/metafori-studio/collection-toolbox-backend/commit/bc68743dea930713fab2ae7f9bca635254ce7d0a))
+
 ## [1.4.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.3.0...etno-v1.4.0) (2026-06-16)
 
 
