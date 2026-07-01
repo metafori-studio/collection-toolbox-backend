@@ -22,9 +22,15 @@ return [
         'work-made-for-hire' => 'work made for hire',
     ],
     'CollectionMethod' => [
+        'acquisition-of-collections-and-fonds' => 'acquisition of collections and fonds',
+        'archival-and-documentary-research' => 'archival and documentary research',
+        'content-and-media-analysis' => 'content and media analysis',
+        'digital-ethnography' => 'digital ethnography',
         'field-research' => 'field research',
-        'survey' => 'survey',
-        'archival-research' => 'archival research',
+        'photographic-and-audiovisual-documentation' => 'photographic and audiovisual documentation',
+        'questionnaire-and-survey-research' => 'questionnaire and survey research',
+        'reproduction-transcription-and-excerption' => 'reproduction, transcription, and excerption',
+        'translation-and-linguistic-processing' => 'translation and linguistic processing',
     ],
     'ExtentUnit' => [
         'drawing' => 'drawing',

@@ -88,6 +88,8 @@ return [
         'upload_media' => 'Upload Media',
         'create_from_files' => 'Create from files',
         'create_items' => 'Create Items',
+        'view_frontend' => 'View on web',
+        'unpublished' => 'Unpublished',
     ],
     'tooltips' => [
         'transcript_attached' => ':format Transcript Attached',
@@ -116,5 +118,9 @@ return [
                 'review_rearrange' => 'Review & Rearrange',
             ],
         ],
+    ],
+    'citations' => [
+        'originator' => 'originator',
+        'time_period' => 'Time Period',
     ],
 ];

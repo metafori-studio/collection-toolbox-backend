@@ -15,6 +15,7 @@ use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Filament\Resources\Documents\Pages\EditDocument;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Project;
+use Metafori\Etno\Support\Frontend;
 
 use function Pest\Livewire\livewire;
 
@@ -110,3 +111,29 @@ dataset('document_inputs_relational_belongsto', [
     'institution_id' => ['institution_id', fn () => Organization::factory()->create()->id],
     'project_id' => ['project_id', fn () => Project::factory()->create()->id],
 ]);
+
+it('shows view_frontend action and hides unpublished text when document is published', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->published(true)->create();
+
+    $expectedUrl = Frontend::documentUrl($document->id);
+
+    livewire(EditDocument::class, ['record' => $document->id])
+        ->assertActionVisible('view_frontend')
+        ->assertActionHasUrl('view_frontend', $expectedUrl)
+        ->assertActionShouldOpenUrlInNewTab('view_frontend')
+        ->assertActionHidden('unpublished');
+});
+
+it('shows unpublished text and hides view_frontend action when document is unpublished', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->published(false)->create();
+
+    livewire(EditDocument::class, ['record' => $document->id])
+        ->assertActionVisible('unpublished')
+        ->assertActionHidden('view_frontend');
+});

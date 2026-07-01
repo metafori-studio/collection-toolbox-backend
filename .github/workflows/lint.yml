@@ -1,0 +1,55 @@
+name: Lint
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      with:
+        persist-credentials: false
+
+    - name: Install nixfmt
+      run: |
+        curl -L https://github.com/NixOS/nixfmt/releases/download/v1.2.0/nixfmt \
+          -o /usr/local/bin/nixfmt
+        echo "aa43e06e2e98d07f9393a8dc73978e0df79bad15d7f84fcd838e15557eb056ee  /usr/local/bin/nixfmt" \
+          | sha256sum --check
+        chmod +x /usr/local/bin/nixfmt
+
+    - name: Setup PHP
+      uses: ./.github/actions/setup-php
+
+    - name: Cache composer downloads
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.cache/composer
+        key: ${{ runner.os }}-composer-lint-${{ hashFiles('composer.lock', 'apps/*/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-lint-
+          ${{ runner.os }}-composer-
+
+    - name: Install root composer packages (for PHPStan, Pint, monorepo-builder)
+      run: composer install --no-interaction --no-progress
+
+    - name: Install per-app composer packages (PHPStan analyses every app)
+      run: |
+        for dir in apps/*/; do
+          composer install --working-dir="$dir" --no-interaction --no-progress
+        done
+
+    - name: Run prek on all files (PHPStan, Laravel Pint, nixfmt, monorepo-builder)
+      uses: j178/prek-action@0bb87d7f00b0c99306c8bcb8b8beba1eb581c037 # v1.1.1
+      with:
+        prek-version: '0.3.4'

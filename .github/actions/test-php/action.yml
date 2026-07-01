@@ -1,0 +1,81 @@
+name: PHP App Tests
+description: Run test suite with its database, search, and dependencies.
+
+inputs:
+  app:
+    description: App directory under apps/ to test.
+    required: true
+  opensearch:
+    description: Start an OpenSearch container for the test run.
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Start PostgreSQL
+      shell: bash
+      run: |
+        docker run -d --name postgres \
+          -e POSTGRES_DB=testing \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_HOST_AUTH_METHOD=trust \
+          -p 5432:5432 \
+          postgres:18
+        echo "Waiting for PostgreSQL to start..."
+        attempts=0
+        until docker exec postgres pg_isready -U postgres -q; do
+          attempts=$((attempts + 1))
+          if [ "$attempts" -ge 30 ]; then
+            echo "PostgreSQL failed to start"
+            exit 1
+          fi
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+
+    - name: Start OpenSearch
+      if: inputs.opensearch == 'true'
+      shell: bash
+      run: |
+        docker run -d --name opensearch -p 9200:9200 -e "discovery.type=single-node" -e "DISABLE_SECURITY_PLUGIN=true" opensearchproject/opensearch:3.5.0
+        echo "Waiting for OpenSearch to start..."
+        attempts=0
+        until curl -sf --connect-timeout 5 --max-time 10 http://localhost:9200/_cluster/health | grep -q -E '"status":"(green|yellow)"'; do
+          attempts=$((attempts + 1))
+          if [ "$attempts" -ge 30 ]; then
+            echo "OpenSearch failed to start"
+            exit 1
+          fi
+          sleep 2
+        done
+        echo "OpenSearch is ready!"
+
+    - name: Setup PHP
+      uses: ./.github/actions/setup-php
+
+    - name: Cache dependency downloads
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: |
+          ~/.cache/composer
+          ~/.npm
+        key: ${{ runner.os }}-deps-${{ inputs.app }}-${{ hashFiles(format('apps/{0}/composer.lock', inputs.app), format('apps/{0}/package-lock.json', inputs.app)) }}
+        restore-keys: |
+          ${{ runner.os }}-deps-${{ inputs.app }}-
+          ${{ runner.os }}-deps-
+
+    - name: Install composer packages
+      shell: bash
+      working-directory: apps/${{ inputs.app }}
+      run: composer install --no-interaction --no-progress
+
+    - name: Run setup (create .env, generate app key, run migrations, build frontend)
+      shell: bash
+      working-directory: apps/${{ inputs.app }}
+      run: composer run setup
+
+    - name: Run Tests
+      shell: bash
+      working-directory: apps/${{ inputs.app }}
+      run: composer run test

@@ -15,6 +15,7 @@ on:
         options:
           - archeo
           - etno
+          - art
       backend_ref:
         description: 'Backend branch or tag'
         required: true
@@ -29,22 +30,77 @@ permissions:
   packages: write
   pull-requests: write
 
+concurrency:
+  group: container-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  build:
+  changes:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    outputs:
+      archeo: ${{ steps.filter.outputs.archeo }}
+      etno: ${{ steps.filter.outputs.etno }}
+      art: ${{ steps.filter.outputs.art }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            shared: &shared
+              - 'app-modules/core/**'
+              - 'app-modules/monitoring/**'
+              - 'composer.json'
+              - 'composer.lock'
+              - '.github/workflows/container-build.yml'
+            archeo:
+              - *shared
+              - 'apps/archeo/**'
+              - 'app-modules/archeo/**'
+            etno:
+              - *shared
+              - 'apps/etno/**'
+              - 'app-modules/etno/**'
+              - 'app-modules/opensearch/**'
+            art:
+              - *shared
+              - 'apps/art/**'
+
+  build:
+    name: build (${{ matrix.module }})
+    needs: changes
+    # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
+    if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        module: [archeo, etno]
+        include:
+          - module: archeo
+            mapbox_secret: VITE_MAPBOX_TOKEN_ARCHEO
+          - module: etno
+            mapbox_secret: VITE_MAPBOX_TOKEN_ETNO
+          - module: art
+            mapbox_secret: ''
 
     steps:
       - name: Check module relevance
         id: guard
+        env:
+          CHANGED: ${{ needs.changes.outputs[matrix.module] }}
         run: |
           if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]] && [[ "$CHANGED" != "true" ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
@@ -54,6 +110,7 @@ jobs:
         if: steps.guard.outputs.skip != 'true'
         with:
           ref: ${{ inputs.backend_ref || github.ref }}
+          persist-credentials: false
 
       - name: Resolve refs and image tag
         id: refs
@@ -67,11 +124,11 @@ jobs:
           fi
 
       - name: Validate required secrets
-        if: steps.guard.outputs.skip != 'true'
+        if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''
         env:
-          MAPBOX_TOKEN: ${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
+          MAPBOX_TOKEN: ${{ secrets[matrix.mapbox_secret] }}
         run: |
-          test -n "$MAPBOX_TOKEN" || { echo "Missing VITE_MAPBOX_TOKEN_${{ matrix.module == 'archeo' && 'ARCHEO' || 'ETNO' }}"; exit 1; }
+          test -n "$MAPBOX_TOKEN" || { echo "Missing ${{ matrix.mapbox_secret }}"; exit 1; }
 
       - name: Set up Docker Buildx
         if: steps.guard.outputs.skip != 'true'
@@ -96,7 +153,7 @@ jobs:
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
           secrets: |
-            mapbox_token=${{ secrets[matrix.module == 'archeo' && 'VITE_MAPBOX_TOKEN_ARCHEO' || 'VITE_MAPBOX_TOKEN_ETNO'] }}
+            mapbox_token=${{ secrets[matrix.mapbox_secret] }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}

@@ -81,6 +81,7 @@ it('can show a complete item with all relations', function () {
                 'publication_date_start',
                 'publication_date_end',
                 'publication_date_settings',
+                'how_to_cite',
                 'institution' => [
                     'id',
                     'name',
@@ -174,6 +175,7 @@ it('can show a complete item with all relations', function () {
                 'location_note' => $document->location_note,
                 'content_note' => $document->content_note,
                 'technical_note' => $document->technical_note,
+                'how_to_cite' => $document->how_to_cite,
                 'type' => $document->type?->value,
                 'extents' => collect($document->extents)->toArray(),
                 'language' => $document->language?->value,
