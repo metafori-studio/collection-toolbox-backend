@@ -11,8 +11,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Metafori\Etno\Enums\TranscriptFormat;
 use Metafori\Etno\Filament\Resources\Items\Schemas\MediaForm;
+use Metafori\Etno\Models\Media;
 use Metafori\Etno\Repositories\ItemRepository;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaRelationManager extends RelationManager
 {

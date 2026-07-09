@@ -9,7 +9,7 @@ use Metafori\Etno\Filament\Resources\Items\Pages\EditItem;
 use Metafori\Etno\Filament\Resources\Items\RelationManagers\MediaRelationManager;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Metafori\Etno\Models\Media;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

@@ -89,7 +89,12 @@ class ItemResource extends JsonResource
             ),
             'document_id' => $this->document_id,
             /** @var MediaType|null */
-            'media_type' => $this->whenLoaded('firstMedia', fn () => $this->firstMedia ? MediaType::tryFrom($this->firstMedia->collection_name) : null),
+            'media_type' => $this->whenLoaded(
+                'firstMedia',
+                fn () => $this->firstMedia
+                    ? $this->firstMedia->getType()
+                    : $this->whenLoaded('media', fn () => $this->media->first()?->getType())
+            ),
             'first_media' => $this->whenLoaded('firstMedia', fn () => $this->when(
                 Gate::allows('viewMedia', $this->resource),
                 fn () => new MediaResource($this->firstMedia)
