@@ -61,6 +61,7 @@ return [
         'musical-score' => 'notový zápis',
         'newspaper-article' => 'novinový článok',
         'personal-papers' => 'pozostalosť',
+        'photograph' => 'fotografia',
         'photographic-negative' => 'negatív',
         'photographic-slide' => 'diapozitív',
         'physical-object' => 'predmet',

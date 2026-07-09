@@ -61,6 +61,7 @@ return [
         'musical-score' => 'musical score',
         'newspaper-article' => 'newspaper article',
         'personal-papers' => 'personal papers',
+        'photograph' => 'photograph',
         'photographic-negative' => 'photographic negative',
         'photographic-slide' => 'photographic slide',
         'physical-object' => 'physical object',
