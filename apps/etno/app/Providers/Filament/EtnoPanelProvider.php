@@ -33,15 +33,10 @@ class EtnoPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->resources([
-                CoreResources\CountryResource::class,
-                CoreResources\DistrictResource::class,
                 CoreResources\KeywordResource::class,
                 CoreResources\LocationResource::class,
-                CoreResources\MunicipalityPartResource::class,
-                CoreResources\MunicipalityResource::class,
                 CoreResources\OrganizationResource::class,
                 CoreResources\PersonResource::class,
-                CoreResources\RegionResource::class,
                 CoreResources\UserResource::class,
             ])
             ->pages([

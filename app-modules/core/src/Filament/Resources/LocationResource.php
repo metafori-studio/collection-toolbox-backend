@@ -20,8 +20,6 @@ class LocationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
 
-    protected static ?int $navigationSort = 6;
-
     public static function getModelLabel(): string
     {
         return __('core::ui.resources.location.label');
@@ -35,11 +33,6 @@ class LocationResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __('core::ui.resources.location.navigation_label');
-    }
-
-    public static function getNavigationGroup(): ?string
-    {
-        return __('core::ui.navigation_groups.localities');
     }
 
     public static function form(Schema $schema): Schema

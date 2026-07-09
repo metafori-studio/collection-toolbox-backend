@@ -2,35 +2,9 @@
 
 return [
     'navigation_groups' => [
-        'localities' => 'Localities',
         'system' => 'System',
     ],
     'resources' => [
-        'country' => [
-            'label' => 'Country',
-            'plural_label' => 'Countries',
-            'navigation_label' => 'Countries',
-        ],
-        'region' => [
-            'label' => 'Region',
-            'plural_label' => 'Regions',
-            'navigation_label' => 'Regions',
-        ],
-        'district' => [
-            'label' => 'District',
-            'plural_label' => 'Districts',
-            'navigation_label' => 'Districts',
-        ],
-        'municipality' => [
-            'label' => 'Municipality',
-            'plural_label' => 'Municipalities',
-            'navigation_label' => 'Municipalities',
-        ],
-        'municipality_part' => [
-            'label' => 'Part of Municipality',
-            'plural_label' => 'Parts of Municipality',
-            'navigation_label' => 'Parts of Municipality',
-        ],
         'location' => [
             'label' => 'Location',
             'plural_label' => 'Locations',
