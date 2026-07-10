@@ -65,6 +65,10 @@ return [
             'title' => 'PDF Compressed',
             'body' => '":name" has been compressed successfully.',
         ],
+        'pdf_watermarked' => [
+            'title' => 'PDF Watermarked',
+            'body' => '":name" has been watermarked successfully.',
+        ],
         'import_queued' => [
             'title' => 'Import Queued',
             'body' => 'The import process has started in the background. You will be notified when it is complete.',

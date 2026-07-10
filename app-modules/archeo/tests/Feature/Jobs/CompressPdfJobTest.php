@@ -3,11 +3,14 @@
 use Filament\Notifications\DatabaseNotification;
 use Illuminate\Process\PendingProcess;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Jobs\CompressPdfJob;
+use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Listeners\CompressPdfOnUploadListener;
 use Metafori\Archeo\Models\Activity;
 use Metafori\Core\Models\User;
@@ -62,6 +65,47 @@ it('does not dispatch CompressPdfJob for non-pdf mime type in pdfs collection', 
     $listener->handle(new MediaHasBeenAddedEvent($media));
 
     Queue::assertNotPushed(CompressPdfJob::class);
+});
+
+it('chains WatermarkPdfJob after CompressPdfJob when a watermark image is configured', function () {
+    Bus::fake();
+
+    $watermarkPng = sys_get_temp_dir().'/'.uniqid('wm_', true).'.png';
+    file_put_contents($watermarkPng, 'fake-png-data');
+    Config::set('archeo.watermark_image', $watermarkPng);
+
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $activity = Activity::factory()->create();
+    $pdfPath = Storage::disk('public')->path('chain.pdf');
+    file_put_contents($pdfPath, '%PDF-1.4 fake content');
+
+    $activity->addMedia($pdfPath)
+        ->usingFileName('chain.pdf')
+        ->toMediaCollection('pdfs', 'public');
+
+    Bus::assertChained([
+        CompressPdfJob::class,
+        WatermarkPdfJob::class,
+    ]);
+
+    @unlink($watermarkPng);
+});
+
+it('chains only CompressPdfJob when no watermark image is configured', function () {
+    Bus::fake();
+    Config::set('archeo.watermark_image', null);
+
+    $activity = Activity::factory()->create();
+    $pdfPath = Storage::disk('public')->path('nochain.pdf');
+    file_put_contents($pdfPath, '%PDF-1.4 fake content');
+
+    $activity->addMedia($pdfPath)
+        ->usingFileName('nochain.pdf')
+        ->toMediaCollection('pdfs', 'public');
+
+    Bus::assertChained([CompressPdfJob::class]);
 });
 
 it('replaces the file with the compressed version when ghostscript reduces file size', function () {

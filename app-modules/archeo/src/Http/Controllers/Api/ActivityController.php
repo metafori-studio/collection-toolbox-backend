@@ -4,6 +4,7 @@ namespace Metafori\Archeo\Http\Controllers\Api;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
 use Metafori\Archeo\Http\Controllers\Controller;
@@ -11,7 +12,9 @@ use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
 use Metafori\Archeo\Http\Requests\Api\ActivityIndexRequest;
 use Metafori\Archeo\Http\Resources\ActivityMapPointResource;
 use Metafori\Archeo\Http\Resources\ActivityResource;
+use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Archeo\Support\WatermarkImage;
 
 class ActivityController extends Controller
 {
@@ -136,12 +139,18 @@ class ActivityController extends Controller
     /**
      * Display the specified activity by its activity number.
      */
-    public function show(string $activityNumber): ActivityResource
+    public function show(Request $request, string $activityNumber): ActivityResource
     {
         $activity = Activity::query()
             ->where('activity_number', $activityNumber)
             ->with(['galleries.media', 'media'])
             ->firstOrFail();
+
+        if (WatermarkImage::isUsable(config('archeo.watermark_image'))) {
+            $activity->getMedia('pdfs')
+                ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
+                ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id, $request->user()));
+        }
 
         return new ActivityResource($activity);
     }

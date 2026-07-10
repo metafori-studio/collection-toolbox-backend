@@ -15,6 +15,7 @@ parameters:
         - apps/
     excludePaths:
         - */vendor/*
+        - */storage/*
     configDirectories:
         - apps/archeo/config
         - apps/art/config
