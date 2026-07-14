@@ -67,7 +67,7 @@ return [
         'research_collections' => 'Výskumné zbierky',
         'subtitle' => 'Podtitul',
         'terms_of_use' => 'Podmienky použitia',
-        'language' => 'Jazyk',
+        'languages' => 'Jazyky',
         'location_note' => 'Poznámka k lokalite',
         'size' => 'Veľkosť',
         'transcripts' => 'Prepisy',

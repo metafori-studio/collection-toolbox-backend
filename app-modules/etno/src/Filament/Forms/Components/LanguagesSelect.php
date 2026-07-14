@@ -6,7 +6,7 @@ use Metafori\Core\Enums\Language;
 use Metafori\Core\Filament\Forms\Components\Select;
 use Metafori\Etno\Filament\Forms\Components\Concerns\CanBeInherited;
 
-class LanguageSelect extends Select
+class LanguagesSelect extends Select
 {
     use CanBeInherited;
 
@@ -14,8 +14,10 @@ class LanguageSelect extends Select
     {
         parent::setUp();
 
-        $this->label(__('etno::ui.fields.language'))
+        $this->label(__('etno::ui.fields.languages'))
             ->options(Language::class)
+            ->multiple()
+            ->reorderable()
             ->sortedOptions()
             ->searchable();
     }

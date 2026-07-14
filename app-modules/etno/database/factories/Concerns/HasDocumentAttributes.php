@@ -65,7 +65,7 @@ trait HasDocumentAttributes
                     'unit' => fake()->randomElement(ExtentUnit::cases())->value,
                 ],
             ] : null,
-            'language' => fake()->optional()->randomElement(Language::cases()),
+            'languages' => fake()->optional()->randomElements(Language::cases(), fake()->numberBetween(0, 2)),
             'collection_method' => fake()->optional()->randomElement(CollectionMethod::cases()),
             'accrual_method' => fake()->optional()->randomElement(AccrualMethod::cases()),
             'access_rights' => fake()->optional()->randomElement(AccessRights::cases()),

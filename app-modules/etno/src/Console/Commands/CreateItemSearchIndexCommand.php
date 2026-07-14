@@ -99,7 +99,7 @@ class CreateItemSearchIndexCommand extends Command
 
                         // Exact match enum-like fields
                         'type' => ['type' => 'keyword'],
-                        'language' => ['type' => 'keyword'],
+                        'languages' => ['type' => 'keyword'],
                         'accrual_method' => ['type' => 'keyword'],
                         'collection_method' => ['type' => 'keyword'],
                         'access_rights' => ['type' => 'keyword'],

@@ -44,7 +44,7 @@ trait HasDocumentMetadata
             'publication_date_end' => 'date',
             'publication_date_settings' => 'json',
             'type' => ItemType::class,
-            'language' => Language::class,
+            'languages' => AsEnumCollection::of(Language::class),
             'accrual_method' => AccrualMethod::class,
             'collection_method' => CollectionMethod::class,
             'access_rights' => AccessRights::class,

@@ -1,5 +1,6 @@
 <?php
 
+use Metafori\Core\Enums\Language;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\User;
 use Metafori\Etno\Enums\AccessRights;
@@ -66,7 +67,7 @@ it('can show a complete item with all relations', function () {
                         ],
                     ],
                 ],
-                'language',
+                'languages',
                 'accrual_method',
                 'collection_method',
                 'access_rights',
@@ -178,7 +179,9 @@ it('can show a complete item with all relations', function () {
                 'how_to_cite' => $document->how_to_cite,
                 'type' => $document->type?->value,
                 'extents' => collect($document->extents)->toArray(),
-                'language' => $document->language?->value,
+                'languages' => collect($document->languages)
+                    ->map(fn (Language $lang) => $lang->value)
+                    ->toArray(),
                 'accrual_method' => $document->accrual_method?->value,
                 'collection_method' => $document->collection_method?->value,
                 'access_rights' => $document->access_rights?->value,
