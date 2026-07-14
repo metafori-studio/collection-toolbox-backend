@@ -30,7 +30,7 @@ use Metafori\Etno\Models\Pivots\ItemPivot;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
 
 class Item extends Model implements HasMedia, Inheritable
 {
@@ -373,7 +373,7 @@ class Item extends Model implements HasMedia, Inheritable
             ->acceptsMimeTypes(self::allowedMimeTypesForCollection(MediaType::Audio));
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?BaseMedia $media = null): void
     {
         $this->addMediaConversion('full')
             ->width(1280)
@@ -400,10 +400,9 @@ class Item extends Model implements HasMedia, Inheritable
         }
 
         return $this->media
-            ->pluck('collection_name')
-            ->unique()
-            ->map(MediaType::tryFrom(...))
+            ->map(fn (Media $media) => $media->getType())
             ->filter()
+            ->unique()
             ->flatMap(self::allowedMimeTypesForCollection(...));
     }
 

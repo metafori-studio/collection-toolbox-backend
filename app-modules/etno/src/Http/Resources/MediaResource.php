@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\MissingValue;
 use Metafori\Core\Http\Resources\MediaResource as CoreMediaResource;
 use Metafori\Etno\Enums\TranscriptFormat;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Metafori\Etno\Models\Media;
 
 /**
  * @mixin Media
