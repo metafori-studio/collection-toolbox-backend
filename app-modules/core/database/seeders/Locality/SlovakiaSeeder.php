@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Metafori\Core\Models\Country;
 use Metafori\Core\Models\District;
 use Metafori\Core\Models\Municipality;
+use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\Region;
 
 class SlovakiaSeeder extends Seeder
@@ -65,7 +66,7 @@ class SlovakiaSeeder extends Seeder
                     foreach ($districtData['municipalities'] ?? [] as $municipalityData) {
                         $municipalityName = $municipalityData['name'];
 
-                        Municipality::updateOrCreate(
+                        $municipality = Municipality::updateOrCreate(
                             [
                                 'district_id' => $district->id,
                                 'name->sk' => $municipalityName,
@@ -76,6 +77,22 @@ class SlovakiaSeeder extends Seeder
                                 'longitude' => $municipalityData['longitude'],
                             ]
                         );
+
+                        foreach ($municipalityData['parts'] ?? [] as $partData) {
+                            $partName = $partData['name'];
+
+                            MunicipalityPart::updateOrCreate(
+                                [
+                                    'municipality_id' => $municipality->id,
+                                    'name->sk' => $partName,
+                                ],
+                                [
+                                    'name' => ['sk' => $partName],
+                                    'latitude' => $partData['latitude'],
+                                    'longitude' => $partData['longitude'],
+                                ]
+                            );
+                        }
                     }
                 }
             }
