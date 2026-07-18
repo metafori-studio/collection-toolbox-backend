@@ -6,5 +6,5 @@ return [
     'District' => 'Okres',
     'Municipality' => 'Obec',
     'MunicipalityPart' => 'Časť obce',
-    'Location' => 'Lokalita (iné)',
+    'Location' => 'Lokalita',
 ];

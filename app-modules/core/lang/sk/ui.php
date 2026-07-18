@@ -2,39 +2,13 @@
 
 return [
     'navigation_groups' => [
-        'localities' => 'Lokality',
         'system' => 'Systém',
     ],
     'resources' => [
-        'country' => [
-            'label' => 'Štát',
-            'plural_label' => 'Štáty',
-            'navigation_label' => 'Štáty',
-        ],
-        'region' => [
-            'label' => 'Kraj',
-            'plural_label' => 'Kraje',
-            'navigation_label' => 'Kraje',
-        ],
-        'district' => [
-            'label' => 'Okres',
-            'plural_label' => 'Okresy',
-            'navigation_label' => 'Okresy',
-        ],
-        'municipality' => [
-            'label' => 'Obec',
-            'plural_label' => 'Obce',
-            'navigation_label' => 'Obce',
-        ],
-        'municipality_part' => [
-            'label' => 'Časť obce',
-            'plural_label' => 'Časti obce',
-            'navigation_label' => 'Časti obce',
-        ],
         'location' => [
-            'label' => 'Lokalita (iné)',
-            'plural_label' => 'Lokality (iné)',
-            'navigation_label' => 'Lokality (iné)',
+            'label' => 'Lokalita',
+            'plural_label' => 'Lokality',
+            'navigation_label' => 'Lokality',
         ],
         'keyword' => [
             'label' => 'Kľúčové slovo',
