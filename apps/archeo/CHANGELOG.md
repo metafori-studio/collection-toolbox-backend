@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.2.1...archeo-v1.2.2) (2026-07-18)
+
+
+### Bug Fixes
+
+* **archeo:** remove watermark from resources ([08ff170](https://github.com/metafori-studio/collection-toolbox-backend/commit/08ff170cc0cb866e26024a980bd05f2f50ae9f4e))
+
 ## [1.2.1](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.2.0...archeo-v1.2.1) (2026-06-25)
 
 

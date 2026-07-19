@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.1...etno-v1.5.0) (2026-07-18)
+
+
+### Features
+
+* **etno:** return media type in item show method ([4ba240a](https://github.com/metafori-studio/collection-toolbox-backend/commit/4ba240a9ad1918f829c20641910f0514ba66ffad))
+
 ## [1.4.1](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.0...etno-v1.4.1) (2026-06-25)
 
 

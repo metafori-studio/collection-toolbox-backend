@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.5.0...v2.6.0) (2026-07-18)
+
+
+### Features
+
+* **core:** import municipality parts into sk.json and update SlovakiaSeeder ([f85e501](https://github.com/metafori-studio/collection-toolbox-backend/commit/f85e501e00790ab80f161d62925ed110d2ca7e84))
+* **core:** make LocalitySelect configurable and add includeLocation option ([55454da](https://github.com/metafori-studio/collection-toolbox-backend/commit/55454da7848961c5591ba8873aa70f213af1d982))
+* **etno:** add frontend link actions to document and item edit pages ([6f3bb58](https://github.com/metafori-studio/collection-toolbox-backend/commit/6f3bb586feae8527f147a5e6805f766d5b9183af))
+* **etno:** allow multiple document languages ([a32c467](https://github.com/metafori-studio/collection-toolbox-backend/commit/a32c46760d1e60d3dc98ec05997148eaedcfc834))
+* **etno:** return media type in item show method ([4ba240a](https://github.com/metafori-studio/collection-toolbox-backend/commit/4ba240a9ad1918f829c20641910f0514ba66ffad))
+
+
+### Bug Fixes
+
+* **archeo:** remove watermark from resources ([08ff170](https://github.com/metafori-studio/collection-toolbox-backend/commit/08ff170cc0cb866e26024a980bd05f2f50ae9f4e))
+* **etno:** add photograph item type translation ([ef295c7](https://github.com/metafori-studio/collection-toolbox-backend/commit/ef295c751f26bdcc9bfbf1e8bec9ff28a15bd922))
+
 ## [2.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.4.0...v2.5.0) (2026-06-25)
 
 
