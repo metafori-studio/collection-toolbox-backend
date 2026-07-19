@@ -25,15 +25,12 @@ class ActivityExcelParser
         'author_ns' => 'K',
         'institution' => 'L',
         'action_number' => 'M',
-        'dating_ns' => 'N',
-        'dating_ceans' => 'O',
-        'site_type_original' => 'P',
-        'dating_site_type' => 'Q',
-        'localization_degree' => 'R',
-        'has_gis_link' => 'S',
-        'coordinate_x' => 'T',
-        'coordinate_y' => 'U',
-        'size_category' => 'V',
+        'dating_site_type' => 'N',
+        'localization_degree' => 'O',
+        'has_gis_link' => 'P',
+        'coordinate_x' => 'Q',
+        'coordinate_y' => 'R',
+        'size_category' => 'S',
     ];
 
     /**
