@@ -91,9 +91,11 @@ class ItemResource extends JsonResource
             /** @var MediaType|null */
             'media_type' => $this->whenLoaded(
                 'firstMedia',
-                fn () => $this->firstMedia
-                    ? $this->firstMedia->getType()
-                    : $this->whenLoaded('media', fn () => $this->media->first()?->getType())
+                fn () => $this->firstMedia?->getType(),
+                fn () => $this->whenLoaded(
+                    'media',
+                    fn () => $this->media->first()?->getType()
+                )
             ),
             'first_media' => $this->whenLoaded('firstMedia', fn () => $this->when(
                 Gate::allows('viewMedia', $this->resource),
