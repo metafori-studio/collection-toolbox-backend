@@ -4,6 +4,7 @@ use Metafori\Core\Enums\Language;
 use Metafori\Core\Models\MunicipalityPart;
 use Metafori\Core\Models\User;
 use Metafori\Etno\Enums\AccessRights;
+use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Enums\ProductionMethod;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
@@ -53,6 +54,7 @@ it('can show a complete item with all relations', function () {
                 'content_note',
                 'technical_note',
                 'type',
+                'media_type',
                 'media' => [
                     'documents' => [
                         '*' => [
@@ -178,6 +180,7 @@ it('can show a complete item with all relations', function () {
                 'technical_note' => $document->technical_note,
                 'how_to_cite' => $document->how_to_cite,
                 'type' => $document->type?->value,
+                'media_type' => MediaType::Document->value,
                 'extents' => collect($document->extents)->toArray(),
                 'languages' => collect($document->languages)
                     ->map(fn (Language $lang) => $lang->value)
