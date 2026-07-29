@@ -22,7 +22,7 @@ class RegionResource extends JsonResource
             'id' => $this->id,
             /** @var string */
             'name' => $this->name,
-            'country' => new CountryResource($this->whenLoaded('country')),
+            'type' => $this->getMorphClass(),
         ];
     }
 }

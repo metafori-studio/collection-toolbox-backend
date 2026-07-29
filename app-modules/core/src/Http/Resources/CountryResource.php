@@ -22,6 +22,7 @@ class CountryResource extends JsonResource
             'id' => $this->id,
             /** @var string */
             'name' => $this->name,
+            'type' => $this->getMorphClass(),
         ];
     }
 }

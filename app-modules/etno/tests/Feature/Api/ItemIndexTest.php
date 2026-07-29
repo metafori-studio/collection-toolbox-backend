@@ -33,6 +33,7 @@ uses(RefreshIndices::class);
 it('can list items', function () {
     Document::factory()
         ->published()
+        ->for(Location::factory(), 'locality')
         ->hasItems(2)
         ->hasAuthors(2)
         ->hasResearchers(2)
@@ -77,8 +78,11 @@ it('can list items', function () {
                         ],
                     ],
                     'locality' => [
-                        'id',
-                        'name',
+                        '*' => [
+                            'id',
+                            'name',
+                            'type',
+                        ],
                     ],
                     'media_type',
                 ],

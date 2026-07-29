@@ -95,23 +95,10 @@ it('can show a complete item with all relations', function () {
                     'title',
                 ],
                 'locality' => [
-                    'id',
-                    'name',
-                    'municipality' => [
+                    '*' => [
                         'id',
                         'name',
-                        'district' => [
-                            'id',
-                            'name',
-                            'region' => [
-                                'id',
-                                'name',
-                                'country' => [
-                                    'id',
-                                    'name',
-                                ],
-                            ],
-                        ],
+                        'type',
                     ],
                 ],
                 'authors' => [
@@ -217,8 +204,31 @@ it('can show a complete item with all relations', function () {
                     'title' => $document->project->title,
                 ],
                 'locality' => [
-                    'id' => $document->locality->id,
-                    'name' => $document->locality->name,
+                    [
+                        'id' => $document->locality->id,
+                        'name' => $document->locality->name,
+                        'type' => 'municipality_part',
+                    ],
+                    [
+                        'id' => $document->locality->municipality->id,
+                        'name' => $document->locality->municipality->name,
+                        'type' => 'municipality',
+                    ],
+                    [
+                        'id' => $document->locality->municipality->district->id,
+                        'name' => $document->locality->municipality->district->name,
+                        'type' => 'district',
+                    ],
+                    [
+                        'id' => $document->locality->municipality->district->region->id,
+                        'name' => $document->locality->municipality->district->region->name,
+                        'type' => 'region',
+                    ],
+                    [
+                        'id' => $document->locality->municipality->district->region->country->id,
+                        'name' => $document->locality->municipality->district->region->country->name,
+                        'type' => 'country',
+                    ],
                 ],
                 'authors' => $document->authors->map(fn ($author) => [
                     'id' => $author->id,

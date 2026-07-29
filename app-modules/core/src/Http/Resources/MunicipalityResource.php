@@ -22,7 +22,7 @@ class MunicipalityResource extends JsonResource
             'id' => $this->id,
             /** @var string */
             'name' => $this->name,
-            'district' => new DistrictResource($this->whenLoaded('district')),
+            'type' => $this->getMorphClass(),
         ];
     }
 }
