@@ -40,16 +40,24 @@ Monorepo of Laravel applications and shared modules for the Metafori Collection 
 nix develop
 ```
 
-This provides PHP 8.5, PostgreSQL, Valkey (Redis), S3-compatible storage, and monitoring tooling.
+This provides PHP 8.5, PostgreSQL, Valkey (Redis), S3-compatible storage, and monitoring tooling. 
+
+**Services are not started automatically** — you need to start them manually after entering the shell.
 
 ### 2. Start infrastructure services
 
 From the repository root (inside the Nix shell):
 
 ```bash
-just start-postgres    # database only
-# or
-just all               # start all services (postgres, valkey, storage, monitoring, …)
+just start-postgres    # minimum for local dev (postgres + valkey)
+```
+
+For basic app development with the default `.env.example` settings, this is all you need.
+
+Optional — start the full local stack (S3 storage, Prometheus, Grafana, …):
+
+```bash
+just all
 ```
 
 Stop services with `just stop-postgres` or `just die`.
