@@ -1,59 +1,128 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Collection Toolbox Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Monorepo of Laravel applications and shared modules for the Metafori Collection Toolbox — museum collection management backends with Filament admin panels and REST APIs.
 
-## About Laravel
+## Repository structure
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Path | Description |
+|------|-------------|
+| `apps/` | Deployable Laravel applications (each has its own `.env`, `composer.json`, and migrations) |
+| `app-modules/` | Shared PHP packages consumed by the apps (`core`, domain modules, monitoring, opensearch) |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Applications
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| App | Package | Description |
+|-----|---------|-------------|
+| [`apps/etno`](apps/etno) | `metafori/etnoskop` | Ethnographic collections — items, research collections, media, search API |
+| [`apps/archeo`](apps/archeo) | `metafori/archeomap` | Archaeological collections |
+| [`apps/art`](apps/art) | `metafori/art` | Lightweight admin shell (shared user management) |
 
-## Learning Laravel
+### Shared modules
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Module | Purpose |
+|--------|---------|
+| `core` | Users, roles, permissions, localities, shared Filament resources |
+| `etno` | Etno domain logic, Filament resources, API |
+| `archeo` | Archeo domain logic, Filament resources |
+| `monitoring` | Prometheus metrics |
+| `opensearch` | OpenSearch integration |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Prerequisites
 
-## Laravel Sponsors
+- [Nix](https://nixos.org/download/) with flakes enabled
+- SSH access to `git@github.com:metafori-studio/infra.git` (used by `flake.nix` for the dev shell)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Local setup
 
-### Premium Partners
+### 1. Enter the development shell
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+nix develop
+```
 
-## Contributing
+This provides PHP 8.5, PostgreSQL, Valkey (Redis), S3-compatible storage, and monitoring tooling.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Start infrastructure services
 
-## Code of Conduct
+From the repository root (inside the Nix shell):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+just start-postgres    # database only
+# or
+just all               # start all services (postgres, valkey, storage, monitoring, …)
+```
 
-## Security Vulnerabilities
+Stop services with `just stop-postgres` or `just die`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Set up an application
 
-## License
+Pick the app you want to run and work from its directory:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cd apps/etno   # or apps/archeo, apps/art
+
+composer install
+composer setup   # copies .env, generates APP_KEY, runs migrations & seeders
+composer dev     # php artisan serve + queue worker + log tail (pail)
+```
+
+`composer dev` starts the app at **http://127.0.0.1:8000**.
+
+### 4. Create an admin user
+
+```bash
+php artisan core:make:user
+```
+
+Prompts for name, email, password, and roles.
+
+### 5. Optional — seed Slovak locality data
+
+Useful for local development with geographic / locality fields:
+
+```bash
+php artisan db:seed --class="Metafori\Core\Database\Seeders\Locality\SlovakiaSeeder" --force
+```
+
+### 6. Locale
+
+For Slovak locale, set in `.env`:
+
+```env
+APP_LOCALE=sk
+```
+
+## URLs (local)
+
+Paths differ per application. Replace the host/port if you changed them.
+
+| App | Filament admin | API docs |
+|-----|----------------|----------|
+| **etno** | http://127.0.0.1:8000/etno/ | http://127.0.0.1:8000/docs/api |
+| **archeo** | http://127.0.0.1:8000/archeo/ | http://127.0.0.1:8000/docs/api |
+| **art** | http://127.0.0.1:8000/ | — |
+
+API documentation is powered by [Scramble](https://scramble.dedoc.co/) and is available on apps that expose an API (etno, archeo).
+
+## Default database
+
+The Nix dev shell configures PostgreSQL with:
+
+- **Database:** `collection_toolbox_backend`
+- **Host:** `127.0.0.1`
+- **Port:** `5432`
+- **User:** `postgres`
+
+These match the values in each app's `.env.example`.
+
+## Useful commands
+
+```bash
+# From repo root (Nix shell)
+just --list              # all infrastructure commands
+
+# From an app directory
+composer test            # run tests
+php artisan migrate      # run pending migrations
+php artisan db:seed      # run DatabaseSeeder
+```
