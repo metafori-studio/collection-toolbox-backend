@@ -4,7 +4,6 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\MissingValue;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
@@ -58,24 +57,9 @@ class DocumentResource extends JsonResource
             'license' => $this->license,
             /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
-            'time_period' => [
-                'precision' => $this->time_period_settings['precision'] ?? new MissingValue,
-                'is_range' => $this->time_period_settings['is_range'] ?? new MissingValue,
-                'start' => $this->time_period_start,
-                'end' => $this->time_period_end,
-            ],
-            'submission_date' => [
-                'precision' => $this->submission_date_settings['precision'] ?? new MissingValue,
-                'is_range' => $this->submission_date_settings['is_range'] ?? new MissingValue,
-                'start' => $this->submission_date_start,
-                'end' => $this->submission_date_end,
-            ],
-            'publication_date' => [
-                'precision' => $this->publication_date_settings['precision'] ?? new MissingValue,
-                'is_range' => $this->publication_date_settings['is_range'] ?? new MissingValue,
-                'start' => $this->publication_date_start,
-                'end' => $this->publication_date_end,
-            ],
+            'time_period' => PrecisionDateResource::make($this->time_period),
+            'submission_date' => PrecisionDateResource::make($this->submission_date),
+            'publication_date' => PrecisionDateResource::make($this->publication_date),
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
             'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),
