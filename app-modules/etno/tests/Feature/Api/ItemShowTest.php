@@ -75,18 +75,9 @@ it('can show a complete item with all relations', function () {
                 'access_rights',
                 'license',
                 'production_methods',
-                'time_period' => [
-                    'start',
-                    'end',
-                ],
-                'submission_date' => [
-                    'start',
-                    'end',
-                ],
-                'publication_date' => [
-                    'start',
-                    'end',
-                ],
+                'time_period',
+                'submission_date',
+                'publication_date',
                 'how_to_cite',
                 'institution' => [
                     'id',
@@ -182,24 +173,24 @@ it('can show a complete item with all relations', function () {
                 'production_methods' => $document->production_methods
                     ? collect($document->production_methods)->map(fn (ProductionMethod $method) => $method->value)->toArray()
                     : null,
-                'time_period' => [
+                'time_period' => $document->time_period ? [
                     'precision' => $document->time_period->precision?->value,
                     'is_range' => $document->time_period->is_range,
                     'start' => $document->time_period->start?->toJson(),
                     'end' => $document->time_period->end?->toJson(),
-                ],
-                'submission_date' => [
+                ] : null,
+                'submission_date' => $document->submission_date ? [
                     'precision' => $document->submission_date->precision?->value,
                     'is_range' => $document->submission_date->is_range,
                     'start' => $document->submission_date->start?->toJson(),
                     'end' => $document->submission_date->end?->toJson(),
-                ],
-                'publication_date' => [
+                ] : null,
+                'publication_date' => $document->publication_date ? [
                     'precision' => $document->publication_date->precision?->value,
                     'is_range' => $document->publication_date->is_range,
                     'start' => $document->publication_date->start?->toJson(),
                     'end' => $document->publication_date->end?->toJson(),
-                ],
+                ] : null,
                 'institution' => [
                     'id' => $document->institution->id,
                     'name' => $document->institution->name,

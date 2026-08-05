@@ -60,7 +60,7 @@ trait HasDocumentMetadata
     protected function timePeriod(): Attribute
     {
         return Attribute::make(
-            get: fn (): PrecisionDate => $this->createPrecisionDate(
+            get: fn (): ?PrecisionDate => $this->createPrecisionDate(
                 $this->time_period_start,
                 $this->time_period_end,
                 $this->time_period_settings,
@@ -71,7 +71,7 @@ trait HasDocumentMetadata
     protected function submissionDate(): Attribute
     {
         return Attribute::make(
-            get: fn (): PrecisionDate => $this->createPrecisionDate(
+            get: fn (): ?PrecisionDate => $this->createPrecisionDate(
                 $this->submission_date_start,
                 $this->submission_date_end,
                 $this->submission_date_settings,
@@ -82,7 +82,7 @@ trait HasDocumentMetadata
     protected function publicationDate(): Attribute
     {
         return Attribute::make(
-            get: fn (): PrecisionDate => $this->createPrecisionDate(
+            get: fn (): ?PrecisionDate => $this->createPrecisionDate(
                 $this->publication_date_start,
                 $this->publication_date_end,
                 $this->publication_date_settings,
@@ -90,8 +90,12 @@ trait HasDocumentMetadata
         );
     }
 
-    private function createPrecisionDate($start, $end, ?array $settings): PrecisionDate
+    private function createPrecisionDate($start, $end, ?array $settings): ?PrecisionDate
     {
+        if ($start === null && $end === null) {
+            return null;
+        }
+
         $precision = $settings['precision'] ?? null;
 
         return new PrecisionDate(

@@ -57,8 +57,11 @@ class DocumentResource extends JsonResource
             'license' => $this->license,
             /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
+            /** @var PrecisionDateResource|null */
             'time_period' => PrecisionDateResource::make($this->time_period),
+            /** @var PrecisionDateResource|null */
             'submission_date' => PrecisionDateResource::make($this->submission_date),
+            /** @var PrecisionDateResource|null */
             'publication_date' => PrecisionDateResource::make($this->publication_date),
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
