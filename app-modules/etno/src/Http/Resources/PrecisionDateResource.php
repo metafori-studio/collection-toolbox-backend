@@ -23,10 +23,10 @@ class PrecisionDateResource extends JsonResource
         }
 
         return [
-            'precision' => $this->whenNotNull($this->precision?->value),
-            'is_range' => $this->when($this->precision !== null, $this->is_range),
-            'start' => $this->start?->toJSON(),
-            'end' => $this->end?->toJSON(),
+            'precision' => $this->precision?->value,
+            'is_range' => $this->is_range,
+            'start' => $this->start,
+            'end' => $this->end,
         ];
     }
 }

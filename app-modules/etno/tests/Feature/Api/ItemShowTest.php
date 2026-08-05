@@ -6,7 +6,6 @@ use Metafori\Core\Models\User;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Enums\MediaType;
 use Metafori\Etno\Enums\ProductionMethod;
-use Metafori\Etno\Http\Resources\PrecisionDateResource;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Item;
 use Metafori\Opensearch\Testing\RefreshIndices;
@@ -183,9 +182,24 @@ it('can show a complete item with all relations', function () {
                 'production_methods' => $document->production_methods
                     ? collect($document->production_methods)->map(fn (ProductionMethod $method) => $method->value)->toArray()
                     : null,
-                'time_period' => PrecisionDateResource::make($document->time_period)?->resolve(),
-                'submission_date' => PrecisionDateResource::make($document->submission_date)?->resolve(),
-                'publication_date' => PrecisionDateResource::make($document->publication_date)?->resolve(),
+                'time_period' => [
+                    'precision' => $document->time_period->precision?->value,
+                    'is_range' => $document->time_period->is_range,
+                    'start' => $document->time_period->start?->toJson(),
+                    'end' => $document->time_period->end?->toJson(),
+                ],
+                'submission_date' => [
+                    'precision' => $document->submission_date->precision?->value,
+                    'is_range' => $document->submission_date->is_range,
+                    'start' => $document->submission_date->start?->toJson(),
+                    'end' => $document->submission_date->end?->toJson(),
+                ],
+                'publication_date' => [
+                    'precision' => $document->publication_date->precision?->value,
+                    'is_range' => $document->publication_date->is_range,
+                    'start' => $document->publication_date->start?->toJson(),
+                    'end' => $document->publication_date->end?->toJson(),
+                ],
                 'institution' => [
                     'id' => $document->institution->id,
                     'name' => $document->institution->name,
