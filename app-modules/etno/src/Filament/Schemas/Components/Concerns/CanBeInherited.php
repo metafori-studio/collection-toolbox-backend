@@ -14,11 +14,10 @@ trait CanBeInherited
         }
 
         $name = $this->getName();
-        $fieldNames = $this->getFieldNames();
         $action = ToggleInheritanceAction::make("{$name}_toggle_inheritance")
-            ->names($fieldNames);
+            ->attributeName($name);
 
-        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, $fieldNames));
+        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, $name));
 
         return $this->headerActions([$action]);
     }

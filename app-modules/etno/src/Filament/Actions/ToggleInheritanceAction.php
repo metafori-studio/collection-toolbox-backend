@@ -10,11 +10,11 @@ use Filament\Support\Icons\Heroicon;
 
 class ToggleInheritanceAction extends Action
 {
-    protected array $names;
+    protected string $attributeName;
 
-    public function names(array $names): static
+    public function attributeName(string $name): static
     {
-        $this->names = $names;
+        $this->attributeName = $name;
 
         return $this;
     }
@@ -48,7 +48,7 @@ class ToggleInheritanceAction extends Action
 
     public function isInherited(): bool
     {
-        return (bool) $this->evaluate(fn (Get $get) => static::isInheritedState($get, $this->names));
+        return (bool) $this->evaluate(fn (Get $get) => static::isInheritedState($get, $this->attributeName));
     }
 
     public function toggleInheritance(): void
@@ -64,7 +64,7 @@ class ToggleInheritanceAction extends Action
     {
         $this->evaluate(function (Get $get, Set $set) {
             $overrides = (array) ($get('document_overrides') ?? []);
-            $overrides = array_unique([...$overrides, ...$this->names]);
+            $overrides = array_unique([...$overrides, $this->attributeName]);
             $set('document_overrides', array_values($overrides));
         });
     }
@@ -73,15 +73,15 @@ class ToggleInheritanceAction extends Action
     {
         $this->evaluate(function (Get $get, Set $set) {
             $overrides = (array) ($get('document_overrides') ?? []);
-            $overrides = array_diff($overrides, $this->names);
+            $overrides = array_diff($overrides, [$this->attributeName]);
             $set('document_overrides', array_values($overrides));
         });
     }
 
-    public static function isInheritedState(Get $get, array $names): bool
+    public static function isInheritedState(Get $get, string $name): bool
     {
         $overrides = (array) ($get('document_overrides') ?? []);
 
-        return (bool) \array_diff($names, $overrides);
+        return ! in_array($name, $overrides, true);
     }
 }
