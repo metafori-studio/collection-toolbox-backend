@@ -22,6 +22,25 @@ it('can show a complete document with all relations', function () {
 
     $document->load('originators.person');
 
+    $formatDate = function (?string $start, ?string $end, ?array $settings) {
+        $result = [];
+
+        if ($settings) {
+            if (isset($settings['precision'])) {
+                $precision = $settings['precision'];
+                $result['precision'] = $precision instanceof BackedEnum ? $precision->value : $precision;
+            }
+            if (isset($settings['is_range'])) {
+                $result['is_range'] = $settings['is_range'];
+            }
+        }
+
+        $result['start'] = $start;
+        $result['end'] = $end;
+
+        return $result;
+    };
+
     $response->assertStatus(200)
         ->assertJsonCount(2, 'data.authors')
         ->assertJsonCount(2, 'data.researchers')
@@ -47,15 +66,18 @@ it('can show a complete document with all relations', function () {
                 'access_rights',
                 'license',
                 'production_methods',
-                'time_period_start',
-                'time_period_end',
-                'time_period_settings',
-                'submission_date_start',
-                'submission_date_end',
-                'submission_date_settings',
-                'publication_date_start',
-                'publication_date_end',
-                'publication_date_settings',
+                'time_period' => [
+                    'start',
+                    'end',
+                ],
+                'submission_date' => [
+                    'start',
+                    'end',
+                ],
+                'publication_date' => [
+                    'start',
+                    'end',
+                ],
                 'how_to_cite',
                 'institution' => [
                     'id',
@@ -149,6 +171,21 @@ it('can show a complete document with all relations', function () {
                 'production_methods' => collect($document->production_methods)
                     ->map(fn (ProductionMethod $method) => $method->value)
                     ->toArray(),
+                'time_period' => $formatDate(
+                    $document->time_period_start?->toJSON(),
+                    $document->time_period_end?->toJSON(),
+                    $document->time_period_settings,
+                ),
+                'submission_date' => $formatDate(
+                    $document->submission_date_start?->toJSON(),
+                    $document->submission_date_end?->toJSON(),
+                    $document->submission_date_settings,
+                ),
+                'publication_date' => $formatDate(
+                    $document->publication_date_start?->toJSON(),
+                    $document->publication_date_end?->toJSON(),
+                    $document->publication_date_settings,
+                ),
                 'institution' => [
                     'id' => $document->institution->id,
                     'name' => $document->institution->name,

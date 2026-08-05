@@ -4,8 +4,8 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\MissingValue;
 use Illuminate\Support\Facades\Gate;
-use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
@@ -61,18 +61,24 @@ class ItemResource extends JsonResource
             'license' => $this->license,
             /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
-            'time_period_start' => $this->time_period_start,
-            'time_period_end' => $this->time_period_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'time_period_settings' => $this->time_period_settings,
-            'submission_date_start' => $this->submission_date_start,
-            'submission_date_end' => $this->submission_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'submission_date_settings' => $this->submission_date_settings,
-            'publication_date_start' => $this->publication_date_start,
-            'publication_date_end' => $this->publication_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'publication_date_settings' => $this->publication_date_settings,
+            'time_period' => [
+                'precision' => $this->time_period_settings['precision'] ?? new MissingValue,
+                'is_range' => $this->time_period_settings['is_range'] ?? new MissingValue,
+                'start' => $this->time_period_start,
+                'end' => $this->time_period_end,
+            ],
+            'submission_date' => [
+                'precision' => $this->submission_date_settings['precision'] ?? new MissingValue,
+                'is_range' => $this->submission_date_settings['is_range'] ?? new MissingValue,
+                'start' => $this->submission_date_start,
+                'end' => $this->submission_date_end,
+            ],
+            'publication_date' => [
+                'precision' => $this->publication_date_settings['precision'] ?? new MissingValue,
+                'is_range' => $this->publication_date_settings['is_range'] ?? new MissingValue,
+                'start' => $this->publication_date_start,
+                'end' => $this->publication_date_end,
+            ],
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
             'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),
