@@ -75,15 +75,9 @@ it('can show a complete item with all relations', function () {
                 'access_rights',
                 'license',
                 'production_methods',
-                'time_period_start',
-                'time_period_end',
-                'time_period_settings',
-                'submission_date_start',
-                'submission_date_end',
-                'submission_date_settings',
-                'publication_date_start',
-                'publication_date_end',
-                'publication_date_settings',
+                'time_period',
+                'submission_date',
+                'publication_date',
                 'how_to_cite',
                 'institution' => [
                     'id',
@@ -169,31 +163,34 @@ it('can show a complete item with all relations', function () {
                 'type' => $document->type?->value,
                 'media_type' => MediaType::Document->value,
                 'extents' => collect($document->extents)->toArray(),
-                'languages' => collect($document->languages)
-                    ->map(fn (Language $lang) => $lang->value)
-                    ->toArray(),
+                'languages' => $document->languages
+                    ? collect($document->languages)->map(fn (Language $lang) => $lang->value)->toArray()
+                    : null,
                 'accrual_method' => $document->accrual_method?->value,
                 'collection_method' => $document->collection_method?->value,
                 'access_rights' => $document->access_rights?->value,
                 'license' => $document->license?->value,
-                'production_methods' => collect($document->production_methods)
-                    ->map(fn (ProductionMethod $method) => $method->value)
-                    ->toArray(),
-                'time_period_start' => $document->time_period_start?->toJSON(),
-                'time_period_end' => $document->time_period_end?->toJSON(),
-                'time_period_settings' => $document->time_period_settings
-                    ? collect($document->time_period_settings)->toArray()
+                'production_methods' => $document->production_methods
+                    ? collect($document->production_methods)->map(fn (ProductionMethod $method) => $method->value)->toArray()
                     : null,
-                'submission_date_start' => $document->submission_date_start?->toJSON(),
-                'submission_date_end' => $document->submission_date_end?->toJSON(),
-                'submission_date_settings' => $document->submission_date_settings
-                    ? collect($document->submission_date_settings)->toArray()
-                    : null,
-                'publication_date_start' => $document->publication_date_start?->toJSON(),
-                'publication_date_end' => $document->publication_date_end?->toJSON(),
-                'publication_date_settings' => $document->publication_date_settings
-                    ? collect($document->publication_date_settings)->toArray()
-                    : null,
+                'time_period' => $document->time_period ? [
+                    'precision' => $document->time_period->precision?->value,
+                    'is_range' => $document->time_period->is_range,
+                    'start' => $document->time_period->start?->toJson(),
+                    'end' => $document->time_period->end?->toJson(),
+                ] : null,
+                'submission_date' => $document->submission_date ? [
+                    'precision' => $document->submission_date->precision?->value,
+                    'is_range' => $document->submission_date->is_range,
+                    'start' => $document->submission_date->start?->toJson(),
+                    'end' => $document->submission_date->end?->toJson(),
+                ] : null,
+                'publication_date' => $document->publication_date ? [
+                    'precision' => $document->publication_date->precision?->value,
+                    'is_range' => $document->publication_date->is_range,
+                    'start' => $document->publication_date->start?->toJson(),
+                    'end' => $document->publication_date->end?->toJson(),
+                ] : null,
                 'institution' => [
                     'id' => $document->institution->id,
                     'name' => $document->institution->name,

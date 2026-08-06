@@ -302,7 +302,7 @@ it('saves and overrides correctly for precision date sections', function (string
     ])
         ->fillForm(array_merge($overrideValues, [
             // @todo call toggle action instead
-            'document_overrides' => array_keys($overrideValues),
+            'document_overrides' => [$sectionName],
         ]))
         ->call('save')
         ->assertHasNoFormErrors();
@@ -321,8 +321,9 @@ it('saves and overrides correctly for precision date sections', function (string
         } else {
             expect($item->$key)->toEqual($value);
         }
-        expect($item->isInherited($key))->toBeFalse();
     }
+
+    expect($item->isInherited($sectionName))->toBeFalse();
 })->with('inheritable_inputs_precision_date');
 
 dataset('inheritable_inputs_precision_date', [

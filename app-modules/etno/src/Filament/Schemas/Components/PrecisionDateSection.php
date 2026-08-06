@@ -8,13 +8,4 @@ use Metafori\Etno\Filament\Schemas\Components\Concerns\CanBeInherited;
 class PrecisionDateSection extends CorePrecisionDateSection
 {
     use CanBeInherited;
-
-    public function getFieldNames(): array
-    {
-        return [
-            $this->startFieldName(),
-            $this->endFieldName(),
-            $this->settingsFieldName(),
-        ];
-    }
 }

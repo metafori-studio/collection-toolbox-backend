@@ -4,7 +4,6 @@ namespace Metafori\Etno\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
@@ -58,18 +57,12 @@ class DocumentResource extends JsonResource
             'license' => $this->license,
             /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
-            'time_period_start' => $this->time_period_start,
-            'time_period_end' => $this->time_period_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'time_period_settings' => $this->time_period_settings,
-            'submission_date_start' => $this->submission_date_start,
-            'submission_date_end' => $this->submission_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'submission_date_settings' => $this->submission_date_settings,
-            'publication_date_start' => $this->publication_date_start,
-            'publication_date_end' => $this->publication_date_end,
-            /** @var array{is_range: bool, precision: DatePrecision}|null */
-            'publication_date_settings' => $this->publication_date_settings,
+            /** @var PrecisionDateResource|null */
+            'time_period' => PrecisionDateResource::make($this->time_period),
+            /** @var PrecisionDateResource|null */
+            'submission_date' => PrecisionDateResource::make($this->submission_date),
+            /** @var PrecisionDateResource|null */
+            'publication_date' => PrecisionDateResource::make($this->publication_date),
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
             'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),

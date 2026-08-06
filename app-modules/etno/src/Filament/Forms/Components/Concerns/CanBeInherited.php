@@ -17,9 +17,9 @@ trait CanBeInherited
 
         $name = $this->getName();
         $action = ToggleInheritanceAction::make("{$name}_toggle_inheritance")
-            ->names([$name]);
+            ->attributeName($name);
 
-        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, [$name]));
+        $this->disabled(static fn (Get $get) => ToggleInheritanceAction::isInheritedState($get, $name));
 
         return match (true) {
             $this instanceof MorphToSelect => $this->modifyTypeSelectUsing(static fn (Select $select) => $select->suffixAction($action)),
