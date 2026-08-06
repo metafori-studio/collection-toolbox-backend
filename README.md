@@ -40,7 +40,7 @@ Monorepo of Laravel applications and shared modules for the Metafori Collection 
 nix develop
 ```
 
-This provides PHP 8.5, PostgreSQL, Valkey (Redis), S3-compatible storage, and monitoring tooling. 
+This provides PHP 8.5, PostgreSQL, Valkey (Redis), S3-compatible storage, and monitoring tooling.
 
 **Services are not started automatically** — you need to start them manually after entering the shell.
 
