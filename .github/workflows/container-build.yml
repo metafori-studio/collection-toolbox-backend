@@ -24,6 +24,14 @@ on:
         description: 'Frontend branch or tag (collection-toolbox-frontend)'
         required: true
         default: 'main'
+      environment:
+        description: 'Target environment for the frontend build'
+        required: true
+        type: choice
+        default: 'staging'
+        options:
+          - staging
+          - production
 
 permissions:
   contents: read
@@ -75,6 +83,9 @@ jobs:
   build:
     name: build (${{ matrix.module }})
     needs: changes
+    # Scopes SOPS_AGE_KEY per environment. Add required reviewers to the
+    # 'production' environment to gate release builds on approval.
+    environment: ${{ github.event_name == 'release' && 'production' || inputs.environment || 'staging' }}
     # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
@@ -84,11 +95,11 @@ jobs:
       matrix:
         include:
           - module: archeo
-            mapbox_secret: VITE_MAPBOX_TOKEN_ARCHEO
+            builds_frontend: true
           - module: etno
-            mapbox_secret: VITE_MAPBOX_TOKEN_ETNO
+            builds_frontend: true
           - module: art
-            mapbox_secret: ''
+            builds_frontend: false
 
     steps:
       - name: Check module relevance
@@ -119,16 +130,22 @@ jobs:
           echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]]; then
             echo "image_tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            echo "build_env=production" >> "$GITHUB_OUTPUT"
           else
             echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+            echo "build_env=${{ inputs.environment || 'staging' }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Validate required secrets
-        if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''
+
+      - name: Validate frontend age key
+        if: steps.guard.outputs.skip != 'true' && matrix.builds_frontend
         env:
-          MAPBOX_TOKEN: ${{ secrets[matrix.mapbox_secret] }}
+          AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: |
-          test -n "$MAPBOX_TOKEN" || { echo "Missing ${{ matrix.mapbox_secret }}"; exit 1; }
+          if [[ -z "$AGE_KEY" ]]; then
+            echo "SOPS_AGE_KEY is not set for the ${{ steps.refs.outputs.build_env }} environment."
+            exit 1
+          fi
 
       - name: Set up Docker Buildx
         if: steps.guard.outputs.skip != 'true'
@@ -152,9 +169,15 @@ jobs:
           push: true
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
+            BUILD_ENV=${{ steps.refs.outputs.build_env }}
           secrets: |
-            mapbox_token=${{ secrets[matrix.mapbox_secret] }}
-          tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
+            ${{ matrix.builds_frontend && format('sops_age_key={0}', secrets.SOPS_AGE_KEY) || '' }}
+          # The second tag is what infra/ansible/roles/deploy-staging-*.yml pin
+          # with a one-minute podman-auto-update timer. Empty lines are ignored,
+          # so production builds push the first tag only.
+          tags: |
+            ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
+            ${{ steps.refs.outputs.build_env == 'staging' && format('ghcr.io/metafori-studio/collection-toolbox:{0}-staging', matrix.module) || '' }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
 
@@ -164,7 +187,7 @@ jobs:
           outcome="${{ steps.build.outcome }}"
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
           echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
-          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\` (env: \`${{ steps.refs.outputs.build_env }}\`)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Post build status to pull request
         if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
