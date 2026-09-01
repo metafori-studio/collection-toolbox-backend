@@ -30,10 +30,6 @@ permissions:
   packages: write
   pull-requests: write
 
-concurrency:
-  group: container-build-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -79,6 +75,9 @@ jobs:
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    concurrency:
+      group: container-build-${{ github.workflow }}-${{ matrix.module }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
