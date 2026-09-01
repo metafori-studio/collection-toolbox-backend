@@ -83,9 +83,9 @@ jobs:
   build:
     name: build (${{ matrix.module }})
     needs: changes
-    # Scopes SOPS_AGE_KEY per environment. Add required reviewers to the
-    # 'production' environment to gate release builds on approval.
-    environment: ${{ github.event_name == 'release' && 'production' || inputs.environment || 'staging' }}
+    # Pull requests must not select an environment that scopes SOPS_AGE_KEY.
+    # Add required reviewers to 'production' to gate release builds on approval.
+    environment: ${{ github.event_name != 'pull_request' && (github.event_name == 'release' && 'production' || inputs.environment || 'staging') || '' }}
     # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
@@ -171,13 +171,12 @@ jobs:
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
             BUILD_ENV=${{ steps.refs.outputs.build_env }}
           secrets: |
-            ${{ matrix.builds_frontend && format('sops_age_key={0}', secrets.SOPS_AGE_KEY) || '' }}
-          # The second tag is what infra/ansible/roles/deploy-staging-*.yml pin
-          # with a one-minute podman-auto-update timer. Empty lines are ignored,
-          # so production builds push the first tag only.
+            ${{ matrix.builds_frontend && format('"sops_age_key={0}"', secrets.SOPS_AGE_KEY) || '' }}
+          # Release builds update the stable tag pinned by staging deployments.
+          # Empty lines are ignored, so other builds push the first tag only.
           tags: |
             ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
-            ${{ steps.refs.outputs.build_env == 'staging' && format('ghcr.io/metafori-studio/collection-toolbox:{0}-staging', matrix.module) || '' }}
+            ${{ github.event_name == 'release' && format('ghcr.io/metafori-studio/collection-toolbox:{0}-staging', matrix.module) || '' }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
 

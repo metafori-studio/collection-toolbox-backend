@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/node:24-alpine AS frontend-builder
+FROM docker.io/node:24-alpine AS frontend-source
 
 ARG FRONTEND_REF=main
 ARG BUILD_ENV=production
@@ -7,16 +7,22 @@ ARG BUILD_ENV=production
 WORKDIR /frontend
 # hadolint ignore=DL3019
 RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
-    apk add git=~2 sops=~3.12 python3
+    apk add git=~2 sops=~3.12
 RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
 
-RUN --mount=type=cache,id=npm,target=/root/.npm \
-    --mount=type=secret,id=sops_age_key \
-    npm ci && \
+RUN --mount=type=secret,id=sops_age_key \
     test -s /run/secrets/sops_age_key && \
-    export SOPS_AGE_KEY_FILE=/run/secrets/sops_age_key && \
-    ./scripts/build-ci.py etno "${BUILD_ENV}"
+    SOPS_AGE_KEY_FILE=/run/secrets/sops_age_key \
+    sops --decrypt "apps/etno/secrets.${BUILD_ENV}.env" > "apps/etno/.env.${BUILD_ENV}.local"
 
+FROM frontend-source AS frontend-builder
+
+RUN --mount=type=cache,id=npm,target=/root/.npm \
+    npm ci
+
+RUN npm run type-check --workspace=apps/etno && \
+    npx vite build apps/etno --mode "${BUILD_ENV}" && \
+    rm "apps/etno/.env.${BUILD_ENV}.local"
 
 FROM docker.io/composer:2.9.5 AS vendor-builder
 

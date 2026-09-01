@@ -5,7 +5,6 @@ default:
 
 image_name := "ghcr.io/metafori-studio/collection-toolbox"
 
-# Build the etno image
 build frontend_ref="main" build_env="development" age_key=env_var('SOPS_AGE_KEY_FILE'):
     podman build \
         --format docker \
@@ -16,11 +15,9 @@ build frontend_ref="main" build_env="development" age_key=env_var('SOPS_AGE_KEY_
         -t {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||') \
         {{justfile_dir()}}/../../
 
-# Push the etno image
 push frontend_ref="main":
     podman push {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||')
 
-# Build and push etno
 deploy frontend_ref="main" build_env="development" age_key=env_var('SOPS_AGE_KEY_FILE'):
     @just build {{frontend_ref}} {{build_env}} {{age_key}}
     @just push {{frontend_ref}}
