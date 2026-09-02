@@ -5,21 +5,19 @@ default:
 
 image_name := "ghcr.io/metafori-studio/collection-toolbox"
 
-# Build the etno image
-build frontend_ref="main":
+build frontend_ref="main" build_env="development" age_key=env_var('SOPS_AGE_KEY_FILE'):
     podman build \
         --format docker \
         --build-arg=FRONTEND_REF={{frontend_ref}} \
-        --secret id=mapbox_token,env=VITE_MAPBOX_TOKEN_ETNO \
+        --build-arg=BUILD_ENV={{build_env}} \
+        --secret id=sops_age_key,src={{age_key}} \
         -f {{justfile_dir()}}/Containerfile \
         -t {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||') \
         {{justfile_dir()}}/../../
 
-# Push the etno image
 push frontend_ref="main":
     podman push {{image_name}}:etno-$(echo {{frontend_ref}} | sed 's|.*/||')
 
-# Build and push etno
-deploy frontend_ref="main":
-    @just build {{frontend_ref}}
+deploy frontend_ref="main" build_env="development" age_key=env_var('SOPS_AGE_KEY_FILE'):
+    @just build {{frontend_ref}} {{build_env}} {{age_key}}
     @just push {{frontend_ref}}
