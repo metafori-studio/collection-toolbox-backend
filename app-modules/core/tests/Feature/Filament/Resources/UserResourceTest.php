@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Notification;
 use Metafori\Core\Filament\Resources\UserResource\Pages\CreateUser;
 use Metafori\Core\Models\User;
@@ -42,22 +41,14 @@ it('can create a user and sends a password set link', function () {
 });
 
 it('sends the password set email in the user preferred locale', function () {
-    Mail::fake();
-
     $user = User::factory()->create(['preferred_locale' => 'sk']);
-    $sentLocale = null;
+    App::setLocale($user->preferredLocale());
 
-    SetPassword::toMailUsing(function () use (&$sentLocale): MailMessage {
-        $sentLocale = app()->getLocale();
+    $mailMessage = (new SetPassword('token'))->toMail($user);
 
-        return new MailMessage;
-    });
-
-    try {
-        Notification::sendNow($user, new SetPassword('token'));
-    } finally {
-        SetPassword::toMailUsing(null);
-    }
-
-    expect($sentLocale)->toBe('sk');
+    expect($mailMessage)
+        ->subject->toBe('Účet bol vytvorený')
+        ->introLines->toContain('Váš účet bol vytvorený. Ak chcete pokračovať, nastavte si heslo.')
+        ->actionText->toBe('Nastaviť heslo')
+        ->outroLines->toContain('Ak sa domnievate, že tento e-mail bol odoslaný omylom, nie je potrebné vykonávať žiadne ďalšie kroky.');
 });
