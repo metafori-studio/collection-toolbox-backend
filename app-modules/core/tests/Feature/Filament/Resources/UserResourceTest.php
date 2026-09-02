@@ -21,7 +21,6 @@ it('can create a user and sends a password set link', function () {
         ->fillForm([
             'name' => 'John Doe',
             'email' => 'john@example.com',
-            'preferred_locale' => 'en',
         ])
         ->call('create')
         ->assertHasNoFormErrors()
@@ -31,7 +30,7 @@ it('can create a user and sends a password set link', function () {
     $this->assertDatabaseHas('users', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
-        'preferred_locale' => 'en',
+        'preferred_locale' => null,
     ]);
 
     $createdUser = User::where('email', 'john@example.com')->first();

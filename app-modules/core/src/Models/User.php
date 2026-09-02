@@ -92,9 +92,9 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference
         return $this->hasRole(Role::Admin);
     }
 
-    public function preferredLocale(): ?string
+    public function preferredLocale(): string
     {
-        return $this->preferred_locale;
+        return $this->preferred_locale ?? (string) config('app.fallback_locale');
     }
 
     public function canAccessPanel(Panel $panel): bool

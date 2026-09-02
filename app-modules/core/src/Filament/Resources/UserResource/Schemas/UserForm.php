@@ -35,8 +35,7 @@ class UserForm
                     ->label(__('core::ui.fields.preferred_locale'))
                     ->options(fn (): array => collect(config('app.locales'))
                         ->mapWithKeys(fn (string $locale): array => [$locale => Locale::getDisplayName($locale, app()->getLocale())])
-                        ->all())
-                    ->required(),
+                        ->all()),
             ]);
     }
 }
