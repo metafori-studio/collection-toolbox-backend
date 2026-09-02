@@ -35,6 +35,7 @@ return [
         'name' => 'Názov',
         'user_name' => 'Meno',
         'email' => 'E-mail',
+        'preferred_locale' => 'Preferovaný jazyk',
         'roles' => 'Roly',
         'precision' => 'Presnosť',
         'date_range' => 'Časové rozpätie',

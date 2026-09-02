@@ -75,10 +75,10 @@ class SetPassword extends Notification
     protected function buildMailMessage($url)
     {
         return (new MailMessage)
-            ->subject(Lang::get('Account Created'))
-            ->line(Lang::get('Your account has been created. Please set your password to continue.'))
-            ->action(Lang::get('Set Password'), $url)
-            ->line(Lang::get('If you believe this email was sent in error, no further action is required.'));
+            ->subject(Lang::get('core::notifications.account_created'))
+            ->line(Lang::get('core::notifications.account_created_intro'))
+            ->action(Lang::get('core::notifications.set_password'), $url)
+            ->line(Lang::get('core::notifications.account_created_outro'));
     }
 
     /**

@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'preferred_locale' => config('app.fallback_locale'),
             'remember_token' => Str::random(10),
         ];
     }

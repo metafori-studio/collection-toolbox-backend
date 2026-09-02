@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Metafori\Core\Filament\Resources\UserResource\Pages\CreateUser;
 use Metafori\Core\Models\User;
@@ -19,6 +21,7 @@ it('can create a user and sends a password set link', function () {
         ->fillForm([
             'name' => 'John Doe',
             'email' => 'john@example.com',
+            'preferred_locale' => 'en',
         ])
         ->call('create')
         ->assertHasNoFormErrors()
@@ -28,6 +31,7 @@ it('can create a user and sends a password set link', function () {
     $this->assertDatabaseHas('users', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
+        'preferred_locale' => 'en',
     ]);
 
     $createdUser = User::where('email', 'john@example.com')->first();
@@ -36,4 +40,25 @@ it('can create a user and sends a password set link', function () {
         [$createdUser],
         SetPassword::class
     );
+});
+
+it('sends the password set email in the user preferred locale', function () {
+    Mail::fake();
+
+    $user = User::factory()->create(['preferred_locale' => 'sk']);
+    $sentLocale = null;
+
+    SetPassword::toMailUsing(function () use (&$sentLocale): MailMessage {
+        $sentLocale = app()->getLocale();
+
+        return new MailMessage;
+    });
+
+    try {
+        Notification::sendNow($user, new SetPassword('token'));
+    } finally {
+        SetPassword::toMailUsing(null);
+    }
+
+    expect($sentLocale)->toBe('sk');
 });

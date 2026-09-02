@@ -5,6 +5,7 @@ namespace Metafori\Core\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,11 +21,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $email
  * @property Carbon|null $email_verified_at
  * @property string|null $password
+ * @property string|null $preferred_locale
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasLocalePreference
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable;
@@ -46,6 +48,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'preferred_locale',
     ];
 
     /**
@@ -87,6 +90,11 @@ class User extends Authenticatable implements FilamentUser
     public function isAdministrator(): bool
     {
         return $this->hasRole(Role::Admin);
+    }
+
+    public function preferredLocale(): ?string
+    {
+        return $this->preferred_locale;
     }
 
     public function canAccessPanel(Panel $panel): bool
