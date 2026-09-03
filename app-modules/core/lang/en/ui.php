@@ -35,6 +35,7 @@ return [
         'name' => 'Name',
         'user_name' => 'Name',
         'email' => 'Email',
+        'preferred_locale' => 'Preferred locale',
         'roles' => 'Roles',
         'precision' => 'Precision',
         'date_range' => 'Date range',

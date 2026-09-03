@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Metafori\Core\Filament\Resources as CoreResources;
+use Metafori\Core\Http\Middleware\SetPreferredLocale;
 
 class EtnoPanelProvider extends PanelProvider
 {
@@ -59,6 +60,7 @@ class EtnoPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+                SetPreferredLocale::class,
+            ], isPersistent: true);
     }
 }
