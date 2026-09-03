@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.5.0...etno-v1.6.0) (2026-09-03)
+
+
+### Features
+
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
 ## [1.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.1...etno-v1.5.0) (2026-07-18)
 
 
