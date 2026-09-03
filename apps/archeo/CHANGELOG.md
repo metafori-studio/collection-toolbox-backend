@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.2.2...archeo-v1.3.0) (2026-09-03)
+
+
+### Features
+
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
 ## [1.2.2](https://github.com/metafori-studio/collection-toolbox-backend/compare/archeo-v1.2.1...archeo-v1.2.2) (2026-07-18)
 
 
