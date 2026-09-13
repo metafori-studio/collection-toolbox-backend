@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.7.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.6.0...v2.7.0) (2026-09-13)
+
+
+### Features
+
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
+
+### Bug Fixes
+
+* cast temporary_url_default_lifetime to integer in media library configs ([3e25461](https://github.com/metafori-studio/collection-toolbox-backend/commit/3e254611c4f6ee7809ecfb659652084e2c454868))
+* cast temporary_url_default_lifetime to integer in media library configs ([4156d88](https://github.com/metafori-studio/collection-toolbox-backend/commit/4156d88dac6eb8a7571dfae80bc40c75042068cd))
+* **etno:** resolve media_type resolution logic in ItemResource ([54e4984](https://github.com/metafori-studio/collection-toolbox-backend/commit/54e4984c61ca1e595e2e7550aea57681aab2f5d0))
+* **etno:** resolve media_type resolution logic in ItemResource and update corresponding API feature test ([3a147cd](https://github.com/metafori-studio/collection-toolbox-backend/commit/3a147cdbcb69002c332a9cdec23193e7c0896365))
+
 ## [2.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.5.0...v2.6.0) (2026-07-18)
 
 
