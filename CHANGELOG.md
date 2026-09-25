@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.7.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.6.0...v2.7.0) (2026-09-25)
+
+
+### Features
+
+* **archeo:** add console command to import and assign PDFs to activities based on CVS number ([3a20986](https://github.com/metafori-studio/collection-toolbox-backend/commit/3a2098645bcfa906d5a55c6f4eedc6f435b28ffb))
+* **core:** add Czech language translation files ([4290045](https://github.com/metafori-studio/collection-toolbox-backend/commit/42900452d0895676f8cac642502241fb18b9a3b6))
+* **core:** add Czech language translation files ([3890b0c](https://github.com/metafori-studio/collection-toolbox-backend/commit/3890b0ce749895df3168ad9107b0ef8f2dfd003b))
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
+
+### Bug Fixes
+
+* **archeo:** remove empty disk env vars from .env.example ([ea12caf](https://github.com/metafori-studio/collection-toolbox-backend/commit/ea12caf9e20e0e04d21f2de945fa20855dfdf886))
+* **archeo:** remove unused dating and site type fields in ActivityExcelParser ([e47a736](https://github.com/metafori-studio/collection-toolbox-backend/commit/e47a736849c5c6d3f076054fd4c6d3be40875d1d))
+* cast temporary_url_default_lifetime to integer in media library configs ([3e25461](https://github.com/metafori-studio/collection-toolbox-backend/commit/3e254611c4f6ee7809ecfb659652084e2c454868))
+* cast temporary_url_default_lifetime to integer in media library configs ([4156d88](https://github.com/metafori-studio/collection-toolbox-backend/commit/4156d88dac6eb8a7571dfae80bc40c75042068cd))
+* **etno:** resolve media_type resolution logic in ItemResource ([54e4984](https://github.com/metafori-studio/collection-toolbox-backend/commit/54e4984c61ca1e595e2e7550aea57681aab2f5d0))
+* **etno:** resolve media_type resolution logic in ItemResource and update corresponding API feature test ([3a147cd](https://github.com/metafori-studio/collection-toolbox-backend/commit/3a147cdbcb69002c332a9cdec23193e7c0896365))
+
 ## [2.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.5.0...v2.6.0) (2026-07-18)
 
 

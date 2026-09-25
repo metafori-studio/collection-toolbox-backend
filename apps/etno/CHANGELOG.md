@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.5.0...etno-v1.6.0) (2026-09-25)
+
+
+### Features
+
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
+
+### Bug Fixes
+
+* cast temporary_url_default_lifetime to integer in media library configs ([3e25461](https://github.com/metafori-studio/collection-toolbox-backend/commit/3e254611c4f6ee7809ecfb659652084e2c454868))
+* cast temporary_url_default_lifetime to integer in media library configs ([4156d88](https://github.com/metafori-studio/collection-toolbox-backend/commit/4156d88dac6eb8a7571dfae80bc40c75042068cd))
+
 ## [1.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.1...etno-v1.5.0) (2026-07-18)
 
 
