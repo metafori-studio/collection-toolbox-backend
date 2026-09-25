@@ -1,6 +1,9 @@
 name: Build and Push Container
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -75,8 +78,8 @@ jobs:
   build:
     name: build (${{ matrix.module }})
     needs: changes
-    # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
-    if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+    # `changes` is skipped for non-pull_request events; always() lets build run anyway.
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -116,12 +119,24 @@ jobs:
         id: refs
         if: steps.guard.outputs.skip != 'true'
         run: |
-          echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
+          frontend_ref="${{ inputs.frontend_ref || 'main' }}"
+          echo "frontend_ref=${frontend_ref}" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "release" ]]; then
             echo "image_tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           else
             echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Resolve frontend commit SHA
+        id: frontend-commit
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ref="${{ steps.refs.outputs.frontend_ref }}"
+          sha="$(gh api repos/metafori-studio/collection-toolbox-frontend/commits/${ref} --jq '.sha')"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "Resolved frontend ref ${ref} to commit ${sha}"
 
       - name: Validate required secrets
         if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''
@@ -152,6 +167,7 @@ jobs:
           push: true
           build-args: |
             FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
+            FRONTEND_COMMIT=${{ steps.frontend-commit.outputs.sha }}
           secrets: |
             mapbox_token=${{ secrets[matrix.mapbox_secret] }}
           tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
