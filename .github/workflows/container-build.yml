@@ -30,10 +30,6 @@ permissions:
   packages: write
   pull-requests: write
 
-concurrency:
-  group: container-build-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -79,6 +75,9 @@ jobs:
     if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    concurrency:
+      group: container-build-${{ github.workflow }}-${{ matrix.module }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
@@ -95,12 +94,16 @@ jobs:
         id: guard
         env:
           CHANGED: ${{ needs.changes.outputs[matrix.module] }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          REQUESTED_MODULE: ${{ inputs.module }}
+          MODULE: ${{ matrix.module }}
         run: |
-          if [[ "${{ github.event_name }}" == "release" ]] && [[ "${{ github.ref_name }}" != "${{ matrix.module }}"* ]]; then
+          if [[ "$EVENT_NAME" == "release" ]] && [[ ! "$REF_NAME" =~ ^${MODULE}-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]] && [[ "${{ inputs.module }}" != "${{ matrix.module }}" ]]; then
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]] && [[ "$REQUESTED_MODULE" != "$MODULE" ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event_name }}" == "pull_request" ]] && [[ "$CHANGED" != "true" ]]; then
+          elif [[ "$EVENT_NAME" == "pull_request" ]] && [[ "$CHANGED" != "true" ]]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
@@ -112,16 +115,17 @@ jobs:
           ref: ${{ inputs.backend_ref || github.ref }}
           persist-credentials: false
 
-      - name: Resolve refs and image tag
-        id: refs
+      - name: Generate container metadata
+        id: meta
         if: steps.guard.outputs.skip != 'true'
-        run: |
-          echo "frontend_ref=${{ inputs.frontend_ref || 'main' }}" >> "$GITHUB_OUTPUT"
-          if [[ "${{ github.event_name }}" == "release" ]]; then
-            echo "image_tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "image_tag=${{ matrix.module }}-$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
-          fi
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
+        with:
+          images: ghcr.io/metafori-studio/collection-toolbox
+          flavor: latest=false
+          tags: |
+            type=raw,value=${{ github.ref_name }},enable=${{ github.event_name == 'release' }},priority=300
+            type=raw,value=${{ matrix.module }}-staging,enable=${{ github.event_name == 'release' }},priority=200
+            type=sha,prefix=${{ matrix.module }}-,format=short,enable=${{ github.event_name != 'release' }},priority=100
 
       - name: Validate required secrets
         if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''
@@ -151,10 +155,11 @@ jobs:
           file: apps/${{ matrix.module }}/Containerfile
           push: true
           build-args: |
-            FRONTEND_REF=${{ steps.refs.outputs.frontend_ref }}
+            FRONTEND_REF=${{ inputs.frontend_ref || 'main' }}
           secrets: |
             mapbox_token=${{ secrets[matrix.mapbox_secret] }}
-          tags: ghcr.io/metafori-studio/collection-toolbox:${{ steps.refs.outputs.image_tag }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.module }}
           cache-to: type=gha,mode=max,scope=${{ matrix.module }}
 
@@ -164,7 +169,7 @@ jobs:
           outcome="${{ steps.build.outcome }}"
           icon=$([[ "$outcome" == "success" ]] && echo "✅" || echo "❌")
           echo "### ${icon} Docker build \`${{ matrix.module }}\`: ${outcome}" >> "$GITHUB_STEP_SUMMARY"
-          echo "Tag: \`${{ steps.refs.outputs.image_tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tag: \`${{ steps.meta.outputs.version }}\`" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Post build status to pull request
         if: always() && github.event_name == 'pull_request' && steps.guard.outputs.skip != 'true'
@@ -174,7 +179,7 @@ jobs:
             const module = '${{ matrix.module }}';
             const outcome = '${{ steps.build.outcome }}';
             const icon = outcome === 'success' ? '✅' : '❌';
-            const tag = '${{ steps.refs.outputs.image_tag }}';
+            const tag = '${{ steps.meta.outputs.version }}';
             const marker = `<!-- docker-build-status:${module} -->`;
             const body = `${marker}\n${icon} **Docker build \`${module}\`**: ${outcome} (tag: \`${tag}\`)`;
 
