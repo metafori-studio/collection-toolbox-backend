@@ -1,17 +1,17 @@
 <?php
 
-namespace Metafori\Etno\Http\Resources;
+namespace Metafori\Core\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 use Metafori\Core\Enums\DatePrecision;
-use Metafori\Etno\Models\PrecisionDate;
+use Metafori\Core\Support\FuzzyDate;
 
 /**
- * @mixin PrecisionDate
+ * @mixin FuzzyDate
  */
-class PrecisionDateResource extends JsonResource
+class FuzzyDateResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,7 +24,7 @@ class PrecisionDateResource extends JsonResource
             /** @var DatePrecision|null */
             'precision' => $this->resource?->precision?->value,
             /** @var bool */
-            'is_range' => $this->resource?->is_range,
+            'is_range' => $this->resource?->isRange,
             /** @var Carbon|null */
             'start' => $this->resource?->start,
             /** @var Carbon|null */

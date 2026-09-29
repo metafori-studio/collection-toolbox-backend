@@ -5,6 +5,7 @@ namespace Metafori\Etno\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
+use Metafori\Core\Http\Resources\FuzzyDateResource;
 use Metafori\Core\Http\Resources\KeywordResource;
 use Metafori\Core\Http\Resources\OrganizationResource;
 use Metafori\Core\Http\Resources\PersonResource;
@@ -60,12 +61,12 @@ class ItemResource extends JsonResource
             'license' => $this->license,
             /** @var ProductionMethod[] */
             'production_methods' => $this->production_methods,
-            /** @var PrecisionDateResource|null */
-            'time_period' => PrecisionDateResource::make($this->time_period),
-            /** @var PrecisionDateResource|null */
-            'submission_date' => PrecisionDateResource::make($this->submission_date),
-            /** @var PrecisionDateResource|null */
-            'publication_date' => PrecisionDateResource::make($this->publication_date),
+            /** @var FuzzyDateResource|null */
+            'time_period' => FuzzyDateResource::make($this->time_period),
+            /** @var FuzzyDateResource|null */
+            'submission_date' => FuzzyDateResource::make($this->submission_date),
+            /** @var FuzzyDateResource|null */
+            'publication_date' => FuzzyDateResource::make($this->publication_date),
             'institution' => new OrganizationResource($this->whenLoaded('institution')),
             'project' => new ProjectResource($this->whenLoaded('project')),
             'locality' => $this->whenLoaded('locality', $this->resolveLocality(...)),

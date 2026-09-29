@@ -145,19 +145,19 @@ it('can show a complete document with all relations', function () {
                     ->toArray(),
                 'time_period' => $document->time_period ? [
                     'precision' => $document->time_period->precision?->value,
-                    'is_range' => $document->time_period->is_range,
+                    'is_range' => $document->time_period->isRange,
                     'start' => $document->time_period->start?->toJson(),
                     'end' => $document->time_period->end?->toJson(),
                 ] : null,
                 'submission_date' => $document->submission_date ? [
                     'precision' => $document->submission_date->precision?->value,
-                    'is_range' => $document->submission_date->is_range,
+                    'is_range' => $document->submission_date->isRange,
                     'start' => $document->submission_date->start?->toJson(),
                     'end' => $document->submission_date->end?->toJson(),
                 ] : null,
                 'publication_date' => $document->publication_date ? [
                     'precision' => $document->publication_date->precision?->value,
-                    'is_range' => $document->publication_date->is_range,
+                    'is_range' => $document->publication_date->isRange,
                     'start' => $document->publication_date->start?->toJson(),
                     'end' => $document->publication_date->end?->toJson(),
                 ] : null,
