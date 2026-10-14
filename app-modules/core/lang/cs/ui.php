@@ -38,6 +38,8 @@ return [
         'preferred_locale' => 'Preferovaný jazyk',
         'roles' => 'Role',
         'precision' => 'Přesnost',
+        'start_precision' => 'Přesnost začátku',
+        'end_precision' => 'Přesnost konce',
         'date_range' => 'Časové rozmezí',
         'start' => 'Začátek',
         'date' => 'Datum',
@@ -56,5 +58,8 @@ return [
     ],
     'placeholders' => [
         'none' => 'Žádná',
+    ],
+    'validation' => [
+        'end_date_must_be_after_start_date' => 'Konec musí být později než začátek.',
     ],
 ];
