@@ -39,6 +39,26 @@ test('creates single fuzzy date via factory with calculated bounds', function ()
         ]);
 });
 
+test('normalizes single fuzzy date to start of selected precision without mutating incoming Carbon', function () {
+    $original = Carbon::parse('1920-06-15 14:30:00');
+    $copy = $original->copy();
+
+    $yearDate = FuzzyDate::single($original, DatePrecision::Year);
+    expect($yearDate->start->toDateTimeString())->toBe('1920-01-01 00:00:00')
+        ->and($yearDate->end->toDateTimeString())->toBe('1920-12-31 23:59:59')
+        ->and($original->toDateTimeString())->toBe($copy->toDateTimeString());
+
+    $monthDate = FuzzyDate::single($original, DatePrecision::Month);
+    expect($monthDate->start->toDateTimeString())->toBe('1920-06-01 00:00:00')
+        ->and($monthDate->end->toDateTimeString())->toBe('1920-06-30 23:59:59')
+        ->and($original->toDateTimeString())->toBe($copy->toDateTimeString());
+
+    $dayDate = FuzzyDate::single($original, DatePrecision::Day);
+    expect($dayDate->start->toDateTimeString())->toBe('1920-06-15 00:00:00')
+        ->and($dayDate->end->toDateTimeString())->toBe('1920-06-15 23:59:59')
+        ->and($original->toDateTimeString())->toBe($copy->toDateTimeString());
+});
+
 test('creates fuzzy date range via factory', function () {
     $range = FuzzyDate::range('1920-01-01', DatePrecision::Year, '1925-05-31', DatePrecision::Month);
 
@@ -188,4 +208,12 @@ test('serializes via FuzzyDateResource matching FuzzyDate::toArray', function ()
     expect((new FuzzyDateResource($single))->toArray($request))->toBe($single->toArray())
         ->and((new FuzzyDateResource($range))->toArray($request))->toBe($range->toArray())
         ->and((new FuzzyDateResource(null))->toArray($request))->toBeNull();
+});
+
+test('implements JsonSerializable and serializes matching toArray', function () {
+    $single = FuzzyDate::single('1920-01-01', DatePrecision::Year);
+    $range = FuzzyDate::range('1920-01-01', DatePrecision::Year, '1925-05-31', DatePrecision::Month);
+
+    expect(json_decode(json_encode($single), true))->toBe($single->toArray())
+        ->and(json_decode(json_encode($range), true))->toBe($range->toArray());
 });

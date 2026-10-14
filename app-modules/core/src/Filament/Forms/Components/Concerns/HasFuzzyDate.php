@@ -44,6 +44,10 @@ trait HasFuzzyDate
 
             $precision = $component->getPrecision();
 
+            if ($precision === DatePrecision::Year && is_scalar($state) && preg_match('/^\d{1,4}$/', (string) $state)) {
+                return;
+            }
+
             try {
                 if ($precision === DatePrecision::Year) {
                     $component->state(Carbon::parse($state)->format('Y'));
@@ -63,6 +67,10 @@ trait HasFuzzyDate
         $precisionField = $this->evaluate($this->precisionField);
         if (! $precisionField) {
             return DatePrecision::Day;
+        }
+
+        if ($precisionField instanceof DatePrecision) {
+            return $precisionField;
         }
 
         $value = $this->evaluate(fn ($get) => $get($precisionField));
