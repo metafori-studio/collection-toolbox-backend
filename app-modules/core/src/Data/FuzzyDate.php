@@ -5,10 +5,11 @@ namespace Metafori\Core\Data;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
+use JsonSerializable;
 use Metafori\Core\Casts\FuzzyDateCast;
 use Metafori\Core\Enums\DatePrecision;
 
-class FuzzyDate implements Arrayable, Castable
+class FuzzyDate implements Arrayable, Castable, JsonSerializable
 {
     public function __construct(
         public ?Carbon $start = null,
@@ -20,17 +21,23 @@ class FuzzyDate implements Arrayable, Castable
 
     public static function single(Carbon|string $date, DatePrecision|string $precision): self
     {
-        $parsedDate = \is_string($date) ? Carbon::parse($date) : $date;
+        $baseDate = \is_string($date) ? Carbon::parse($date) : $date->copy();
         $parsedPrecision = $precision instanceof DatePrecision ? $precision : DatePrecision::from((string) $precision);
 
+        $start = match ($parsedPrecision) {
+            DatePrecision::Year => $baseDate->copy()->startOfYear(),
+            DatePrecision::Month => $baseDate->copy()->startOfMonth(),
+            DatePrecision::Day => $baseDate->copy()->startOfDay(),
+        };
+
         $end = match ($parsedPrecision) {
-            DatePrecision::Year => $parsedDate->copy()->endOfYear(),
-            DatePrecision::Month => $parsedDate->copy()->endOfMonth(),
-            DatePrecision::Day => $parsedDate->copy()->endOfDay(),
+            DatePrecision::Year => $baseDate->copy()->endOfYear(),
+            DatePrecision::Month => $baseDate->copy()->endOfMonth(),
+            DatePrecision::Day => $baseDate->copy()->endOfDay(),
         };
 
         return new self(
-            start: $parsedDate,
+            start: $start,
             end: $end,
             isRange: false,
             startPrecision: $parsedPrecision,
@@ -118,5 +125,13 @@ class FuzzyDate implements Arrayable, Castable
                 'precision' => $this->endPrecision?->value,
             ],
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

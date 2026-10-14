@@ -198,7 +198,7 @@ class FuzzyDateFieldset extends Fieldset
             ->precisionField(fn (Get $get) => ($this->isRangeable() && $get('is_range')) ? 'end_precision' : 'precision')
             ->hidden(fn (Get $get) => ! ($this->isRangeable() && $get('is_range')))
             ->rules([
-                fn (Get $get) => function (string $attribute, $value, Closure $fail) use ($get) {
+                fn (Get|Closure $get) => function (string $attribute, $value, Closure $fail) use ($get) {
                     if (! ($this->isRangeable() && $get('is_range'))) {
                         return;
                     }
@@ -209,8 +209,28 @@ class FuzzyDateFieldset extends Fieldset
                     }
 
                     try {
-                        $startDate = Carbon::parse($start);
-                        $endDate = Carbon::parse($value);
+                        $startPrecisionRaw = $get('start_precision') ?? $get('precision');
+                        $endPrecisionRaw = $get('end_precision') ?? $get('precision');
+
+                        $startPrecision = $startPrecisionRaw instanceof DatePrecision
+                            ? $startPrecisionRaw
+                            : (DatePrecision::tryFrom((string) $startPrecisionRaw) ?? DatePrecision::Day);
+
+                        $endPrecision = $endPrecisionRaw instanceof DatePrecision
+                            ? $endPrecisionRaw
+                            : (DatePrecision::tryFrom((string) $endPrecisionRaw) ?? DatePrecision::Day);
+
+                        $startDate = match ($startPrecision) {
+                            DatePrecision::Year => Carbon::parse($start)->startOfYear(),
+                            DatePrecision::Month => Carbon::parse($start)->startOfMonth(),
+                            DatePrecision::Day => Carbon::parse($start)->startOfDay(),
+                        };
+
+                        $endDate = match ($endPrecision) {
+                            DatePrecision::Year => Carbon::parse($value)->endOfYear(),
+                            DatePrecision::Month => Carbon::parse($value)->endOfMonth(),
+                            DatePrecision::Day => Carbon::parse($value)->endOfDay(),
+                        };
 
                         if ($startDate->greaterThanOrEqualTo($endDate)) {
                             $fail(__('core::ui.validation.end_date_must_be_after_start_date'));
