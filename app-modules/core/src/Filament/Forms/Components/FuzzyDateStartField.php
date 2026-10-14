@@ -24,7 +24,16 @@ class FuzzyDateStartField extends TextInput
             $precision = $component->getPrecision();
 
             if ($precision === DatePrecision::Year) {
-                return "{$state}-01-01";
+                if (! is_string($state) && ! is_numeric($state)) {
+                    return null;
+                }
+
+                $year = (string) $state;
+                if (! preg_match('/^\d{4}$/', $year)) {
+                    return null;
+                }
+
+                return "{$year}-01-01";
             }
 
             if ($precision === DatePrecision::Month) {
