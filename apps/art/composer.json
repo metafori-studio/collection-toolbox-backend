@@ -10,7 +10,8 @@
         "laravel/tinker": "^3.0",
         "metafori/core": "*",
         "metafori/monitoring": "*",
-        "predis/predis": "^3.5"
+        "predis/predis": "^3.5",
+        "spatie/laravel-medialibrary": "^11.21"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
