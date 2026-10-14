@@ -22,24 +22,6 @@ class FuzzyDateResource extends JsonResource
             return null;
         }
 
-        if (! $this->resource->isRange) {
-            return [
-                'is_range' => false,
-                'date' => $this->resource->start?->toDateString(),
-                'precision' => $this->resource->startPrecision?->value,
-            ];
-        }
-
-        return [
-            'is_range' => true,
-            'start' => [
-                'date' => $this->resource->start?->toDateString(),
-                'precision' => $this->resource->startPrecision?->value,
-            ],
-            'end' => [
-                'date' => $this->resource->end?->toDateString(),
-                'precision' => $this->resource->endPrecision?->value,
-            ],
-        ];
+        return $this->resource->toArray();
     }
 }
