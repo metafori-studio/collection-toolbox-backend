@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Metafori\Core\Data\FuzzyDate;
 use Metafori\Core\Enums\DatePrecision;
+use Metafori\Core\Http\Resources\FuzzyDateResource;
 use Metafori\Core\Traits\HasFuzzyDates;
 
 class TestFuzzyDateModel extends Model
@@ -177,3 +179,13 @@ test('round trips serialized open-ended fuzzy date ranges', function (?string $s
     'end only' => [null, '1950-05-31'],
     'start only' => ['1920-01-01', null],
 ]);
+
+test('serializes via FuzzyDateResource matching FuzzyDate::toArray', function () {
+    $request = new Request;
+    $single = FuzzyDate::single('1920-01-01', DatePrecision::Year);
+    $range = FuzzyDate::range('1920-01-01', DatePrecision::Year, '1925-05-31', DatePrecision::Month);
+
+    expect((new FuzzyDateResource($single))->toArray($request))->toBe($single->toArray())
+        ->and((new FuzzyDateResource($range))->toArray($request))->toBe($range->toArray())
+        ->and((new FuzzyDateResource(null))->toArray($request))->toBeNull();
+});
