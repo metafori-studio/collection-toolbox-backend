@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Metafori\Art\Data\Measurement;
 use Metafori\Art\Database\Factories\ArtworkFactory;
 use Metafori\Art\Enums\AcquisitionMethod;
@@ -22,6 +23,26 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use Spatie\Translatable\HasTranslations;
 
+/**
+ * @property int $id
+ * @property string|null $identifier
+ * @property string $slug
+ * @property string|null $title
+ * @property string|null $description
+ * @property string|null $dating
+ * @property FuzzyDate|null $creation_date
+ * @property \Illuminate\Support\Collection<int, WorkType>|null $work_types
+ * @property \Illuminate\Support\Collection<int, ObjectType>|null $object_types
+ * @property \Illuminate\Support\Collection<int, Medium>|null $mediums
+ * @property \Illuminate\Support\Collection<int, Technique>|null $techniques
+ * @property AcquisitionMethod|null $acquisition_method
+ * @property FuzzyDate|null $acquisition_date
+ * @property \Illuminate\Support\Collection<int, Measurement>|null $measurements
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ArtworkAuthor> $authors
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Collection> $collections
+ */
 class Artwork extends Model implements HasMedia
 {
     use HasFactory, HasFuzzyDates, HasTranslations, InteractsWithMedia;
@@ -66,8 +87,7 @@ class Artwork extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('images')
-            ->useDisk(config('art.media_disk', 'public'));
+        $this->addMediaCollection('images');
     }
 
     public function registerMediaConversions(?SpatieMedia $media = null): void
