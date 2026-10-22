@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
+use Metafori\Archeo\Console\Commands\ImportExternalPdfsCommand;
 use Metafori\Archeo\Listeners\CompressPdfOnUploadListener;
 use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Models\ActivityAssignment;
@@ -47,5 +48,11 @@ class ArcheoServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ImportExternalPdfsCommand::class,
+            ]);
+        }
     }
 }
