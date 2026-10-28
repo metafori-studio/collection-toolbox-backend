@@ -2,8 +2,10 @@
 
 namespace Metafori\Art\Http\Controllers\Api;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
+use Metafori\Art\Http\Requests\Api\ArtworkAggregationsRequest;
 use Metafori\Art\Http\Requests\Api\ArtworkIndexRequest;
 use Metafori\Art\Http\Resources\ArtworkResource;
 use Metafori\Art\Models\Artwork;
@@ -28,6 +30,17 @@ class ArtworkController extends Controller
         $artworks = $this->repository->paginate($filters, $sorts, $locale, $perPage);
 
         return ArtworkResource::collection($artworks);
+    }
+
+    public function aggregations(ArtworkAggregationsRequest $request): JsonResponse
+    {
+        $filters = $request->validated('filter', []);
+
+        $aggregations = $this->repository->aggregations($filters, size: 100);
+
+        return response()->json([
+            'data' => $aggregations,
+        ]);
     }
 
     public function show(Artwork $artwork): ArtworkResource
