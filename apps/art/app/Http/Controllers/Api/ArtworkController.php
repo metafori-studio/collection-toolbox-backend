@@ -2,12 +2,34 @@
 
 namespace Metafori\Art\Http\Controllers\Api;
 
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
+use Metafori\Art\Http\Requests\Api\ArtworkIndexRequest;
 use Metafori\Art\Http\Resources\ArtworkResource;
 use Metafori\Art\Models\Artwork;
+use Metafori\Art\Repositories\ArtworkRepository;
 
 class ArtworkController extends Controller
 {
+    public function __construct(
+        protected readonly ArtworkRepository $repository,
+    ) {}
+
+    public function index(ArtworkIndexRequest $request): AnonymousResourceCollection
+    {
+        $filters = $request->validated('filter', []);
+        $sorts = $request->sorts();
+        if ($sorts === []) {
+            $sorts = ['id' => 'desc'];
+        }
+        $locale = app()->getLocale();
+        $perPage = (int) $request->input('per_page', 15);
+
+        $artworks = $this->repository->paginate($filters, $sorts, $locale, $perPage);
+
+        return ArtworkResource::collection($artworks);
+    }
+
     public function show(Artwork $artwork): ArtworkResource
     {
         $artwork->loadMissing([

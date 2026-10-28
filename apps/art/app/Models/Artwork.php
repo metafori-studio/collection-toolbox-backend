@@ -87,6 +87,7 @@ class Artwork extends Model implements HasMedia
             ]),
             'author' => [
                 'person_id' => $this->authors->pluck('person_id')->filter()->values()->all(),
+                'label' => $this->authors->whereNull('person_id')->pluck('label')->filter()->values()->all(),
             ],
             'collection' => [
                 'id' => $this->collections->pluck('id')->values()->all(),
