@@ -14,6 +14,9 @@ use Metafori\Core\Enums\DatePrecision;
 use Metafori\Core\Filament\Forms\Components\PrecisionDateEndField;
 use Metafori\Core\Filament\Forms\Components\PrecisionDateStartField;
 
+/**
+ * @deprecated Use \Metafori\Core\Filament\Schemas\Components\FuzzyDateFieldset instead.
+ */
 class PrecisionDateSection extends Section
 {
     use HasName;
