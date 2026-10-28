@@ -4,8 +4,11 @@ namespace Metafori\Art\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Metafori\Art\Models\Artwork;
+use Metafori\Art\Support\FacetMetadata;
 use OpenSearch\Client;
+use Stringable;
 
 class ArtworkRepository
 {
@@ -64,6 +67,95 @@ class ArtworkRepository
         });
 
         return $query->paginate($perPage);
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return Collection<string, mixed>
+     */
+    public function aggregations(array $filters, int $size = 100): Collection
+    {
+        $creationDateFilter = $this->buildDateFilter(
+            Arr::pull($filters, 'creation_date_from'),
+            Arr::pull($filters, 'creation_date_to'),
+        );
+
+        $aggs = collect(FacetMetadata::all())
+            ->mapWithKeys(fn (string $field) => [
+                $field => collect(Arr::except($filters, in_array($field, ['author.person_id', 'author.label'], true)
+                    ? ['author.person_id', 'author.label']
+                    : [$field]))
+                    ->except(['author.person_id', 'author.label'])
+                    ->map(fn (array $values, string $key) => [
+                        'terms' => [$key => $values],
+                    ])
+                    ->when(! in_array($field, ['author.person_id', 'author.label'], true) && Arr::only($filters, ['author.person_id', 'author.label']) !== [],
+                        fn ($activeFilters) => $activeFilters->push($this->authorFilter(Arr::only($filters, ['author.person_id', 'author.label'])))
+                    )
+                    ->concat($creationDateFilter ? [[
+                        'range' => ['creation_date' => $creationDateFilter],
+                    ]] : [])
+                    ->values(),
+            ])
+            ->map(fn (Collection $activeFilters, string $field) => [
+                'filter' => $activeFilters->isEmpty()
+                    ? ['match_all' => new \stdClass]
+                    : ['bool' => ['filter' => $activeFilters]],
+                'aggs' => [
+                    'filtered' => ['terms' => ['field' => $field, 'size' => $size]],
+                ],
+            ])
+            ->toArray();
+
+        $query = Artwork::search('*', function (Client $client, string $query, array $params) use ($aggs) {
+            $params['body']['aggs'] = $aggs;
+            $params['body']['size'] = 0;
+
+            return $client->search($params);
+        });
+
+        $aggregations = $query->raw()['aggregations'] ?? [];
+
+        return $this->formatAggregations($aggregations);
+    }
+
+    /**
+     * @param  array<string, mixed>  $aggregations
+     * @return Collection<string, mixed>
+     */
+    protected function formatAggregations(array $aggregations): Collection
+    {
+        $modelMapping = FacetMetadata::MODEL_MAPPING;
+        $enumMapping = FacetMetadata::ENUM_MAPPING;
+
+        $parsedAggregations = collect($aggregations)
+            ->mapWithKeys(fn (array $agg, string $key) => [$key => $agg['filtered'] ?? $agg]);
+
+        $modelLabels = $parsedAggregations
+            ->filter(fn (array $agg) => isset($agg['buckets']))
+            ->only(array_keys($modelMapping))
+            ->map(fn (array $agg, string $key) => $modelMapping[$key]::query()
+                ->whereIn('id', array_column($agg['buckets'], 'key'))
+                ->get()
+                ->keyBy('id')
+                ->map(fn (Stringable $model) => (string) $model)
+            );
+
+        return $parsedAggregations
+            ->map(fn (array $agg, string $key) => collect($agg['buckets'])
+                ->map(fn (array $bucket) => [
+                    'value' => $bucket['key'],
+                    'label' => match (true) {
+                        isset($modelMapping[$key]) => ($modelLabels[$key] ?? collect())->get($bucket['key']),
+                        isset($enumMapping[$key]) => $enumMapping[$key]::tryFrom($bucket['key'])?->getLabel(),
+                        $key === 'author.label' => $bucket['key'],
+                        default => null,
+                    },
+                    'count' => $bucket['doc_count'],
+                ])
+                ->filter(fn (array $bucket) => $bucket['label'] !== null)
+                ->values()
+            );
     }
 
     /**
