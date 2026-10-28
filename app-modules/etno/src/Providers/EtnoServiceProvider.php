@@ -13,10 +13,16 @@ use Metafori\Core\Models\Region;
 use Metafori\Etno\Console\Commands\CreateItemSearchIndexCommand;
 use Metafori\Etno\EtnoPlugin;
 use Metafori\Etno\Models\Document;
+use Metafori\Etno\Models\DocumentOriginator;
 use Metafori\Etno\Models\Item;
+use Metafori\Etno\Models\ItemOriginator;
+use Metafori\Etno\Models\Media;
 use Metafori\Etno\Observers\DocumentObserver;
+use Metafori\Etno\Observers\DocumentOriginatorObserver;
 use Metafori\Etno\Observers\ItemObserver;
+use Metafori\Etno\Observers\ItemOriginatorObserver;
 use Metafori\Etno\Observers\LocalityObserver;
+use Metafori\Etno\Observers\MediaObserver;
 
 class EtnoServiceProvider extends ServiceProvider
 {
@@ -42,6 +48,9 @@ class EtnoServiceProvider extends ServiceProvider
 
         Item::observe(ItemObserver::class);
         Document::observe(DocumentObserver::class);
+        ItemOriginator::observe(ItemOriginatorObserver::class);
+        DocumentOriginator::observe(DocumentOriginatorObserver::class);
+        Media::observe(MediaObserver::class);
 
         $localityModels = [
             Country::class,

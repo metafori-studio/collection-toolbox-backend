@@ -4,10 +4,11 @@ namespace Metafori\Etno\Observers;
 
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Repositories\ItemRepository;
+use Metafori\Etno\Support\ItemSearchSynchronizer;
 
 class DocumentObserver
 {
-    public function __construct(public ItemRepository $repository) {}
+    public function __construct(public ItemRepository $repository, protected ItemSearchSynchronizer $searchSynchronizer) {}
 
     public function updated(Document $document): void
     {
@@ -15,7 +16,7 @@ class DocumentObserver
             $this->repository->invalidateMapPointsCache();
         }
 
-        $this->syncSearchableItems($document);
+        $this->searchSynchronizer->syncDocumentItems($document);
     }
 
     public function deleted(Document $document): void
@@ -41,15 +42,6 @@ class DocumentObserver
             $this->repository->invalidateMapPointsCache();
         }
 
-        $this->syncSearchableItems($document);
-    }
-
-    protected function syncSearchableItems(Document $document): void
-    {
-        $items = $document->items()->get();
-        [$searchable, $unsearchable] = $items->partition->shouldBeSearchable();
-
-        $searchable->searchable();
-        $unsearchable->unsearchable();
+        $this->searchSynchronizer->syncDocumentItems($document);
     }
 }

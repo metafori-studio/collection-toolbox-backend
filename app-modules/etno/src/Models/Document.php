@@ -22,6 +22,7 @@ use Metafori\Core\Models\Region;
 use Metafori\Etno\Database\Factories\DocumentFactory;
 use Metafori\Etno\Enums\AccessRights;
 use Metafori\Etno\Models\Concerns\HasDocumentMetadata;
+use Metafori\Etno\Models\Pivots\DocumentPivot;
 use Metafori\Etno\Support\CitationFormatter;
 use Stringable;
 
@@ -62,12 +63,12 @@ class Document extends Model implements Stringable
 
     public function authors(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_document_authors')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_document_authors')->using(DocumentPivot::class)->orderByPivot('sort_order');
     }
 
     public function researchers(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'etno_document_researchers')->orderByPivot('sort_order');
+        return $this->belongsToMany(Person::class, 'etno_document_researchers')->using(DocumentPivot::class)->orderByPivot('sort_order');
     }
 
     public function originators(): HasMany
@@ -77,12 +78,12 @@ class Document extends Model implements Stringable
 
     public function keywords(): BelongsToMany
     {
-        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->orderByPivot('sort_order');
+        return $this->belongsToMany(Keyword::class, 'etno_document_keyword')->using(DocumentPivot::class)->orderByPivot('sort_order');
     }
 
     public function researchCollections(): BelongsToMany
     {
-        return $this->belongsToMany(ResearchCollection::class, 'etno_document_research_collection')->orderByPivot('sort_order');
+        return $this->belongsToMany(ResearchCollection::class, 'etno_document_research_collection')->using(DocumentPivot::class)->orderByPivot('sort_order');
     }
 
     public function items(): HasMany
