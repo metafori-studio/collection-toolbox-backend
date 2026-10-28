@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Laravel\Scout\Searchable;
 use Metafori\Art\Data\Measurement;
 use Metafori\Art\Database\Factories\ArtworkFactory;
 use Metafori\Art\Enums\AcquisitionMethod;
@@ -31,6 +32,8 @@ use Spatie\Translatable\HasTranslations;
  * @property string|null $description
  * @property string|null $dating
  * @property FuzzyDate|null $creation_date
+ * @property Carbon|null $creation_date_start
+ * @property Carbon|null $creation_date_end
  * @property \Illuminate\Support\Collection<int, WorkType>|null $work_types
  * @property \Illuminate\Support\Collection<int, ObjectType>|null $object_types
  * @property \Illuminate\Support\Collection<int, Medium>|null $mediums
@@ -45,7 +48,7 @@ use Spatie\Translatable\HasTranslations;
  */
 class Artwork extends Model implements HasMedia
 {
-    use HasFactory, HasFuzzyDates, HasTranslations, InteractsWithMedia;
+    use HasFactory, HasFuzzyDates, HasTranslations, InteractsWithMedia, Searchable;
 
     protected $guarded = [];
 
@@ -55,6 +58,41 @@ class Artwork extends Model implements HasMedia
     }
 
     protected array $translatable = ['title', 'description', 'dating'];
+
+    public function toSearchableArray(): array
+    {
+        $resolveTranslations = function (string $attribute): array {
+            $translations = $this->getTranslations($attribute);
+
+            return collect(config('app.locales'))
+                ->mapWithKeys(fn (string $locale) => [$locale => $translations[$locale] ?? null])
+                ->toArray();
+        };
+
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'identifier' => $this->identifier,
+            'title' => $resolveTranslations('title'),
+            'description' => $resolveTranslations('description'),
+            'dating' => $resolveTranslations('dating'),
+            'work_types' => $this->work_types?->map->value->values()->all() ?? [],
+            'object_types' => $this->object_types?->map->value->values()->all() ?? [],
+            'mediums' => $this->mediums?->map->value->values()->all() ?? [],
+            'techniques' => $this->techniques?->map->value->values()->all() ?? [],
+            'acquisition_method' => $this->acquisition_method?->value,
+            'creation_date' => array_filter([
+                'gte' => $this->creation_date_start?->format('Y-m-d'),
+                'lte' => $this->creation_date_end?->format('Y-m-d'),
+            ]),
+            'author' => [
+                'person_id' => $this->authors->pluck('person_id')->filter()->values()->all(),
+            ],
+            'collection' => [
+                'id' => $this->collections->pluck('id')->values()->all(),
+            ],
+        ];
+    }
 
     public function getRouteKeyName(): string
     {

@@ -41,6 +41,7 @@ jobs:
             art:
               - *shared
               - 'apps/art/**'
+              - 'app-modules/opensearch/**'
             etno:
               - *shared
               - 'apps/etno/**'
@@ -72,6 +73,7 @@ jobs:
       - uses: ./.github/actions/test-php
         with:
           app: art
+          opensearch: 'true'
 
   etno:
     needs: changes
