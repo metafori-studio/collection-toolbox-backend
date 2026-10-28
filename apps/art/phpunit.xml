@@ -36,5 +36,6 @@
         <env name="APP_LOCALE" value="en"/>
         <env name="APP_LOCALES" value="en,cs"/>
         <env name="APP_FALLBACK_LOCALE" value="en"/>
+        <env name="SCOUT_DRIVER" value="null"/>
     </php>
 </phpunit>

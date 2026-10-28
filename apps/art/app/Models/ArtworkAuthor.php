@@ -17,7 +17,7 @@ use Metafori\Core\Models\Person;
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Artwork $artwork
+ * @property-read Artwork|null $artwork
  * @property-read Person|null $person
  */
 class ArtworkAuthor extends Model
