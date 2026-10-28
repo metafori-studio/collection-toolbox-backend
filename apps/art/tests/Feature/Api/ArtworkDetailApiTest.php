@@ -124,14 +124,14 @@ it('returns localized attributes based on Accept-Language header', function () {
 });
 
 it('includes attached media in response', function () {
-    Storage::fake('public');
+    Storage::fake('local');
 
     $artwork = Artwork::factory()->create([
         'slug' => 'artwork-with-image',
     ]);
 
     $file = UploadedFile::fake()->image('painting.jpg', 1000, 1000);
-    $artwork->addMedia($file)->toMediaCollection('images', 'public');
+    $artwork->addMedia($file)->toMediaCollection('images', 'local');
 
     $response = getJson(route('artworks.show', ['artwork' => 'artwork-with-image', 'include' => 'media']));
 
