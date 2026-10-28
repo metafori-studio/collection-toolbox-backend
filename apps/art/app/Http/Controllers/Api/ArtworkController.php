@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
 use Metafori\Art\Http\Requests\Api\ArtworkAggregationsRequest;
 use Metafori\Art\Http\Requests\Api\ArtworkIndexRequest;
+use Metafori\Art\Http\Requests\Api\ArtworkSearchRequest;
 use Metafori\Art\Http\Resources\ArtworkResource;
 use Metafori\Art\Models\Artwork;
 use Metafori\Art\Repositories\ArtworkRepository;
@@ -28,6 +29,17 @@ class ArtworkController extends Controller
         $perPage = (int) $request->input('per_page', 15);
 
         $artworks = $this->repository->paginate($filters, $sorts, $locale, $perPage);
+
+        return ArtworkResource::collection($artworks);
+    }
+
+    public function search(ArtworkSearchRequest $request): AnonymousResourceCollection
+    {
+        $query = (string) $request->string('q');
+        $size = (int) $request->integer('size', 10);
+        $locale = app()->getLocale();
+
+        $artworks = $this->repository->search($query, $size, $locale);
 
         return ArtworkResource::collection($artworks);
     }
