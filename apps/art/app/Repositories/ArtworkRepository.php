@@ -3,6 +3,7 @@
 namespace Metafori\Art\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Metafori\Art\Models\Artwork;
@@ -67,6 +68,53 @@ class ArtworkRepository
         });
 
         return $query->paginate($perPage);
+    }
+
+    public function search(string $query, int $size, string $locale): EloquentCollection
+    {
+        $textFields = [
+            "title.{$locale}",
+            "description.{$locale}",
+        ];
+
+        $suggestFields = [
+            "title.{$locale}.suggest",
+        ];
+
+        $scoutQuery = Artwork::search($query, function (Client $client, string $q, array $params) use ($textFields, $suggestFields) {
+            $params['body']['query'] = [
+                'bool' => [
+                    'should' => [
+                        [
+                            'multi_match' => [
+                                'query' => $q,
+                                'fields' => $textFields,
+                            ],
+                        ],
+                        [
+                            'multi_match' => [
+                                'query' => $q,
+                                'type' => 'bool_prefix',
+                                'fields' => $suggestFields,
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
+                ],
+            ];
+
+            return $client->search($params);
+        });
+
+        $scoutQuery->query(function ($eloquentQuery) {
+            $eloquentQuery->with([
+                'authors.person',
+                'collections' => fn ($query) => $query->withCount('artworks'),
+                'media',
+            ]);
+        });
+
+        return $scoutQuery->take($size)->get();
     }
 
     /**
