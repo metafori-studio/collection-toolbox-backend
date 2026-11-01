@@ -27,8 +27,8 @@ return [
     */
 
     'routes' => [
-        'reset_password' => '/reset-password',
-        'set_password' => '/setup-account',
+        'reset_password' => '/{locale}/reset-password',
+        'set_password' => '/{locale}/setup-account',
     ],
 
     'require_basic_auth' => (bool) env('FRONTEND_REQUIRE_BASIC_AUTH', false),
