@@ -20,6 +20,7 @@ class Frontend
         return $this->route('reset_password', [
             'token' => $token,
             'email' => $user->getEmailForPasswordReset(),
+            'locale' => $user->preferredLocale(),
         ]);
     }
 
@@ -31,6 +32,7 @@ class Frontend
         return $this->route('set_password', [
             'token' => $token,
             'email' => $user->email,
+            'locale' => $user->preferredLocale(),
         ]);
     }
 
