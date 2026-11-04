@@ -1,7 +1,7 @@
 {
     "name": "metafori/archeomap",
-    "type": "project",
     "license": "MIT",
+    "type": "project",
     "require": {
         "php": "^8.5",
         "dedoc/scramble": "^0.13.14",
@@ -20,7 +20,7 @@
         "predis/predis": "^3.5",
         "proj4php/proj4php": "^2.0",
         "sentry/sentry-laravel": "^4.25",
-        "spatie/laravel-medialibrary": "^11.21",
+        "spatie/laravel-medialibrary": "^11.23",
         "tpetry/laravel-postgresql-enhanced": "^3.7"
     },
     "require-dev": {
@@ -49,6 +49,15 @@
             "Metafori\\Archeo\\Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../app-modules/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "scripts": {
         "setup": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
@@ -87,14 +96,5 @@
         "platform": {
             "php": "8.5"
         }
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../app-modules/*",
-            "options": {
-                "symlink": true
-            }
-        }
-    ]
+    }
 }
