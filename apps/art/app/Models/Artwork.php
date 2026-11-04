@@ -62,10 +62,8 @@ class Artwork extends Model implements HasMedia
     public function toSearchableArray(): array
     {
         $resolveTranslations = function (string $attribute): array {
-            $translations = $this->getTranslations($attribute);
-
             return collect(config('app.locales'))
-                ->mapWithKeys(fn (string $locale) => [$locale => $translations[$locale] ?? null])
+                ->mapWithKeys(fn (string $locale) => [$locale => $this->getTranslation($attribute, $locale)])
                 ->toArray();
         };
 
