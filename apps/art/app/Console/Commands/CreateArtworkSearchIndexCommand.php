@@ -60,6 +60,14 @@ class CreateArtworkSearchIndexCommand extends Command
                             ],
                         ],
                         'analyzer' => [
+                            'suggest_analyzer' => [
+                                'type' => 'custom',
+                                'tokenizer' => 'standard',
+                                'filter' => [
+                                    'lowercase',
+                                    'asciifolding',
+                                ],
+                            ],
                             'cs_analyzer' => [
                                 'type' => 'custom',
                                 'tokenizer' => 'standard',
@@ -101,6 +109,7 @@ class CreateArtworkSearchIndexCommand extends Command
                                         ],
                                         'suggest' => [
                                             'type' => 'search_as_you_type',
+                                            'analyzer' => 'suggest_analyzer',
                                         ],
                                     ],
                                 ],

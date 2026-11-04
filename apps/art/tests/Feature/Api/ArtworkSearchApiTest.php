@@ -5,6 +5,7 @@ use Metafori\Art\Models\Artwork;
 use Metafori\Art\Repositories\ArtworkRepository;
 use Metafori\Opensearch\Testing\RefreshIndices;
 
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\withHeader;
 
 uses(RefreshDatabase::class, RefreshIndices::class);
@@ -24,4 +25,10 @@ it('can search artworks using full-text search', function () {
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', (string) $artwork1->id);
+});
+
+it('rejects search sizes outside the result window', function () {
+    getJson(route('artworks.search', ['q' => 'art', 'size' => 10001]))
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('size');
 });

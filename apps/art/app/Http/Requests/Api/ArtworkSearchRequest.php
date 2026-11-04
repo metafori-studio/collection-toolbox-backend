@@ -25,7 +25,7 @@ class ArtworkSearchRequest extends FormRequest
             /**
              * The number of items to return.
              */
-            'size' => ['nullable', 'integer', 'min:1'],
+            'size' => ['nullable', 'integer', 'min:1', 'max:10000'],
         ];
     }
 }
