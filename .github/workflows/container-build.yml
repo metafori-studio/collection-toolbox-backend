@@ -136,7 +136,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          ref="${{ steps.refs.outputs.frontend_ref }}"
+          ref="${{ inputs.frontend_ref || 'main' }}"
           sha="$(gh api repos/metafori-studio/collection-toolbox-frontend/commits/${ref} --jq '.sha')"
           echo "sha=${sha}" >> "$GITHUB_OUTPUT"
           echo "Resolved frontend ref ${ref} to commit ${sha}"
@@ -170,6 +170,7 @@ jobs:
           push: true
           build-args: |
             FRONTEND_REF=${{ inputs.frontend_ref || 'main' }}
+            FRONTEND_COMMIT=${{ steps.frontend-commit.outputs.sha }}
           secrets: |
             mapbox_token=${{ secrets[matrix.mapbox_secret] }}
           tags: ${{ steps.meta.outputs.tags }}
