@@ -2,12 +2,16 @@
 FROM docker.io/node:24-alpine AS frontend-builder
 
 ARG FRONTEND_REF=main
+ARG FRONTEND_COMMIT=
 
 WORKDIR /frontend
 # hadolint ignore=DL3019
 RUN --mount=type=cache,id=apk,target=/etc/apk/cache \
     apk add git=~2
-RUN git clone --depth 1 --branch ${FRONTEND_REF} https://github.com/metafori-studio/collection-toolbox-frontend.git .
+RUN git init && \
+    git remote add origin https://github.com/metafori-studio/collection-toolbox-frontend.git && \
+    git fetch --depth 1 origin ${FRONTEND_COMMIT:-${FRONTEND_REF}} && \
+    git checkout --detach FETCH_HEAD
 
 RUN --mount=type=cache,id=npm,target=/root/.npm \
     --mount=type=secret,id=mapbox_token \
