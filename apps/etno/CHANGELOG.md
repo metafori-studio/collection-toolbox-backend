@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.5.0...etno-v1.6.0) (2026-11-05)
+
+
+### Features
+
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+
+
+### Bug Fixes
+
+* bump frankenphp to 1.13.2 ([0fd078a](https://github.com/metafori-studio/collection-toolbox-backend/commit/0fd078afc6fb4336f762b0a9a0ee212a5a2d6eb9))
+* bump frankenphp to 1.13.2 ([1c0d484](https://github.com/metafori-studio/collection-toolbox-backend/commit/1c0d48460ca314d90c42af0e2bc984b6797b9904))
+* cast temporary_url_default_lifetime to integer in media library configs ([3e25461](https://github.com/metafori-studio/collection-toolbox-backend/commit/3e254611c4f6ee7809ecfb659652084e2c454868))
+* cast temporary_url_default_lifetime to integer in media library configs ([4156d88](https://github.com/metafori-studio/collection-toolbox-backend/commit/4156d88dac6eb8a7571dfae80bc40c75042068cd))
+* **ci:** cache image based on commit sha, not branch ([8f4a193](https://github.com/metafori-studio/collection-toolbox-backend/commit/8f4a193a3dbd35ee26e575678ad811bd15f02bd4))
+
+
+### Miscellaneous Chores
+
+* update spatie/laravel-medialibrary ([e098300](https://github.com/metafori-studio/collection-toolbox-backend/commit/e098300fab1a511c726c1296d89379f520933c72))
+
 ## [1.5.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/etno-v1.4.1...etno-v1.5.0) (2026-07-18)
 
 
