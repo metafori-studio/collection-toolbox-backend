@@ -6,6 +6,9 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Carbon;
 use Metafori\Core\Enums\DatePrecision;
 
+/**
+ * @deprecated Use \Metafori\Core\Filament\Forms\Components\FuzzyDateEndField instead.
+ */
 class PrecisionDateEndField extends TextInput
 {
     use Concerns\HasPrecisionDate;

@@ -59,7 +59,7 @@ it('does not dispatch WatermarkPdfJob for PDFs that already have a watermarked c
     Queue::assertNotPushed(WatermarkPdfJob::class);
 });
 
-it('returns watermarked_url as null when conversion has not been generated', function () {
+it('returns original url when watermarked conversion has not been generated', function () {
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_');
@@ -73,10 +73,11 @@ it('returns watermarked_url as null when conversion has not been generated', fun
     $response = $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
-    expect($response->json('data.pdfs.0.watermarked_url'))->toBeNull();
+    expect($response->json('data.pdfs.0.url'))->not->toBeNull()
+        ->toContain('report.pdf');
 });
 
-it('returns watermarked_url when conversion has been generated', function () {
+it('returns watermarked url in url prop when conversion has been generated', function () {
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_set_');
@@ -92,6 +93,6 @@ it('returns watermarked_url when conversion has been generated', function () {
     $response = $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
-    expect($response->json('data.pdfs.0.watermarked_url'))->not->toBeNull()
+    expect($response->json('data.pdfs.0.url'))->not->toBeNull()
         ->toContain('report-watermarked.pdf');
 });

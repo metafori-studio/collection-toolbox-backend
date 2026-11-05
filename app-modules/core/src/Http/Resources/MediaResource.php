@@ -4,6 +4,7 @@ namespace Metafori\Core\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
@@ -20,13 +21,33 @@ class MediaResource extends JsonResource
             'human_readable_size' => $this->human_readable_size,
             'mime_type' => $this->mime_type,
             /** @var string */
-            'url' => $this->getTemporaryUrl(),
+            'url' => $this->getUrl(),
             /** @var array<string, string> */
-            'conversions' => $this->getGeneratedConversions()
-                ->filter()
-                ->mapWithKeys(fn (true $hasGeneratedConversion, string $conversionName) => [
-                    $conversionName => $this->getTemporaryUrl(conversionName: $conversionName),
-                ]),
+            'conversions' => $this->getConversions(),
         ];
+    }
+
+    protected function getUrl(): string
+    {
+        return $this->getTemporaryUrl();
+    }
+
+    /**
+     * @return Collection<string, string>
+     */
+    protected function getConversions(): Collection
+    {
+        return $this->getGeneratedConversions()
+            ->mapWithKeys(fn (true $hasGeneratedConversion, string $conversionName) => [
+                $conversionName => $this->getTemporaryUrl(conversionName: $conversionName),
+            ]);
+    }
+
+    /**
+     * @return Collection<string, bool>
+     */
+    protected function getGeneratedConversions(): Collection
+    {
+        return $this->resource->getGeneratedConversions()->filter();
     }
 }

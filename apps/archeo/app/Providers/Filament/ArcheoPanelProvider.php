@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Metafori\Core\Filament\Resources\UserResource;
+use Metafori\Core\Http\Middleware\SetPreferredLocale;
 
 class ArcheoPanelProvider extends PanelProvider
 {
@@ -56,6 +57,7 @@ class ArcheoPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+                SetPreferredLocale::class,
+            ], isPersistent: true);
     }
 }

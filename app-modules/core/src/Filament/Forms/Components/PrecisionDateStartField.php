@@ -6,6 +6,9 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Carbon;
 use Metafori\Core\Enums\DatePrecision;
 
+/**
+ * @deprecated Use \Metafori\Core\Filament\Forms\Components\FuzzyDateStartField instead.
+ */
 class PrecisionDateStartField extends TextInput
 {
     use Concerns\HasPrecisionDate;

@@ -35,8 +35,11 @@ return [
         'name' => 'Názov',
         'user_name' => 'Meno',
         'email' => 'E-mail',
+        'preferred_locale' => 'Preferovaný jazyk',
         'roles' => 'Roly',
         'precision' => 'Presnosť',
+        'start_precision' => 'Presnosť začiatku',
+        'end_precision' => 'Presnosť konca',
         'date_range' => 'Časové rozpätie',
         'start' => 'Začiatok',
         'date' => 'Dátum',
@@ -55,5 +58,8 @@ return [
     ],
     'placeholders' => [
         'none' => 'Žiadna',
+    ],
+    'validation' => [
+        'end_date_must_be_after_start_date' => 'Koniec musí byť neskôr ako začiatok.',
     ],
 ];

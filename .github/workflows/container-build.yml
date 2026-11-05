@@ -1,6 +1,9 @@
 name: Build and Push Container
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -71,8 +74,8 @@ jobs:
   build:
     name: build (${{ matrix.module }})
     needs: changes
-    # `changes` is skipped for release/workflow_dispatch; always() lets build run anyway.
-    if: always() && (github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
+    # `changes` is skipped for non-pull_request events; always() lets build run anyway.
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'release' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
@@ -126,6 +129,17 @@ jobs:
             type=raw,value=${{ github.ref_name }},enable=${{ github.event_name == 'release' }},priority=300
             type=raw,value=${{ matrix.module }}-staging,enable=${{ github.event_name == 'release' }},priority=200
             type=sha,prefix=${{ matrix.module }}-,format=short,enable=${{ github.event_name != 'release' }},priority=100
+
+      - name: Resolve frontend commit SHA
+        id: frontend-commit
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ref="${{ steps.refs.outputs.frontend_ref }}"
+          sha="$(gh api repos/metafori-studio/collection-toolbox-frontend/commits/${ref} --jq '.sha')"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "Resolved frontend ref ${ref} to commit ${sha}"
 
       - name: Validate required secrets
         if: steps.guard.outputs.skip != 'true' && matrix.mapbox_secret != ''

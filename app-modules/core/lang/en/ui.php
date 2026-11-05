@@ -35,8 +35,11 @@ return [
         'name' => 'Name',
         'user_name' => 'Name',
         'email' => 'Email',
+        'preferred_locale' => 'Preferred locale',
         'roles' => 'Roles',
         'precision' => 'Precision',
+        'start_precision' => 'Start precision',
+        'end_precision' => 'End precision',
         'date_range' => 'Date range',
         'start' => 'Start',
         'date' => 'Date',
@@ -55,5 +58,8 @@ return [
     ],
     'placeholders' => [
         'none' => 'None',
+    ],
+    'validation' => [
+        'end_date_must_be_after_start_date' => 'The end date must be after the start date.',
     ],
 ];

@@ -17,6 +17,8 @@ class UserResource extends JsonResource
             'id' => $this->id,
             /* @var string */
             'email' => $this->email,
+            /* @var string|null */
+            'preferred_locale' => $this->preferred_locale,
         ];
     }
 }
