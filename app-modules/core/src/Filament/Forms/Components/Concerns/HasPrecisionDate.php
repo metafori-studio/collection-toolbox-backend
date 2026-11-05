@@ -8,6 +8,9 @@ use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Illuminate\Support\Carbon;
 use Metafori\Core\Enums\DatePrecision;
 
+/**
+ * @deprecated Use \Metafori\Core\Filament\Forms\Components\Concerns\HasFuzzyDate instead.
+ */
 trait HasPrecisionDate
 {
     use HasExtraInputAttributes;

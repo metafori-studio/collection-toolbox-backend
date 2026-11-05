@@ -26,7 +26,7 @@
         "phpoffice/phpspreadsheet": "^5.5",
         "proj4php/proj4php": "^2.0",
         "sentry/sentry-laravel": "^4.25",
-        "spatie/laravel-medialibrary": "^11.21",
+        "spatie/laravel-medialibrary": "^11.23",
         "spatie/laravel-permission": "^7.2",
         "spatie/laravel-prometheus": "^1.6",
         "spatie/laravel-translatable": "^6.12",
