@@ -5,6 +5,7 @@ namespace Metafori\Art\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Metafori\Art\Models\Artwork;
+use Metafori\Core\Http\Resources\EnumResource;
 
 /**
  * @mixin Artwork
@@ -34,13 +35,13 @@ class ArtworkResource extends JsonApiResource
             'description' => $this->description,
             'dating' => $this->dating,
             'creation_date' => $this->creation_date,
-            'work_types' => $this->work_types?->map(fn ($type): string => $type->getLabel())->values()->all() ?? [],
-            'object_types' => $this->object_types?->map(fn ($type): string => $type->getLabel())->values()->all() ?? [],
-            'mediums' => $this->mediums?->map(fn ($medium): string => $medium->getLabel())->values()->all() ?? [],
-            'techniques' => $this->techniques?->map(fn ($technique): string => $technique->getLabel())->values()->all() ?? [],
-            'acquisition_method' => $this->acquisition_method?->getLabel(),
+            'work_types' => EnumResource::collection($this->work_types ?? []),
+            'object_types' => EnumResource::collection($this->object_types ?? []),
+            'mediums' => EnumResource::collection($this->mediums ?? []),
+            'techniques' => EnumResource::collection($this->techniques ?? []),
+            'acquisition_method' => EnumResource::make($this->acquisition_method),
             'acquisition_date' => $this->acquisition_date,
-            'measurements' => $this->measurements?->values()->all() ?? [],
+            'measurements' => MeasurementResource::collection($this->measurements ?? []),
         ];
     }
 }

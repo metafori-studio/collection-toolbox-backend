@@ -20,7 +20,10 @@ class CollectionFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => ['en' => fake()->words(2, true)],
+            'title' => [
+                'cs' => fake()->words(2, true),
+                'en' => fake()->words(2, true),
+            ],
         ];
     }
 }

@@ -73,21 +73,21 @@ it('retrieves artwork detail by slug with included relations', function () {
         ->assertJsonPath('data.attributes.title', 'Starry Night')
         ->assertJsonPath('data.attributes.dating', 'circa 1889')
         ->assertJsonPath('data.attributes.description', 'A famous painting')
-        ->assertJsonPath('data.attributes.work_types.0', 'painting')
-        ->assertJsonPath('data.attributes.object_types.0', 'positive')
-        ->assertJsonPath('data.attributes.mediums.0', 'canvas')
-        ->assertJsonPath('data.attributes.techniques.0', 'oil')
-        ->assertJsonPath('data.attributes.acquisition_method', 'donation')
+        ->assertJsonPath('data.attributes.work_types.0', ['value' => 'painting', 'label' => 'painting'])
+        ->assertJsonPath('data.attributes.object_types.0', ['value' => 'positive', 'label' => 'positive'])
+        ->assertJsonPath('data.attributes.mediums.0', ['value' => 'canvas', 'label' => 'canvas'])
+        ->assertJsonPath('data.attributes.techniques.0', ['value' => 'oil', 'label' => 'oil'])
+        ->assertJsonPath('data.attributes.acquisition_method', ['value' => 'donation', 'label' => 'donation'])
         ->assertJsonPath('data.attributes.acquisition_date.date', '1941-01-01')
         ->assertJsonPath('data.attributes.acquisition_date.precision', 'year')
         ->assertJsonPath('data.attributes.creation_date.date', '1889-01-01')
         ->assertJsonPath('data.attributes.creation_date.precision', 'year')
-        ->assertJsonPath('data.attributes.measurements.0.type', MeasurementType::Height->value)
+        ->assertJsonPath('data.attributes.measurements.0.type', ['value' => MeasurementType::Height->value, 'label' => 'total height/length'])
         ->assertJsonPath('data.attributes.measurements.0.value', 73.7)
-        ->assertJsonPath('data.attributes.measurements.0.unit', MeasurementUnit::Cm->value)
-        ->assertJsonPath('data.attributes.measurements.1.type', MeasurementType::Width->value)
+        ->assertJsonPath('data.attributes.measurements.0.unit', ['value' => MeasurementUnit::Cm->value, 'label' => 'cm'])
+        ->assertJsonPath('data.attributes.measurements.1.type', ['value' => MeasurementType::Width->value, 'label' => 'width'])
         ->assertJsonPath('data.attributes.measurements.1.value', 92.1)
-        ->assertJsonPath('data.attributes.measurements.1.unit', MeasurementUnit::Cm->value)
+        ->assertJsonPath('data.attributes.measurements.1.unit', ['value' => MeasurementUnit::Cm->value, 'label' => 'cm'])
         ->assertJsonCount(1, 'data.relationships.authors.data')
         ->assertJsonCount(1, 'data.relationships.collections.data')
         ->assertJsonPath('included.0.type', 'artwork_authors')
@@ -112,6 +112,8 @@ it('returns localized attributes based on Accept-Language header', function () {
         'title' => ['en' => 'English Title', 'cs' => 'Český název'],
         'description' => ['en' => 'English Description', 'cs' => 'Český popis'],
         'dating' => ['en' => 'English Dating', 'cs' => 'Česká datace'],
+        'work_types' => [WorkType::Painting],
+        'acquisition_method' => AcquisitionMethod::Donation,
     ]);
 
     $response = withHeader('Accept-Language', 'cs')
@@ -120,7 +122,9 @@ it('returns localized attributes based on Accept-Language header', function () {
     $response->assertOk()
         ->assertJsonPath('data.attributes.title', 'Český název')
         ->assertJsonPath('data.attributes.description', 'Český popis')
-        ->assertJsonPath('data.attributes.dating', 'Česká datace');
+        ->assertJsonPath('data.attributes.dating', 'Česká datace')
+        ->assertJsonPath('data.attributes.work_types.0', ['value' => 'painting', 'label' => 'malba'])
+        ->assertJsonPath('data.attributes.acquisition_method', ['value' => 'donation', 'label' => 'dar']);
 });
 
 it('includes attached media in response', function () {
