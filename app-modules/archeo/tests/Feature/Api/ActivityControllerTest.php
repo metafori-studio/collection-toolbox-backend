@@ -96,3 +96,44 @@ it('returns watermarked url in url prop when conversion has been generated', fun
     expect($response->json('data.pdfs.0.url'))->not->toBeNull()
         ->toContain('report-watermarked.pdf');
 });
+
+it('returns aggregations including jsonb array fields', function () {
+    Activity::factory()->create([
+        'activity_type' => 'Výskum',
+        'author_ns' => ['Jan Novák', 'Peter Kováč'],
+        'dating_ns' => ['Pravek', 'Stredovek'],
+        'dating_ceans' => ['Halštat'],
+        'dating_site_type' => ['Sídlisko'],
+    ]);
+
+    Activity::factory()->create([
+        'activity_type' => 'Výskum',
+        'author_ns' => ['Jan Novák'],
+        'dating_ns' => ['Stredovek'],
+        'dating_ceans' => ['Latén'],
+        'dating_site_type' => ['Pohrebisko'],
+    ]);
+
+    $response = $this->getJson(url('api/archeo/activities/aggregations'))
+        ->assertSuccessful();
+
+    $authorNs = collect($response->json('data.author_ns'));
+    expect($authorNs->firstWhere('value', 'Jan Novák'))->toMatchArray([
+        'value' => 'Jan Novák',
+        'label' => 'Jan Novák',
+        'count' => 2,
+    ])->and($authorNs->firstWhere('value', 'Peter Kováč'))->toMatchArray([
+        'value' => 'Peter Kováč',
+        'label' => 'Peter Kováč',
+        'count' => 1,
+    ]);
+
+    $datingNs = collect($response->json('data.dating_ns'));
+    expect($datingNs->firstWhere('value', 'Stredovek')['count'])->toBe(2)
+        ->and($datingNs->firstWhere('value', 'Pravek')['count'])->toBe(1);
+
+    $filtered = $this->getJson(url('api/archeo/activities?filter[author_ns][]=Peter+Kov%C3%A1%C4%8D'))
+        ->assertSuccessful();
+
+    expect($filtered->json('data'))->toHaveCount(1);
+});
