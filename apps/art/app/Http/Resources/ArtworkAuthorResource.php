@@ -27,7 +27,6 @@ class ArtworkAuthorResource extends JsonApiResource
     {
         return [
             'label' => $this->label,
-            'sort_order' => $this->sort_order,
         ];
     }
 }

@@ -4,13 +4,29 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Metafori\Art\Enums\WorkType;
 use Metafori\Art\Models\Artwork;
 use Metafori\Art\Models\ArtworkAuthor;
+use Metafori\Art\Models\Collection;
 use Metafori\Art\Repositories\ArtworkRepository;
 use Metafori\Core\Models\Person;
 use Metafori\Opensearch\Testing\RefreshIndices;
 
 use function Pest\Laravel\getJson;
+use function Pest\Laravel\withHeader;
 
 uses(RefreshDatabase::class, RefreshIndices::class);
+
+it('returns the localized collection title in aggregations', function () {
+    $collection = Collection::factory()->create(['title' => ['en' => 'Modern art', 'cs' => 'Moderní umění']]);
+    $artwork = Artwork::factory()->create();
+    $artwork->collections()->attach($collection);
+    $artwork->searchable();
+    app(ArtworkRepository::class)->refreshIndex();
+
+    $response = withHeader('Accept-Language', 'cs')->getJson(route('artworks.aggregations'));
+
+    $response->assertOk();
+    expect(collect($response->json('data')['collection.id'])->firstWhere('value', (string) $collection->id))
+        ->toMatchArray(['label' => 'Moderní umění', 'count' => 1]);
+});
 
 it('can retrieve filter aggregations with counts and labels', function () {
     $artwork1 = Artwork::factory()->create([

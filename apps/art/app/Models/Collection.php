@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 use Metafori\Art\Database\Factories\CollectionFactory;
 use Spatie\Translatable\HasTranslations;
+use Stringable;
 
 /**
  * @property int $id
@@ -17,13 +18,18 @@ use Spatie\Translatable\HasTranslations;
  * @property int|null $artworks_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Artwork> $artworks
  */
-class Collection extends Model
+class Collection extends Model implements Stringable
 {
     use HasFactory, HasTranslations;
 
     protected $fillable = ['title'];
 
     protected array $translatable = ['title'];
+
+    public function __toString(): string
+    {
+        return $this->title ?? '';
+    }
 
     protected static function newFactory(): CollectionFactory
     {
