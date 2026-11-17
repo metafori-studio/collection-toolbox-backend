@@ -30,6 +30,11 @@ class ArcheoServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        config([
+            'frontend.routes.reset_password' => '/reset-password',
+            'frontend.routes.set_password' => '/setup-account',
+        ]);
+
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'archeo');
 
         User::resolveRelationUsing('activityAssignments', function (User $user) {
