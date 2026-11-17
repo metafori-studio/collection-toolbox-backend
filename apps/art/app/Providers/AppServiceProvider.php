@@ -5,7 +5,9 @@ namespace Metafori\Art\Providers;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Art\Database\Seeders\DatabaseSeeder;
 use Metafori\Art\Models\ArtworkAuthor;
+use Metafori\Art\Models\Collection;
 use Metafori\Art\Observers\ArtworkAuthorObserver;
+use Metafori\Art\Observers\CollectionObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'art');
 
         ArtworkAuthor::observe(ArtworkAuthorObserver::class);
+        Collection::observe(CollectionObserver::class);
     }
 }

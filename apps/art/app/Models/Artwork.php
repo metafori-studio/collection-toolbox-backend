@@ -88,7 +88,7 @@ class Artwork extends Model implements HasMedia
                 'label' => $this->authors->whereNull('person_id')->pluck('label')->filter()->values()->all(),
             ],
             'collection' => [
-                'id' => $this->collections->pluck('id')->values()->all(),
+                'id' => $this->collections()->published()->pluck('collections.id')->all(),
             ],
         ];
     }
@@ -112,11 +112,26 @@ class Artwork extends Model implements HasMedia
         ];
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
+    public static function relations(): array
+    {
+        return [
+            'authors.person',
+            'collections' => fn ($query) => $query->published()->withCount('artworks'),
+            'media',
+        ];
+    }
+
     public function authors(): HasMany
     {
         return $this->hasMany(ArtworkAuthor::class)->orderBy('sort_order');
     }
 
+    /**
+     * @return BelongsToMany<Collection, $this>
+     */
     public function collections(): BelongsToMany
     {
         return $this->belongsToMany(Collection::class, 'artwork_collection')->orderByPivot('sort_order');
