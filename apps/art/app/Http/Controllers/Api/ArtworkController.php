@@ -57,11 +57,7 @@ class ArtworkController extends Controller
 
     public function show(Artwork $artwork): ArtworkResource
     {
-        $artwork->loadMissing([
-            'authors.person',
-            'collections' => fn ($query) => $query->withCount('artworks'),
-            'media',
-        ]);
+        $artwork->loadMissing(Artwork::relations());
 
         return ArtworkResource::make($artwork);
     }

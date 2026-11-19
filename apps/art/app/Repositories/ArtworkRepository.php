@@ -16,11 +16,7 @@ class ArtworkRepository
     public function findOrFail(string $slug): Artwork
     {
         return Artwork::query()
-            ->with([
-                'authors.person',
-                'collections' => fn ($query) => $query->withCount('artworks'),
-                'media',
-            ])
+            ->with(Artwork::relations())
             ->where('slug', $slug)
             ->firstOrFail();
     }
@@ -28,6 +24,7 @@ class ArtworkRepository
     /**
      * @param  array<string, mixed>  $filters
      * @param  array<string, 'asc'|'desc'>  $sorts
+     * @return LengthAwarePaginator<int, Artwork>
      */
     public function paginate(array $filters, array $sorts, string $locale, int $perPage = 15): LengthAwarePaginator
     {
@@ -60,16 +57,15 @@ class ArtworkRepository
         }
 
         $query->query(function ($eloquentQuery) {
-            $eloquentQuery->with([
-                'authors.person',
-                'collections' => fn ($query) => $query->withCount('artworks'),
-                'media',
-            ]);
+            $eloquentQuery->with(Artwork::relations());
         });
 
         return $query->paginate($perPage);
     }
 
+    /**
+     * @return EloquentCollection<int, Artwork>
+     */
     public function search(string $query, int $size, string $locale): EloquentCollection
     {
         $textFields = [
@@ -107,11 +103,7 @@ class ArtworkRepository
         });
 
         $scoutQuery->query(function ($eloquentQuery) {
-            $eloquentQuery->with([
-                'authors.person',
-                'collections' => fn ($query) => $query->withCount('artworks'),
-                'media',
-            ]);
+            $eloquentQuery->with(Artwork::relations());
         });
 
         return $scoutQuery->take($size)->get();

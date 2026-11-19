@@ -217,3 +217,22 @@ it('can filter artworks by creation date range', function () {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.id', (string) $midArtwork->id);
 });
+
+it('lists collection artworks from the search index with the requested sorting', function () {
+    $collection = Collection::factory()->create();
+    $alpha = Artwork::factory()->create(['title' => ['en' => 'Alpha']]);
+    $beta = Artwork::factory()->create(['title' => ['en' => 'Beta']]);
+    Artwork::factory()->create(['title' => ['en' => 'Outside collection']]);
+    $collection->artworks()->attach([$alpha->id, $beta->id]);
+    $alpha->searchable();
+    $beta->searchable();
+    app(ArtworkRepository::class)->refreshIndex();
+
+    getJson(route('collections.artworks', ['collection' => $collection, 'sort' => 'title', 'per_page' => 1]))
+        ->assertSuccessful()
+        ->assertJsonPath('meta.total', 2)
+        ->assertJsonPath('data.0.id', (string) $alpha->id);
+    getJson(route('collections.artworks', ['collection' => $collection, 'sort' => '-title', 'per_page' => 1]))
+        ->assertSuccessful()
+        ->assertJsonPath('data.0.id', (string) $beta->id);
+});

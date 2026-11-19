@@ -58,8 +58,9 @@ it('retrieves artwork detail by slug with included relations', function () {
     $collection = Collection::factory()->create([
         'title' => ['en' => 'Post-Impressionism Masterpieces', 'cs' => 'Postimpresionistická díla'],
     ]);
+    $unpublishedCollection = Collection::factory()->unpublished()->create();
 
-    $artwork->collections()->attach($collection);
+    $artwork->collections()->attach([$collection->id, $unpublishedCollection->id]);
 
     $response = withHeader('Accept-Language', 'en')
         ->getJson(route('artworks.show', ['artwork' => 'starry-night', 'include' => 'authors.person,collections']));
