@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
 use Metafori\Archeo\Http\Controllers\Controller;
 use Metafori\Archeo\Http\Requests\Api\ActivityAggregationsRequest;
 use Metafori\Archeo\Http\Requests\Api\ActivityIndexRequest;
@@ -143,13 +144,17 @@ class ActivityController extends Controller
     {
         $activity = Activity::query()
             ->where('activity_number', $activityNumber)
-            ->with(['galleries.media', 'media'])
+            ->with(['galleries.media'])
             ->firstOrFail();
 
-        if (WatermarkImage::isUsable(config('archeo.watermark_image'))) {
-            $activity->getMedia('pdfs')
-                ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
-                ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id, $request->user()));
+        if (Gate::allows('viewDocument', $activity)) {
+            $activity->load('media');
+
+            if (WatermarkImage::isUsable(config('archeo.watermark_image'))) {
+                $activity->getMedia('pdfs')
+                    ->reject(fn ($pdf) => $pdf->hasGeneratedConversion('watermarked'))
+                    ->each(fn ($pdf) => WatermarkPdfJob::dispatch($pdf->id, $request->user()));
+            }
         }
 
         return new ActivityResource($activity);
