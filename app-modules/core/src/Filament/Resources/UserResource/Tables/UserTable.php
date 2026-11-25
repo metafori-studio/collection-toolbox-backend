@@ -25,7 +25,7 @@ class UserTable
                 TextColumn::make('roles.enum')
                     ->label(__('core::ui.fields.roles'))
                     ->badge(),
-                TextColumn::make('permissions.enum')
+                TextColumn::make('permissions.label')
                     ->label(__('core::ui.fields.permissions'))
                     ->badge()
                     ->visible(fn (): bool => Permission::enumClass() !== null),
