@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Metafori\Archeo\Jobs\WatermarkPdfJob;
 use Metafori\Archeo\Models\Activity;
+use Metafori\Core\Database\Seeders\RoleSeeder;
+use Metafori\Core\Models\User;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 function markAsWatermarked(Media $media): void
@@ -16,12 +18,15 @@ function markAsWatermarked(Media $media): void
 }
 
 beforeEach(function () {
+    $this->seed(RoleSeeder::class);
+
     Storage::fake('public');
     Queue::fake();
     Config::set('archeo.watermark_image', __DIR__.'/../../Fixtures/dummy-watermark.png');
 });
 
 it('dispatches WatermarkPdfJob for each PDF without a watermarked conversion on show', function () {
+    $admin = User::factory()->admin()->create();
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_wm_');
@@ -32,13 +37,15 @@ it('dispatches WatermarkPdfJob for each PDF without a watermarked conversion on 
         ->toMediaCollection('pdfs', 'public');
     @unlink($pdfPath);
 
-    $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
+    $this->actingAs($admin)
+        ->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
     Queue::assertPushed(WatermarkPdfJob::class, 1);
 });
 
 it('does not dispatch WatermarkPdfJob for PDFs that already have a watermarked conversion', function () {
+    $admin = User::factory()->admin()->create();
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_wm_skip_');
@@ -53,13 +60,15 @@ it('does not dispatch WatermarkPdfJob for PDFs that already have a watermarked c
 
     Queue::fake();
 
-    $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
+    $this->actingAs($admin)
+        ->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
     Queue::assertNotPushed(WatermarkPdfJob::class);
 });
 
 it('returns original url when watermarked conversion has not been generated', function () {
+    $admin = User::factory()->admin()->create();
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_');
@@ -70,7 +79,8 @@ it('returns original url when watermarked conversion has not been generated', fu
         ->toMediaCollection('pdfs', 'public');
     @unlink($pdfPath);
 
-    $response = $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
+    $response = $this->actingAs($admin)
+        ->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
     expect($response->json('data.pdfs.0.url'))->not->toBeNull()
@@ -78,6 +88,7 @@ it('returns original url when watermarked conversion has not been generated', fu
 });
 
 it('returns watermarked url in url prop when conversion has been generated', function () {
+    $admin = User::factory()->admin()->create();
     $activity = Activity::factory()->create();
 
     $pdfPath = tempnam(sys_get_temp_dir(), 'test_controller_url_set_');
@@ -90,7 +101,8 @@ it('returns watermarked url in url prop when conversion has been generated', fun
 
     markAsWatermarked($activity->getMedia('pdfs')->first());
 
-    $response = $this->getJson(url("api/archeo/activities/{$activity->activity_number}"))
+    $response = $this->actingAs($admin)
+        ->getJson(url("api/archeo/activities/{$activity->activity_number}"))
         ->assertOk();
 
     expect($response->json('data.pdfs.0.url'))->not->toBeNull()
