@@ -88,6 +88,7 @@ return [
         'upload_media' => 'Upload Media',
         'create_from_files' => 'Create from files',
         'create_items' => 'Create Items',
+        'view_document' => 'View document',
         'view_frontend' => 'View on web',
         'unpublished' => 'Unpublished',
     ],
@@ -103,11 +104,16 @@ return [
         ],
     ],
     'validation' => [
+        'id_trashed' => 'A deleted document with this ID already exists. Restore it or permanently delete it before reusing this ID.',
         'mixed_media_types' => 'The media type of the file must match the other media files.',
         'mixed_media_types_item' => "The media type of the file must match the other item's media files.",
         'transcripts_without_media' => 'Cannot upload transcripts without corresponding media files.',
     ],
     'notifications' => [
+        'document_id_trashed' => [
+            'title' => 'Document ID already exists in trash',
+            'body' => 'A deleted document with ID :id already exists. You can restore it or permanently delete it.',
+        ],
         'processing_media' => '{1} :count media file is currently being processed in the background.|[2,*] :count media files are currently being processed in the background.',
     ],
     'pages' => [

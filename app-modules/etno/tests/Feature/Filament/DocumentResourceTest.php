@@ -2,6 +2,8 @@
 
 namespace Metafori\Etno\Tests\Feature\Filament;
 
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Metafori\Core\Enums\Language;
 use Metafori\Core\Enums\License;
 use Metafori\Core\Models\Organization;
@@ -12,6 +14,8 @@ use Metafori\Etno\Enums\CollectionMethod;
 use Metafori\Etno\Enums\ExtentUnit;
 use Metafori\Etno\Enums\ItemType;
 use Metafori\Etno\Enums\ProductionMethod;
+use Metafori\Etno\Filament\Resources\Documents\DocumentResource;
+use Metafori\Etno\Filament\Resources\Documents\Pages\CreateDocument;
 use Metafori\Etno\Filament\Resources\Documents\Pages\EditDocument;
 use Metafori\Etno\Models\Document;
 use Metafori\Etno\Models\Project;
@@ -136,4 +140,80 @@ it('shows unpublished text and hides view_frontend action when document is unpub
     livewire(EditDocument::class, ['record' => $document->id])
         ->assertActionVisible('unpublished')
         ->assertActionHidden('view_frontend');
+});
+
+it('can create a document with a unique id', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    livewire(CreateDocument::class)
+        ->fillForm([
+            'id' => 'DOC12345',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    expect(Document::find('DOC12345'))->not->toBeNull();
+});
+
+it('cannot create a document with a duplicate active id', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    Document::factory()->create(['id' => 'DOC12345']);
+
+    livewire(CreateDocument::class)
+        ->fillForm([
+            'id' => 'DOC12345',
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['id' => 'unique'])
+        ->assertNotNotified();
+});
+
+it('cannot create a document with an id matching a soft-deleted document', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->create(['id' => 'DOC12345']);
+    $document->delete();
+
+    livewire(CreateDocument::class)
+        ->fillForm([
+            'id' => 'DOC12345',
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['id' => __('etno::ui.validation.id_trashed')])
+        ->assertNotified(
+            Notification::make()
+                ->warning()
+                ->title(__('etno::ui.notifications.document_id_trashed.title'))
+                ->body(__('etno::ui.notifications.document_id_trashed.body', ['id' => $document->id]))
+                ->actions([
+                    Action::make('view_document')
+                        ->label(__('etno::ui.actions.view_document'))
+                        ->button()
+                        ->url(DocumentResource::getUrl('edit', ['record' => $document])),
+                ])
+                ->persistent()
+        );
+
+    expect(Document::withTrashed()->where('id', 'DOC12345')->count())->toBe(1);
+});
+
+it('can edit a soft-deleted document without id validation error', function () {
+    $user = User::factory()->admin()->create();
+    $this->actingAs($user);
+
+    $document = Document::factory()->create(['id' => 'DOC12345']);
+    $document->delete();
+
+    livewire(EditDocument::class, ['record' => $document->id])
+        ->fillForm([
+            'doi' => '10.5678/999',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($document->fresh()->doi)->toBe('10.5678/999');
 });
