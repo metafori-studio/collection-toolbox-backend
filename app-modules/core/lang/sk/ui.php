@@ -37,6 +37,7 @@ return [
         'email' => 'E-mail',
         'preferred_locale' => 'Preferovaný jazyk',
         'roles' => 'Roly',
+        'permissions' => 'Oprávnenia',
         'precision' => 'Presnosť',
         'start_precision' => 'Presnosť začiatku',
         'end_precision' => 'Presnosť konca',

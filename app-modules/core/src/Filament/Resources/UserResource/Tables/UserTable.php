@@ -6,6 +6,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Metafori\Core\Models\Permission;
 
 class UserTable
 {
@@ -24,6 +25,10 @@ class UserTable
                 TextColumn::make('roles.enum')
                     ->label(__('core::ui.fields.roles'))
                     ->badge(),
+                TextColumn::make('permissions.label')
+                    ->label(__('core::ui.fields.permissions'))
+                    ->badge()
+                    ->visible(fn (): bool => Permission::enumClass() !== null),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

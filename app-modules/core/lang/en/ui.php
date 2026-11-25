@@ -37,6 +37,7 @@ return [
         'email' => 'Email',
         'preferred_locale' => 'Preferred locale',
         'roles' => 'Roles',
+        'permissions' => 'Permissions',
         'precision' => 'Precision',
         'start_precision' => 'Start precision',
         'end_precision' => 'End precision',

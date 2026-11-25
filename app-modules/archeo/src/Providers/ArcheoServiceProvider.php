@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Metafori\Archeo\ArcheoPlugin;
 use Metafori\Archeo\Console\Commands\ImportExternalPdfsCommand;
+use Metafori\Archeo\Enums\Permission as ArcheoPermission;
 use Metafori\Archeo\Listeners\CompressPdfOnUploadListener;
 use Metafori\Archeo\Models\Activity;
 use Metafori\Archeo\Models\ActivityAssignment;
@@ -33,6 +34,7 @@ class ArcheoServiceProvider extends ServiceProvider
         config([
             'frontend.routes.reset_password' => '/reset-password',
             'frontend.routes.set_password' => '/setup-account',
+            'permission.enums.permission' => ArcheoPermission::class,
         ]);
 
         $this->loadTranslationsFrom(__DIR__.'/../../lang', 'archeo');

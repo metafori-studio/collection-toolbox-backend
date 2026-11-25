@@ -2,10 +2,12 @@
 
 namespace Metafori\Core\Filament\Resources\UserResource\Schemas;
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Locale;
+use Metafori\Core\Models\Permission;
 use Metafori\Core\Models\Role;
 
 class UserForm
@@ -36,6 +38,11 @@ class UserForm
                     ->options(fn (): array => collect(config('app.locales'))
                         ->mapWithKeys(fn (string $locale): array => [$locale => Locale::getDisplayName($locale, app()->getLocale())])
                         ->all()),
+                CheckboxList::make('permissions')
+                    ->label(__('core::ui.fields.permissions'))
+                    ->relationship('permissions', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Permission $permission) => $permission->label)
+                    ->visible(fn (): bool => Permission::enumClass() !== null),
             ]);
     }
 }
