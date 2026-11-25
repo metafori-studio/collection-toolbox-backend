@@ -88,6 +88,7 @@ return [
         'upload_media' => 'Nahrať médiá',
         'create_from_files' => 'Vytvoriť zo súborov',
         'create_items' => 'Vytvoriť položky',
+        'view_document' => 'Zobraziť dokument',
         'view_frontend' => 'Zobraziť na webe',
         'unpublished' => 'Nepublikované',
     ],
@@ -103,11 +104,16 @@ return [
         ],
     ],
     'validation' => [
+        'id_trashed' => 'Vymazaný dokument s týmto ID už existuje. Pred opätovným použitím tohto ID ho obnovte alebo natrvalo vymažte.',
         'mixed_media_types' => 'Mediálny typ súboru sa musí zhodovať s ostatnými mediálnymi súbormi.',
         'mixed_media_types_item' => 'Mediálny typ súboru sa musí zhodovať s ostatnými mediálnymi súbormi položky.',
         'transcripts_without_media' => 'Nemožno nahrať prepisy bez zodpovedajúcich mediálnych súborov.',
     ],
     'notifications' => [
+        'document_id_trashed' => [
+            'title' => 'Dokument s týmto ID existuje v koši',
+            'body' => 'Vymazaný dokument s ID :id už existuje. Môžete ho obnoviť alebo natrvalo vymazať.',
+        ],
         'processing_media' => '{1} :count mediálny súbor sa momentálne spracováva na pozadí.|[2,4] :count mediálne súbory sa momentálne spracovávajú na pozadí.|[5,*] :count mediálnych súborov sa momentálne spracováva na pozadí.',
     ],
     'pages' => [
