@@ -1,5 +1,60 @@
 # Changelog
 
+## [2.7.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.6.0...v2.7.0) (2026-11-26)
+
+
+### Features
+
+* **archeo:** add console command to import and assign PDFs to activities based on CVS number ([3a20986](https://github.com/metafori-studio/collection-toolbox-backend/commit/3a2098645bcfa906d5a55c6f4eedc6f435b28ffb))
+* **archeo:** add frontend route configurations for password reset and account setup ([ec9d82f](https://github.com/metafori-studio/collection-toolbox-backend/commit/ec9d82f083958ceb60df40b177974ddac39e61c5))
+* **archeo:** apply viewDocument policy in activity resource ([dfdb74e](https://github.com/metafori-studio/collection-toolbox-backend/commit/dfdb74efe4878c3a4dbe46474ebb8c8b0d125c9e))
+* **archeo:** apply viewDocument policy in activity resource ([e73df05](https://github.com/metafori-studio/collection-toolbox-backend/commit/e73df05732213001257a10ec782c1042099b7b02))
+* **archeo:** correct terminology for CVs and authorship in activities language file ([05dcb1b](https://github.com/metafori-studio/collection-toolbox-backend/commit/05dcb1b8daa6678215505935d5deb5dab17c5672))
+* **archeo:** implement permission system with enums and update policies ([6ac4806](https://github.com/metafori-studio/collection-toolbox-backend/commit/6ac48060cf58001506bfa11ffe903054bbfc1ad6))
+* **art:** add artwork detail api with JSON:API resources and docs ([7d2ff37](https://github.com/metafori-studio/collection-toolbox-backend/commit/7d2ff37b305916e9402e2a6dc0c308ee2c48d568))
+* **art:** add Artwork model, migrations, enums, casts, and factories ([344e773](https://github.com/metafori-studio/collection-toolbox-backend/commit/344e773ac00ff65403c38e32b862644ce019e5d4))
+* **art:** add media-library configuration file ([7f1ef0e](https://github.com/metafori-studio/collection-toolbox-backend/commit/7f1ef0e4d968c5b7e9f8b41928385a0b6bd68984))
+* **art:** artwork aggregations api ([6bacc91](https://github.com/metafori-studio/collection-toolbox-backend/commit/6bacc91a24b2be99075c2c53938caa54e973844a))
+* **art:** artwork index api ([cf49142](https://github.com/metafori-studio/collection-toolbox-backend/commit/cf49142eac9b207c2877c5c4a8ddfeff8446fb11))
+* **art:** artwork search api ([ef36e10](https://github.com/metafori-studio/collection-toolbox-backend/commit/ef36e104dfc673a1a63fd19e5fe7a860850f166c))
+* **art:** artwork search index ([8dfa3a2](https://github.com/metafori-studio/collection-toolbox-backend/commit/8dfa3a23dbe3f30be59b1002c56a2158f07edacb))
+* **art:** update default application locales to Czech with English fallback ([022c86e](https://github.com/metafori-studio/collection-toolbox-backend/commit/022c86e92327f2f57aa70dcf67b6058511b7a20d))
+* **ci:** doubly tag each release with semver and staging-* ([480c412](https://github.com/metafori-studio/collection-toolbox-backend/commit/480c4121dbbb1f86e8511864143a5b8f9fca4ed4))
+* **core:** add Czech language translation files ([4290045](https://github.com/metafori-studio/collection-toolbox-backend/commit/42900452d0895676f8cac642502241fb18b9a3b6))
+* **core:** add Czech language translation files ([3890b0c](https://github.com/metafori-studio/collection-toolbox-backend/commit/3890b0ce749895df3168ad9107b0ef8f2dfd003b))
+* **core:** add FuzzyDate value object, cast, resource, and FuzzyDateFieldset ([7ab7122](https://github.com/metafori-studio/collection-toolbox-backend/commit/7ab71229b1190a2b2ed1640057bbe50eee432ab6))
+* **core:** enhance FuzzyDate single normalization and year precision handling ([fdb12b0](https://github.com/metafori-studio/collection-toolbox-backend/commit/fdb12b0656336c2b27354d84945039517ed65d0e))
+* **core:** implement per-user preferred locale selection with middleware and localized notifications ([755cadb](https://github.com/metafori-studio/collection-toolbox-backend/commit/755cadb25f15eec8348fd80fb1c751e4ea21d793))
+* **etno:** enhance document ID validation and notifications for trashed documents ([ea66573](https://github.com/metafori-studio/collection-toolbox-backend/commit/ea665735144a31c8cab9712457e6dc9b6894013c))
+
+
+### Bug Fixes
+
+* **archeo:** change json columns to jsonb in archeo activities table and add aggregation tests ([3ffe5e3](https://github.com/metafori-studio/collection-toolbox-backend/commit/3ffe5e3810a312462e9c827f71634ae331b8f5d3))
+* **archeo:** change json columns to jsonb in archeo activities table and add aggregation tests ([65ab5e6](https://github.com/metafori-studio/collection-toolbox-backend/commit/65ab5e680a26c5bf828a4cf5b15897ce46776044))
+* **archeo:** clear permission cache after seeding ([a685185](https://github.com/metafori-studio/collection-toolbox-backend/commit/a685185aa8a2f5a1c76a14d921b7a6d4b13b3eac))
+* **archeo:** remove empty disk env vars from .env.example ([ea12caf](https://github.com/metafori-studio/collection-toolbox-backend/commit/ea12caf9e20e0e04d21f2de945fa20855dfdf886))
+* **archeo:** remove unused dating and site type fields in ActivityExcelParser ([e47a736](https://github.com/metafori-studio/collection-toolbox-backend/commit/e47a736849c5c6d3f076054fd4c6d3be40875d1d))
+* **archeo:** update S-JTSK to WGS84 transformation parameters ([e6ea070](https://github.com/metafori-studio/collection-toolbox-backend/commit/e6ea0701e928e5639df4875d72486d462cdfa6d9))
+* **art:** address artwork search review feedback ([d4d7871](https://github.com/metafori-studio/collection-toolbox-backend/commit/d4d78715985b65cf86f106fa1cbdba305b4900f1))
+* **art:** correct artwork API labels ([7ab0a89](https://github.com/metafori-studio/collection-toolbox-backend/commit/7ab0a899dc9dc4299994e8f770e3ac1acaec6f20))
+* **art:** correct artwork API labels ([dad60fc](https://github.com/metafori-studio/collection-toolbox-backend/commit/dad60fc0bf7eec625036a22cbcff1c43c4b56f9a))
+* bump frankenphp to 1.13.2 ([0fd078a](https://github.com/metafori-studio/collection-toolbox-backend/commit/0fd078afc6fb4336f762b0a9a0ee212a5a2d6eb9))
+* bump frankenphp to 1.13.2 ([1c0d484](https://github.com/metafori-studio/collection-toolbox-backend/commit/1c0d48460ca314d90c42af0e2bc984b6797b9904))
+* cast temporary_url_default_lifetime to integer in media library configs ([3e25461](https://github.com/metafori-studio/collection-toolbox-backend/commit/3e254611c4f6ee7809ecfb659652084e2c454868))
+* cast temporary_url_default_lifetime to integer in media library configs ([4156d88](https://github.com/metafori-studio/collection-toolbox-backend/commit/4156d88dac6eb8a7571dfae80bc40c75042068cd))
+* **ci:** cache image based on commit sha, not branch ([8f4a193](https://github.com/metafori-studio/collection-toolbox-backend/commit/8f4a193a3dbd35ee26e575678ad811bd15f02bd4))
+* **ci:** default frontend ref on merge commits ([98aa95e](https://github.com/metafori-studio/collection-toolbox-backend/commit/98aa95e1adad2853f63fd866db00970ba37ccd18))
+* **ci:** isolate release concurrency ([9cc18ac](https://github.com/metafori-studio/collection-toolbox-backend/commit/9cc18acd77dd4bb26ab76a428a55604510cdad89))
+* **core:** display permission labels in UserTable ([65d0819](https://github.com/metafori-studio/collection-toolbox-backend/commit/65d08190489d044de8c06316c91c24ffad2be2e6))
+* **etno:** include user preferred locale in frontend password URLs ([b0c530f](https://github.com/metafori-studio/collection-toolbox-backend/commit/b0c530f2664ab1c41368bb3156df3447e1e2ea9a))
+* **etno:** include user preferred locale in frontend password URLs ([e9dbfec](https://github.com/metafori-studio/collection-toolbox-backend/commit/e9dbfec157ccaf85c38f2f7e4c693226cea72ff9))
+* **etno:** resolve media_type resolution logic in ItemResource ([54e4984](https://github.com/metafori-studio/collection-toolbox-backend/commit/54e4984c61ca1e595e2e7550aea57681aab2f5d0))
+* **etno:** resolve media_type resolution logic in ItemResource and update corresponding API feature test ([3a147cd](https://github.com/metafori-studio/collection-toolbox-backend/commit/3a147cdbcb69002c332a9cdec23193e7c0896365))
+* **etno:** synchronize item search data ([508e045](https://github.com/metafori-studio/collection-toolbox-backend/commit/508e045b30dc6481567cfeec57fd22e63c845dc1))
+* **etno:** synchronize item search data ([2fc0577](https://github.com/metafori-studio/collection-toolbox-backend/commit/2fc0577b87eb108ce7c0921015611be7150c92db))
+* staging image tag race condition ([99fda94](https://github.com/metafori-studio/collection-toolbox-backend/commit/99fda946bc2f147501bc1c63000aefe5c7a1cdce))
+
 ## [2.6.0](https://github.com/metafori-studio/collection-toolbox-backend/compare/v2.5.0...v2.6.0) (2026-07-18)
 
 
