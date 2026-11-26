@@ -33,8 +33,8 @@ class CoordinateTransformer
             $wgs84 = new Proj('EPSG:4326', $proj4);
 
             // S-JTSK / Krovak East North (EPSG:5514)
-            // with Bursa-Wolf parameters for Slovakia (EPSG:8368)
-            $jtskDef = '+proj=krovak +lat_0=49.5 +lon_0=24.83333333333333 +alpha=30.28813972222222 +k=0.9999 +x_0=0 +y_0=0 +ellps=bessel +towgs84=485.021,169.465,483.839,-7.786342,-4.397554,-4.102655,0 +units=m +no_defs';
+            // with Bursa-Wolf parameters for Slovakia (EPSG:8368, Position Vector convention for PROJ.4 +towgs84)
+            $jtskDef = '+proj=krovak +lat_0=49.5 +lon_0=24.83333333333333 +alpha=30.28813972222222 +k=0.9999 +x_0=0 +y_0=0 +ellps=bessel +towgs84=485.021,169.465,483.839,7.786342,4.397554,4.102655,0 +units=m +no_defs';
             $jtsk = new Proj($jtskDef, $proj4);
 
             // Proj4 expects Point($x, $y).
